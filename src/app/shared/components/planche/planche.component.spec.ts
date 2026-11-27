@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { TEXTES, TEXTES_LISTE } from '@core/i18n/textes.fr';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
-import { ListeRessourcesComponent } from './liste-ressources.component';
+import { PlancheComponent } from './planche.component';
 
 const CARTE: EntreeIndex = {
   slug: 'carte-sejour',
@@ -13,6 +13,8 @@ const CARTE: EntreeIndex = {
   secteurs: ['voyage'],
   tags: [],
   contratTokens: 1,
+  animee: false,
+  tailleCase: 'normale',
   statut: 'provisoire',
   ajouteLe: '2026-11-26',
 };
@@ -27,14 +29,14 @@ const DESIGN: EntreeIndex = {
   statut: 'publie',
 };
 
-describe('ListeRessourcesComponent', () => {
-  let fixture: ComponentFixture<ListeRessourcesComponent>;
+describe('PlancheComponent', () => {
+  let fixture: ComponentFixture<PlancheComponent>;
 
   function afficher(
     entrees: readonly EntreeIndex[] | undefined,
     extra: { chargement?: boolean; erreur?: boolean } = {},
   ) {
-    fixture = TestBed.createComponent(ListeRessourcesComponent);
+    fixture = TestBed.createComponent(PlancheComponent);
     fixture.componentRef.setInput('entrees', entrees);
     fixture.componentRef.setInput('chargement', extra.chargement ?? false);
     fixture.componentRef.setInput('erreur', extra.erreur ?? false);
@@ -66,29 +68,49 @@ describe('ListeRessourcesComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Pas encore de template');
   });
 
-  it('liste les ressources avec leur lien de fiche, leur type, leur secteur et le badge provisoire', () => {
+  it('affiche une case par ressource : lien de fiche, type, secteur, vignette décorative', () => {
     const el = afficher([CARTE]);
     const lien = el.querySelector<HTMLAnchorElement>('h3 a');
     expect(lien?.getAttribute('href')).toBe('/composants/carte/carte-sejour');
     expect(lien?.textContent).toContain('Carte de séjour');
-    expect(el.textContent).toContain('Voyage');
-    expect(el.textContent).toContain(TEXTES_LISTE.provisoire);
+    expect(el.querySelector('.ngs-badge')?.textContent).toContain('Carte');
+    expect(el.querySelector('.ngs-badge--secteur')?.textContent).toContain('Voyage');
+    expect(el.querySelector('.ngs-case__stage')?.getAttribute('aria-hidden')).toBe('true');
+    expect(el.querySelector('.ngs-case')?.classList).toContain('ngs-cat-composants');
   });
 
-  it('masque le badge de catégorie quand la page est déjà celle de la catégorie', () => {
+  it('décrit le lien de la case par la description de la ressource', () => {
+    const el = afficher([CARTE]);
+    const id = el.querySelector('h3 a')?.getAttribute('aria-describedby') ?? '';
+    expect(el.querySelector(`#${id}`)?.textContent).toContain('Une carte cliquable.');
+  });
+
+  it('donne à la case la taille du registre et le badge « Animée »', () => {
+    const el = afficher([{ ...CARTE, animee: true, tailleCase: 'large-haute' }]);
+    const classes = el.querySelector('.ngs-case')?.classList;
+    expect(classes).toContain('ngs-case--wide');
+    expect(classes).toContain('ngs-case--tall');
+    expect(el.querySelector('.ngs-badge--anime')?.textContent).toContain(TEXTES_LISTE.anime);
+    expect(afficher([CARTE]).querySelector('.ngs-badge--anime')).toBeNull();
+  });
+
+  it('ne charge aucun aperçu live : pas d’iframe, de ressource embarquée ni d’image', () => {
+    const el = afficher([CARTE, DESIGN]);
+    expect(el.querySelector('iframe, img, object, embed')).toBeNull();
+  });
+
+  it('étire la grille à une colonne de moins quand la page a une colonne de filtres', () => {
     afficher([CARTE]);
-    fixture.componentRef.setInput('afficherCategorie', false);
+    fixture.componentRef.setInput('avecFacettes', true);
     fixture.detectChanges();
-    expect(
-      fixture.nativeElement.querySelector(
-        '.ngs-badge:not(.ngs-badge--secteur):not(.ngs-badge--provisoire)',
-      ),
-    ).toBeNull();
+    expect(fixture.nativeElement.querySelector('ul.ngs-planche.catalogue-grille')).not.toBeNull();
   });
 
   it("n'ajoute aucun lien pour un design, qui n'a pas encore de fiche", () => {
     const el = afficher([DESIGN]);
     expect(el.querySelector('h3 a')).toBeNull();
+    expect(el.querySelector('.ngs-case__open')).toBeNull();
     expect(el.querySelector('h3')?.textContent).toContain('Design Fleuve');
+    expect(el.querySelector('.ngs-badge')?.textContent).toContain('Design');
   });
 });

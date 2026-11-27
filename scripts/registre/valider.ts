@@ -3,6 +3,7 @@ import {
   CATEGORIES,
   SECTEURS,
   SEGMENT_CATEGORIE,
+  TAILLES_CASE,
   TYPES_PAR_CATEGORIE,
 } from '../../src/app/shared/models/taxonomie.model.ts';
 
@@ -70,6 +71,8 @@ const CLES_RESSOURCE = [
   'auteur',
   'dependances',
   'designsMisEnAvant',
+  'animee',
+  'tailleCase',
   'modifieLe',
   'anciensChemins',
 ];
@@ -188,6 +191,15 @@ function validerType(meta: Objet, rapport: Rapport): void {
   }
 }
 
+function validerOptionsPlanche(meta: Objet, rapport: Rapport): void {
+  if (meta['animee'] !== undefined && typeof meta['animee'] !== 'boolean') {
+    rapport.signaler('« animee » doit valoir true ou false');
+  }
+  if (meta['tailleCase'] !== undefined && !inclus(TAILLES_CASE, meta['tailleCase'])) {
+    rapport.signaler(`« tailleCase » doit être l'une de : ${TAILLES_CASE.join(', ')}`);
+  }
+}
+
 function validerDependances(valeur: unknown, rapport: Rapport): void {
   const vide =
     estObjet(valeur) &&
@@ -205,6 +217,7 @@ function validerDependances(valeur: unknown, rapport: Rapport): void {
 function validerRessource(meta: Objet, rapport: Rapport): void {
   validerCles(meta, CLES_RESSOURCE, rapport);
   validerType(meta, rapport);
+  validerOptionsPlanche(meta, rapport);
   if (meta['contratTokens'] !== 1 && meta['contratTokens'] !== null) {
     rapport.signaler('« contratTokens » doit valoir 1 ou null');
   }

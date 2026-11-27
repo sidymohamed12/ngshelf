@@ -1,7 +1,6 @@
 <div class="ngs-container grid gap-4 pt-10 pb-8 lg:pt-14" [class]="classe()">
   <h1 class="ngs-h2 m-0">{{ titre() }}</h1>
   <p class="ngs-lead m-0 max-w-[52ch]">{{ description() }}</p>
-  <p class="ngs-small ngs-muted m-0">{{ compte() }}</p>
 </div>
 
 @if (types().length) {
@@ -22,11 +21,5 @@
 }
 
 <div class="ngs-container pb-24">
-  <app-liste-ressources
-    [afficherCategorie]="false"
-    [entrees]="entrees()"
-    [chargement]="chargement.isLoading()"
-    [erreur]="chargement.error() !== undefined"
-    (reessayer)="chargement.reload()"
-  />
+  <app-explorateur [portee]="portee()" />
 </div>

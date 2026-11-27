@@ -8,6 +8,7 @@ const COMPTEURS_TEST: Compteurs = {
   categories: { composant: 3, bloc: 2, template: 0, design: 0 },
   types: { carte: 2, navbar: 2, bouton: 1 },
   secteurs: { restaurant: 2 },
+  options: { reglables: 5, animees: 1 },
 };
 
 describe('construireMenuCatalogue', () => {

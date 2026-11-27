@@ -2,6 +2,7 @@ import { EntreeIndex } from '@shared/models/index-catalogue.model';
 import {
   MAX_PAR_GROUPE,
   chercher,
+  filtrerParRequete,
   construireIndexRecherche,
   normaliser,
   segmenter,
@@ -16,6 +17,8 @@ function entree(partiel: Partial<EntreeIndex> & Pick<EntreeIndex, 'slug'>): Entr
     secteurs: [],
     tags: [],
     contratTokens: 1,
+    animee: false,
+    tailleCase: 'normale',
     statut: 'publie',
     ajouteLe: '2026-01-01',
     ...partiel,
@@ -117,6 +120,18 @@ describe('chercher', () => {
 
   it('ne renvoie aucun groupe quand rien ne correspond', () => {
     expect(chercher(INDEX, 'zzzz')).toEqual({ groupes: [], total: 0 });
+  });
+});
+
+describe('filtrerParRequete', () => {
+  it('renvoie toutes les ressources, dans l’ordre de l’index, pour une requête vide', () => {
+    expect(filtrerParRequete(INDEX, '  ')).toEqual(ENTREES);
+  });
+
+  it('renvoie à plat, sans la limite par groupe de la recherche globale, les mieux classées d’abord', () => {
+    const dates = filtrerParRequete(INDEX, 'date').map((e) => e.slug);
+    expect(dates).toEqual(['calendrier']);
+    expect(filtrerParRequete(INDEX, 'rien de tel')).toEqual([]);
   });
 });
 

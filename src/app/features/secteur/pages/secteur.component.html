@@ -6,15 +6,9 @@
     </p>
     <h1 class="ngs-h2 m-0">{{ titre() }}</h1>
     <p class="ngs-lead m-0 max-w-[52ch]">{{ textes.secteurAide }}</p>
-    <p class="ngs-small ngs-muted m-0">{{ compte() }}</p>
   </div>
   <div class="ngs-container pb-24">
-    <app-liste-ressources
-      [entrees]="entrees()"
-      [chargement]="chargement.isLoading()"
-      [erreur]="chargement.error() !== undefined"
-      (reessayer)="chargement.reload()"
-    />
+    <app-explorateur [portee]="portee()" />
   </div>
 } @else {
   <app-page-introuvable />

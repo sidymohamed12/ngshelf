@@ -73,6 +73,33 @@ describe('validerRegistre', () => {
     expect(resultat.metas).toHaveLength(2);
   });
 
+  it('accepte les options de la planche : animée et taille de case', () => {
+    const meta = ressource({ animee: true, tailleCase: 'large-haute' });
+    expect(valider(meta)).toEqual([]);
+    expect(valider(ressource({ animee: false, tailleCase: 'normale' }))).toEqual([]);
+  });
+
+  it('refuse une animée qui n’est pas un booléen et une taille de case inconnue', () => {
+    expect(valider(ressource({ animee: 'oui' }))).toEqual([
+      expect.stringContaining('« animee » doit valoir true ou false'),
+    ]);
+    expect(valider(ressource({ tailleCase: 'geante' }))).toEqual([
+      expect.stringContaining(
+        "« tailleCase » doit être l'une de : normale, large, haute, large-haute",
+      ),
+    ]);
+  });
+
+  it('refuse ces options sur un design, qui n’a ni animation ni case propre', () => {
+    const erreurs = validerRegistre([
+      { chemin: 'designs/fleuve', meta: design({ animee: true, tailleCase: 'large' }) },
+    ]).erreurs;
+    expect(erreurs).toEqual([
+      expect.stringContaining('champ inconnu « animee »'),
+      expect.stringContaining('champ inconnu « tailleCase »'),
+    ]);
+  });
+
   it('refuse un type inconnu et un type d’une autre catégorie', () => {
     expect(valider(ressource({ type: 'nav-bar' }))).toEqual([
       expect.stringContaining('type « nav-bar » inconnu'),

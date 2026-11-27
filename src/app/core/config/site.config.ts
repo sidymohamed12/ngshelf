@@ -16,6 +16,8 @@ export interface AuteurConfig {
 
 export interface SiteConfig {
   readonly nom: string;
+  /** Adresse publique du site, sans barre finale ; null tant que le domaine n'est pas choisi. */
+  readonly url: string | null;
   /** Texte de la marque à côté du logo (le logo contient déjà « ng »). */
   readonly nomCourt: string;
   /** Préfixe des tokens (--ngs-*) et des classes (ngs-*), ADR 0006. */
@@ -30,6 +32,7 @@ export interface SiteConfig {
 
 export const SITE: SiteConfig = {
   nom: 'NgShelf',
+  url: null,
   nomCourt: 'Shelf',
   prefixe: 'ngs',
   depot: null,

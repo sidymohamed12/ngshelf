@@ -78,17 +78,35 @@ function score(cible: EntreeRecherche, motsRequete: readonly string[]): number {
   return dansTitre * BASE_POINTS_TITRE + (debut ? BONUS_DEBUT_TITRE : 0);
 }
 
+interface Correspondance {
+  readonly cible: EntreeRecherche;
+  readonly rang: number;
+  readonly points: number;
+}
+
+/** Les ressources dont le texte contient chaque mot de la requête, les mieux classées d'abord. */
+function classer(index: IndexRecherche, requete: string): readonly Correspondance[] {
+  const motsRequete = mots(requete);
+  return index
+    .filter((cible) => motsRequete.every((mot) => cible.texte.includes(mot)))
+    .map((cible, rang) => ({ cible, rang, points: score(cible, motsRequete) }))
+    .sort((a, b) => b.points - a.points || a.rang - b.rang);
+}
+
+/**
+ * Les ressources qui correspondent à la requête, dans l'ordre de leur pertinence ; toutes si elle est vide.
+ * Sert aux filtres du catalogue, qui n'ont pas la limite par groupe de la recherche globale.
+ */
+export function filtrerParRequete(index: IndexRecherche, requete: string): readonly EntreeIndex[] {
+  return classer(index, requete).map((c) => c.cible.entree);
+}
+
 /**
  * Toutes les ressources dont le texte contient chaque mot de la requête, groupées par catégorie
  * (dans l'ordre du catalogue), les mieux classées d'abord. Une requête vide les renvoie toutes.
  */
 export function chercher(index: IndexRecherche, requete: string): Resultats {
-  const motsRequete = mots(requete);
-  const correspondances = index
-    .filter((cible) => motsRequete.every((mot) => cible.texte.includes(mot)))
-    .map((cible, rang) => ({ cible, rang, points: score(cible, motsRequete) }))
-    .sort((a, b) => b.points - a.points || a.rang - b.rang);
-
+  const correspondances = classer(index, requete);
   const groupes = CATEGORIES.flatMap((categorie) => {
     const dansGroupe = correspondances.filter((c) => c.cible.entree.categorie === categorie);
     return dansGroupe.length === 0

@@ -102,3 +102,10 @@ export const SECTEURS = [
   'creatif',
 ] as const;
 export type Secteur = (typeof SECTEURS)[number];
+
+/**
+ * Taille de la case d'une ressource dans la planche du catalogue (DESIGN.md, « dans le catalogue, la taille
+ * vient du registre ») : 1×1, 2×1, 1×2 ou 2×2. Une valeur inconnue fait échouer le build.
+ */
+export const TAILLES_CASE = ['normale', 'large', 'haute', 'large-haute'] as const;
+export type TailleCase = (typeof TAILLES_CASE)[number];

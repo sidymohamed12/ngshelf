@@ -1,0 +1,142 @@
+<div class="catalogue">
+  <div
+    class="ngs-tiroir__fond"
+    [class.is-open]="tiroirOuvert()"
+    aria-hidden="true"
+    (click)="fermerTiroir()"
+  ></div>
+
+  <!-- Facettes : colonne collante en grand écran, tiroir (bottom sheet) en petit écran -->
+  <aside
+    class="ngs-tiroir"
+    id="facettes"
+    #tiroir
+    aria-labelledby="facettes-titre"
+    [class.is-open]="tiroirOuvert()"
+    [attr.role]="modal() ? 'dialog' : null"
+    [attr.aria-modal]="modal() ? 'true' : null"
+    [attr.inert]="petitEcran() && !tiroirOuvert() ? '' : null"
+  >
+    <div class="ngs-tiroir__tete">
+      <h2 class="ngs-h3 m-0 text-[1.25rem]" id="facettes-titre">{{ textes.filtres }}</h2>
+      <button
+        class="ngs-btn ngs-btn--ghost ngs-btn--icon"
+        type="button"
+        #boutonFermer
+        [attr.aria-label]="textes.filtresFermer"
+        (click)="fermerTiroir()"
+      >
+        <svg appIcone="x"></svg>
+      </button>
+    </div>
+
+    <div class="ngs-tiroir__corps">
+      <app-facettes
+        [vue]="vueFacettes()"
+        (categorieChoisie)="choisirCategorie($event)"
+        (typeBascule)="basculerType($event.type, $event.coche)"
+        (secteurBascule)="basculerSecteur($event.secteur, $event.coche)"
+        (reglablesBascule)="basculerReglables($event)"
+        (animeesBascule)="basculerAnimees($event)"
+        (typesBascules)="basculerTypes()"
+      />
+    </div>
+
+    <div class="ngs-tiroir__pied">
+      <button class="ngs-btn ngs-btn--secondary" type="button" (click)="toutEffacer()">
+        {{ textes.filtresEffacer }}
+      </button>
+      <button class="ngs-btn flex-1" type="button" (click)="fermerTiroir()">
+        <span>{{ textes.filtresVoir }}</span>
+        <span class="tabular">({{ resultats().length }})</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="grid min-w-0 gap-5">
+    <div class="catalogue-outils">
+      <div class="ngs-input-wrap min-w-[14rem] flex-1">
+        <svg appIcone="magnifying-glass"></svg>
+        <label class="sr-only" for="filtre">{{ textes.rechercheLabel }}</label>
+        <input
+          class="ngs-input"
+          id="filtre"
+          type="search"
+          autocomplete="off"
+          #champ
+          [placeholder]="textes.recherchePlaceholder"
+          [value]="filtres().q"
+          (input)="saisir(champ)"
+        />
+      </div>
+      <button
+        class="ngs-btn ngs-btn--secondary lg:hidden"
+        type="button"
+        #boutonOuvrir
+        aria-controls="facettes"
+        [attr.aria-expanded]="tiroirOuvert()"
+        (click)="ouvrirTiroir()"
+      >
+        <svg appIcone="funnel-simple"></svg>
+        <span>{{ textes.filtres }}</span>
+        @if (actifs().length) {
+          <span class="tabular">({{ actifs().length }})</span>
+        }
+      </button>
+      <label class="sr-only" for="tri">{{ textes.tri }}</label>
+      <select class="ngs-select" id="tri" #tri (change)="changerTri(tri.value)">
+        <option value="recent" [selected]="filtres().tri === 'recent'">
+          {{ textes.triRecent }}
+        </option>
+        <option value="az" [selected]="filtres().tri === 'az'">{{ textes.triAz }}</option>
+      </select>
+    </div>
+
+    @if (actifs().length) {
+      <div class="ngs-filtres-actifs" role="group" [attr.aria-label]="textes.filtresActifs">
+        @for (filtre of actifs(); track filtre.cle) {
+          <button
+            class="ngs-filtre-actif"
+            type="button"
+            [attr.aria-label]="filtre.aria"
+            (click)="retirer(filtre.actif)"
+          >
+            {{ filtre.libelle }}
+            <svg appIcone="x"></svg>
+          </button>
+        }
+        @if (actifs().length > 1) {
+          <button
+            class="ngs-link ngs-link--rest cursor-pointer border-0 bg-transparent text-sm"
+            type="button"
+            (click)="toutEffacer()"
+          >
+            {{ textes.filtresEffacer }}
+          </button>
+        }
+      </div>
+    }
+
+    <p class="ngs-small ngs-muted tabular m-0" role="status" aria-live="polite">{{ compte() }}</p>
+
+    <app-planche
+      [avecFacettes]="true"
+      [entrees]="affichees()"
+      [chargement]="chargement.isLoading()"
+      [erreur]="chargement.error() !== undefined"
+      [titreVide]="etatVide()?.titre"
+      [texteVide]="etatVide()?.texte"
+      [libelleActionVide]="etatVide()?.action"
+      (reessayer)="chargement.reload()"
+      (actionVide)="toutEffacer()"
+    />
+
+    @if (resteAMontrer()) {
+      <div class="flex justify-center">
+        <button class="ngs-btn ngs-btn--secondary" type="button" (click)="afficherPlus()">
+          {{ textes.plus }}
+        </button>
+      </div>
+    }
+  </div>
+</div>

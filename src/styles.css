@@ -2,11 +2,13 @@
   Styles globaux de NgShelf.
   tokens.css : thème Tailwind (@theme) du site, seule source des valeurs (design system).
   components.css : classes .ngs-* du design system (@layer base et components).
+  catalogue.css : mise en page de la page catalogue (colonne de filtres, planche), tirée de la maquette.
   Le contrat de tokens des ressources (src/styles/contrat/) n'est pas chargé par le site.
 */
 @import 'tailwindcss';
 @import './styles/tokens.css';
 @import './styles/components.css';
+@import './styles/catalogue.css';
 
 /* Mode sombre : attribut data-theme="sombre" sur <html> (posé avant le premier rendu, voir public/theme-init.js). */
 @custom-variant dark (&:where([data-theme="sombre"], [data-theme="sombre"] *));

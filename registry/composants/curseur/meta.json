@@ -12,6 +12,8 @@
   "secteurs": [],
   "tags": ["formulaire", "slider", "range", "réglage"],
   "contratTokens": 1,
+  "animee": false,
+  "tailleCase": "normale",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

@@ -12,6 +12,8 @@
   "secteurs": [],
   "tags": ["toast", "retour", "message", "snackbar"],
   "contratTokens": 1,
+  "animee": true,
+  "tailleCase": "large",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

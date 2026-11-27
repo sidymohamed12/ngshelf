@@ -12,6 +12,8 @@
   "secteurs": [],
   "tags": ["date", "formulaire", "agenda", "datepicker", "réservation"],
   "contratTokens": 1,
+  "animee": true,
+  "tailleCase": "large-haute",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

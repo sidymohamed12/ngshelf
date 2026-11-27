@@ -1,4 +1,4 @@
-import { CategorieTypee, Secteur, TypeRessource } from './taxonomie.model';
+import { CategorieTypee, Secteur, TailleCase, TypeRessource } from './taxonomie.model';
 import { Texte } from './texte.model';
 
 /** Cycle de vie d'une ressource ; `provisoire` affiche le badge « Démo provisoire ». */
@@ -38,6 +38,10 @@ export interface MetaRessource {
   /** Version majeure du contrat de tokens suivie ; null = non réglable. */
   readonly contratTokens: 1 | null;
   readonly designsMisEnAvant?: readonly string[];
+  /** Vrai si la ressource a ses propres animations, désactivables : badge « Animée » et filtre (absent = faux). */
+  readonly animee?: boolean;
+  /** Taille de sa case dans la planche du catalogue (absent = « normale », 1×1). */
+  readonly tailleCase?: TailleCase;
   readonly variantes: readonly VarianteStyle[];
   readonly angularMin: string;
   readonly licence: 'MIT';

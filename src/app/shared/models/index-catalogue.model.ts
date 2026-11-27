@@ -1,4 +1,4 @@
-import { Categorie, Secteur, TypeRessource } from './taxonomie.model';
+import { Categorie, Secteur, TailleCase, TypeRessource } from './taxonomie.model';
 import { Texte } from './texte.model';
 import { StatutRessource } from './ressource.model';
 
@@ -16,6 +16,10 @@ export interface EntreeIndex {
   readonly secteurs: readonly Secteur[];
   readonly tags: readonly string[];
   readonly contratTokens: 1 | null;
+  /** A ses propres animations (toujours renseigné dans l'index : faux par défaut, et pour un design). */
+  readonly animee: boolean;
+  /** Taille de la case dans la planche (toujours renseignée : « normale » par défaut). */
+  readonly tailleCase: TailleCase;
   readonly statut: StatutRessource;
   /** AAAA-MM-JJ */
   readonly ajouteLe: string;
@@ -32,6 +36,8 @@ export interface Compteurs {
   readonly types: Readonly<Partial<Record<TypeRessource, number>>>;
   /** Seuls les secteurs qui ont au moins une ressource sont présents. */
   readonly secteurs: Readonly<Partial<Record<Secteur, number>>>;
+  /** Ressources réglables (qui suivent le contrat de tokens) et animées, pour les options du catalogue. */
+  readonly options: { readonly reglables: number; readonly animees: number };
 }
 
 export type IndexParCategorie = Readonly<Record<Categorie, readonly EntreeIndex[]>>;

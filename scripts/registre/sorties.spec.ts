@@ -1,5 +1,6 @@
 import { enJson, construireSorties, nomFichierIndex } from './sorties.ts';
 import type { MetaRegistre } from './valider.ts';
+import type { EntreeIndex } from '../../src/app/shared/models/index-catalogue.model.ts';
 import type { MetaDesign, MetaRessource } from '../../src/app/shared/models/ressource.model.ts';
 
 const BASE = {
@@ -38,7 +39,13 @@ const DESIGN: MetaDesign = {
 };
 
 const METAS: readonly MetaRegistre[] = [
-  ressource({ slug: 'zebre', titre: { fr: 'Zèbre' }, secteurs: ['voyage'] }),
+  ressource({
+    slug: 'zebre',
+    titre: { fr: 'Zèbre' },
+    secteurs: ['voyage'],
+    animee: true,
+    tailleCase: 'large-haute',
+  }),
   ressource({
     slug: 'abeille',
     titre: { fr: 'Éléphant' },
@@ -70,6 +77,8 @@ describe('construireSorties', () => {
       secteurs: [],
       tags: [],
       contratTokens: 1,
+      animee: false,
+      tailleCase: 'normale',
       statut: 'provisoire',
       ajouteLe: '2026-11-26',
     });
@@ -81,7 +90,20 @@ describe('construireSorties', () => {
       categories: { composant: 2, bloc: 1, template: 0, design: 1 },
       types: { carte: 1, bouton: 1, navbar: 1 },
       secteurs: { voyage: 2, sport: 1 },
+      options: { reglables: 4, animees: 1 },
     });
+  });
+
+  it('renseigne toujours animée et taille de case dans l’index, avec leurs valeurs par défaut', () => {
+    const parSlug = (slug: string): EntreeIndex | undefined =>
+      sorties.index.composant.find((e) => e.slug === slug);
+    expect(parSlug('zebre')).toMatchObject({ animee: true, tailleCase: 'large-haute' });
+    expect(parSlug('abeille')).toMatchObject({ animee: false, tailleCase: 'normale' });
+  });
+
+  it('ne compte pas comme réglable une ressource hors contrat', () => {
+    const horsContrat = ressource({ slug: 'libre', contratTokens: null });
+    expect(construireSorties([horsContrat, ...METAS]).compteurs.options.reglables).toBe(4);
   });
 
   it('est déterministe : même registre dans un autre ordre, mêmes sorties', () => {

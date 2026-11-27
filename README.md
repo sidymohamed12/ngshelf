@@ -41,9 +41,11 @@ Le site est servi sur `http://localhost:4200/` et se recharge à chaque modifica
 
 ## Registre
 
-`registry/<categorie>/<slug>/meta.json` est la source unique des ressources (ADR 0002 et 0004) : `composants/`, `blocs/`, `templates/`, `designs/`. Pour ajouter une ressource, créer son dossier et son `meta.json` (modèle : `shared/models/ressource.model.ts`, textes au format `{ "fr": "…" }`), puis lancer `npm run registre:build`. Le script (`scripts/registre/`) refuse le build si un type ou un secteur est hors de la taxonomie (`shared/models/taxonomie.model.ts`), un slug en double, plus de 3 secteurs ou 8 tags, une dépendance non vide, un texte français absent, un champ inconnu.
+`registry/<categorie>/<slug>/meta.json` est la source unique des ressources (ADR 0002 et 0004) : `composants/`, `blocs/`, `templates/`, `designs/`. Pour ajouter une ressource, créer son dossier et son `meta.json` (modèle : `shared/models/ressource.model.ts`, textes au format `{ "fr": "…" }`), puis lancer `npm run registre:build`. Le script (`scripts/registre/`) refuse le build si un type ou un secteur est hors de la taxonomie (`shared/models/taxonomie.model.ts`), un slug en double, plus de 3 secteurs ou 8 tags, une dépendance non vide, un texte français absent, un champ inconnu, une valeur de `animee` qui n'est pas un booléen, une `tailleCase` hors de `normale`, `large`, `haute`, `large-haute`.
 
-Sorties, dans `src/generated/registre/` (non versionnées) : un index par catégorie (`index-<categorie>.json`, chargé à la demande, jamais dans le bundle initial) et `compteurs.json` (ressources publiées par catégorie, type et secteur, dans le bundle initial pour le méga-menu).
+Champs de la planche du catalogue (facultatifs, repris dans les index) : `animee` (la ressource a ses propres animations : badge « Animée » et filtre ; absent = faux) et `tailleCase` (taille de sa case dans la planche : 1×1, 2×1, 1×2 ou 2×2 ; absent = `normale`). Une ressource est « réglable » quand `contratTokens` vaut 1.
+
+Sorties, dans `src/generated/registre/` (non versionnées) : un index par catégorie (`index-<categorie>.json`, chargé à la demande, jamais dans le bundle initial) et `compteurs.json` (ressources publiées par catégorie, type et secteur, plus le nombre de ressources réglables et animées ; dans le bundle initial pour le méga-menu).
 
 ## Structure
 
@@ -75,6 +77,7 @@ Les imports passent par les alias `@core/*`, `@shared/*`, `@features/*`, `@layou
 - **Thème** : clair, sombre ou système, mémorisé dans le cookie `ngs_theme` (jamais `localStorage`). `public/theme-init.js` pose `data-theme` avant le premier rendu ; `ThemeService` reprend ensuite côté navigateur.
 - **Textes** : tous dans `core/i18n/textes.fr.ts`, marqués `$localize` avec l'identifiant `@@clé` (`@angular/localize`, langue source `fr`). Nom du site et liens de Sidy : `core/config/site.config.ts`.
 - **Recherche et menus** : dialogue ⌘K / Ctrl+K (`<dialog>` natif, recherche locale sur les index chargés à la première ouverture), méga-menu « Catalogue » du header et liste des secteurs du menu mobile, tous alimentés par `compteurs.json`.
+- **Catalogue filtrable** : `/catalogue`, `/<categorie>`, `/<categorie>/<type>` et `/secteurs/<secteur>` partagent `ExplorateurComponent` (facettes, recherche, tri, puces, planche, « Afficher plus » par 24). Les filtres sont dans l'URL (`?c=composants&type=a,b&secteur=x&q=…&tri=az&reglables=1&animees=1`, logique pure et testée dans `core/registre/filtres.ts`) ; un changement de filtre remplace les paramètres sans entrée d'historique ni remontée de la page. Ces URL ne sont ni prérendues ni indexées : `IndexationService` pose le canonique du chemin sans paramètres et `noindex, follow` dès qu'un paramètre est présent. Les vignettes des cases sont statiques (aperçus live : phase suivante, ADR 0003).
 - **Routes** : toutes lazy. Prérendues depuis le registre (`getPrerenderParams`) : `/<categorie>` (composants, blocs, templates, designs), `/<categorie>/<type>` et `/secteurs/<secteur>` seulement si au moins une ressource, `/<categorie>/<type>/<slug>` pour chaque fiche. Un type ou un secteur sans ressource n'a pas de page : il n'est pas un lien dans la navigation.
 
 ## Déploiement : Cloudflare Pages
