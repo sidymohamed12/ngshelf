@@ -1,0 +1,1 @@
+block max-w-full font-ngs text-ngs-text

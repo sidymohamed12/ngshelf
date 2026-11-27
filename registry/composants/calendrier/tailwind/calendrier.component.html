@@ -1,0 +1,78 @@
+<div
+  class="grid w-max max-w-full gap-ngs-3 rounded-[calc(var(--radius-ngs)*1.6)] bg-ngs-surface px-[clamp(8px,3vw,var(--spacing-ngs-4))] py-ngs-4 shadow-[inset_0_0_0_1px_var(--color-ngs-border)]"
+>
+  <div class="flex items-center gap-1">
+    <p class="m-0 flex-1 pl-1.5 text-base font-semibold first-letter:uppercase" aria-live="polite">
+      {{ libelleMois() }}
+    </p>
+    <button
+      class="inline-grid size-11 cursor-pointer place-items-center rounded-ngs border-0 bg-transparent text-inherit transition-colors duration-(--ngs-duration) hover:bg-ngs-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ngs-action [&_svg]:size-[18px]"
+      type="button"
+      aria-label="Mois précédent"
+      (click)="changerDeMois(-1)"
+    >
+      <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+        <path
+          d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"
+        />
+      </svg>
+    </button>
+    <button
+      class="inline-grid size-11 cursor-pointer place-items-center rounded-ngs border-0 bg-transparent text-inherit transition-colors duration-(--ngs-duration) hover:bg-ngs-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ngs-action [&_svg]:size-[18px]"
+      type="button"
+      aria-label="Mois suivant"
+      (click)="changerDeMois(1)"
+    >
+      <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+        <path
+          d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <div
+    class="grid grid-cols-[repeat(7,minmax(30px,var(--spacing-ngs-11)))] gap-0.5 text-center text-xs font-semibold text-ngs-text-muted"
+    aria-hidden="true"
+  >
+    <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span
+    ><span>D</span>
+  </div>
+
+  <!-- Une grille par mois (clé = date du 1er) : [animate.enter] rejoue l'entrée dans le sens de navigation. -->
+  @for (cle of [vue().getTime()]; track cle) {
+    <div
+      class="grid grid-cols-[repeat(7,minmax(30px,var(--spacing-ngs-11)))] gap-0.5 in-[.ngs-sans-animation]:animate-none!"
+      #grille
+      [animate.enter]="
+        sens() > 0
+          ? 'motion-safe:animate-[ngs-mois-suivant_calc(var(--ngs-duration)*1.5)_cubic-bezier(.22,1,.36,1)_both]'
+          : sens() < 0
+            ? 'motion-safe:animate-[ngs-mois-precedent_calc(var(--ngs-duration)*1.5)_cubic-bezier(.22,1,.36,1)_both]'
+            : ''
+      "
+      (keydown)="clavier($event)"
+    >
+      @for (vide of decalage(); track $index) {
+        <span></span>
+      }
+      @for (jour of jours(); track jour.numero) {
+        <button
+          class="aspect-square min-w-0 cursor-pointer rounded-ngs border-0 bg-transparent text-[15px] tabular-nums text-inherit transition-colors duration-(--ngs-duration) hover:bg-ngs-surface-alt aria-[current=date]:font-semibold aria-[current=date]:shadow-[inset_0_0_0_1.5px_var(--color-ngs-border)] aria-pressed:bg-ngs-action aria-pressed:font-semibold aria-pressed:text-ngs-on-action aria-pressed:hover:bg-ngs-action focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ngs-action"
+          type="button"
+          [attr.aria-label]="libelle(jour.date)"
+          [attr.aria-pressed]="estChoisi(jour.date)"
+          [attr.aria-current]="estAujourdhui(jour.date) ? 'date' : null"
+          [tabindex]="estFocus(jour.date) ? 0 : -1"
+          (click)="choisir(jour)"
+        >
+          {{ jour.numero }}
+        </button>
+      }
+    </div>
+  }
+
+  <p class="m-0 text-sm text-ngs-text-muted [&_strong]:font-semibold [&_strong]:text-ngs-text">
+    Date choisie : <strong>{{ libelleChoix() }}</strong>
+  </p>
+</div>

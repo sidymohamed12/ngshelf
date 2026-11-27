@@ -1,6 +1,33 @@
+import type { FichiersRessource } from './sources.ts';
 import { EntreeBrute, validerRegistre } from './valider.ts';
 
+const GABARIT_TAILWIND = '<button class="rounded-ngs px-4" type="button"><ng-content /></button>';
+const GABARIT_CSS = '<button class="barre__action" type="button"><ng-content /></button>';
+
+/** Fichiers minimaux et valides d'une ressource nommée « barre » (bloc de test). */
+const FICHIERS: FichiersRessource = {
+  'barre.component.ts': `@Component({
+  templateUrl: './barre.component.html',
+  /*STYLE*/
+})
+export class BarreComponent {
+  readonly animations = input(true);
+}`,
+  'tailwind/barre.component.html': GABARIT_TAILWIND,
+  'tailwind/hote.txt': 'block',
+  'css/barre.component.html': GABARIT_CSS,
+  'css/barre.component.css': '.barre__action { color: var(--ngs-color-text, #0b0b0c); }',
+  'fiche.json': JSON.stringify({ usage: '<ngs-barre />', api: [] }),
+  'demo/demo.component.ts': 'export class DemoComponent {}',
+};
+
 const UN_SECTEUR = ['restaurant'];
+
+const MOTION = {
+  resume: { fr: 'La barre descend en entrant.' },
+  moments: ['entree'],
+  technique: '@keyframes CSS',
+};
 
 function ressource(surcharge: Record<string, unknown> = {}): Record<string, unknown> {
   return {
@@ -20,6 +47,7 @@ function ressource(surcharge: Record<string, unknown> = {}): Record<string, unkn
     statut: 'provisoire',
     ajouteLe: '2026-11-26',
     dependances: { npm: [], ressources: [] },
+    motion: null,
     ...surcharge,
   };
 }
@@ -59,13 +87,13 @@ function design(surcharge: Record<string, unknown> = {}): Record<string, unknown
 }
 
 function valider(meta: unknown, chemin = 'blocs/navbar-test'): readonly string[] {
-  return validerRegistre([{ chemin, meta }]).erreurs;
+  return validerRegistre([{ chemin, meta, fichiers: FICHIERS }]).erreurs;
 }
 
 describe('validerRegistre', () => {
   it('accepte une ressource et un design valides', () => {
     const entrees: EntreeBrute[] = [
-      { chemin: 'blocs/navbar-test', meta: ressource() },
+      { chemin: 'blocs/navbar-test', meta: ressource(), fichiers: FICHIERS },
       { chemin: 'designs/fleuve', meta: design() },
     ];
     const resultat = validerRegistre(entrees);
@@ -73,16 +101,21 @@ describe('validerRegistre', () => {
     expect(resultat.metas).toHaveLength(2);
   });
 
-  it('accepte les options de la planche : animée et taille de case', () => {
-    const meta = ressource({ animee: true, tailleCase: 'large-haute' });
-    expect(valider(meta)).toEqual([]);
-    expect(valider(ressource({ animee: false, tailleCase: 'normale' }))).toEqual([]);
+  it('accepte une taille de case et un motion complet', () => {
+    expect(valider(ressource({ motion: MOTION, tailleCase: 'large-haute' }))).toEqual([]);
+    expect(valider(ressource({ tailleCase: 'normale' }))).toEqual([]);
   });
 
-  it('refuse une animée qui n’est pas un booléen et une taille de case inconnue', () => {
-    expect(valider(ressource({ animee: 'oui' }))).toEqual([
-      expect.stringContaining('« animee » doit valoir true ou false'),
-    ]);
+  it('accepte rejouer quand la sortie figure dans les moments', () => {
+    const motion = {
+      ...MOTION,
+      moments: ['entree', 'sortie'],
+      rejouer: { entree: true, sortie: 'hero-sortie' },
+    };
+    expect(valider(ressource({ motion }))).toEqual([]);
+  });
+
+  it('refuse une taille de case inconnue', () => {
     expect(valider(ressource({ tailleCase: 'geante' }))).toEqual([
       expect.stringContaining(
         "« tailleCase » doit être l'une de : normale, large, haute, large-haute",
@@ -90,12 +123,57 @@ describe('validerRegistre', () => {
     ]);
   });
 
+  it('exige le champ motion, null quand la ressource n’a aucune animation', () => {
+    const sans = ressource();
+    delete sans['motion'];
+    expect(valider(sans)).toEqual([expect.stringContaining('« motion » est obligatoire')]);
+    expect(valider(ressource({ motion: 'oui' }))).toEqual([
+      expect.stringContaining('« motion » doit valoir null ou un objet'),
+    ]);
+  });
+
+  it('refuse un motion sans moment, avec un moment inconnu ou un champ inconnu', () => {
+    expect(valider(ressource({ motion: { ...MOTION, moments: [] } }))).toEqual([
+      expect.stringContaining('au moins un moment'),
+    ]);
+    expect(valider(ressource({ motion: { ...MOTION, moments: ['clic'] } }))).toEqual([
+      expect.stringContaining('moment inconnu « clic »'),
+    ]);
+    expect(valider(ressource({ motion: { ...MOTION, duree: 3 } }))).toEqual([
+      expect.stringContaining('champ inconnu « duree »'),
+    ]);
+  });
+
+  it('refuse un motion sans résumé français ni technique', () => {
+    expect(valider(ressource({ motion: { ...MOTION, resume: 'texte' } }))).toEqual([
+      expect.stringContaining('« motion.resume » doit être'),
+    ]);
+    expect(valider(ressource({ motion: { ...MOTION, technique: ' ' } }))).toEqual([
+      expect.stringContaining('« motion.technique » est obligatoire'),
+    ]);
+  });
+
+  it('refuse rejouer.sortie sans sortie dans les moments, et une entrée qui ne vaut pas true', () => {
+    expect(
+      valider(ressource({ motion: { ...MOTION, rejouer: { sortie: 'hero-sortie' } } })),
+    ).toEqual([expect.stringContaining('exige « sortie » dans « motion.moments »')]);
+    expect(valider(ressource({ motion: { ...MOTION, rejouer: { entree: false } } }))).toEqual([
+      expect.stringContaining('« motion.rejouer.entree » doit valoir true'),
+    ]);
+  });
+
+  it('refuse l’ancien champ animee (remplacé par motion, ADR 0007)', () => {
+    expect(valider(ressource({ animee: true }))).toEqual([
+      expect.stringContaining('champ inconnu « animee »'),
+    ]);
+  });
+
   it('refuse ces options sur un design, qui n’a ni animation ni case propre', () => {
     const erreurs = validerRegistre([
-      { chemin: 'designs/fleuve', meta: design({ animee: true, tailleCase: 'large' }) },
+      { chemin: 'designs/fleuve', meta: design({ motion: null, tailleCase: 'large' }) },
     ]).erreurs;
     expect(erreurs).toEqual([
-      expect.stringContaining('champ inconnu « animee »'),
+      expect.stringContaining('champ inconnu « motion »'),
       expect.stringContaining('champ inconnu « tailleCase »'),
     ]);
   });
@@ -165,10 +243,11 @@ describe('validerRegistre', () => {
 
   it('refuse un slug utilisé deux fois dans tout le registre', () => {
     const resultat = validerRegistre([
-      { chemin: 'blocs/navbar-test', meta: ressource() },
+      { chemin: 'blocs/navbar-test', meta: ressource(), fichiers: FICHIERS },
       {
         chemin: 'composants/navbar-test',
         meta: ressource({ categorie: 'composant', type: 'carte' }),
+        fichiers: FICHIERS,
       },
     ]);
     expect(resultat.erreurs).toEqual([
@@ -196,5 +275,75 @@ describe('validerRegistre', () => {
     expect(valider(ressource({ categorie: 'widget' }))).toEqual([
       expect.stringContaining('« categorie »'),
     ]);
+  });
+
+  describe('fichiers de la ressource', () => {
+    function avec(surcharge: Record<string, string>, retirer: string[] = []): EntreeBrute {
+      const fichiers: Record<string, string> = { ...FICHIERS, ...surcharge };
+      for (const chemin of retirer) delete fichiers[chemin];
+      return { chemin: 'blocs/navbar-test', meta: ressource(), fichiers };
+    }
+    const erreursDe = (entree: EntreeBrute): readonly string[] => validerRegistre([entree]).erreurs;
+
+    it('refuse une ressource dont le dossier ne contient aucun fichier lu', () => {
+      const sans = { chemin: 'blocs/navbar-test', meta: ressource() };
+      expect(erreursDe(sans)).toEqual([expect.stringContaining('fichiers de la ressource')]);
+    });
+
+    it('refuse un gabarit manquant, une fiche absente ou un composant en double', () => {
+      expect(erreursDe(avec({}, ['css/barre.component.html']))).toEqual([
+        expect.stringContaining('fichier manquant « css/barre.component.html »'),
+      ]);
+      expect(erreursDe(avec({}, ['fiche.json']))).toEqual([
+        expect.stringContaining('fichier manquant « fiche.json »'),
+      ]);
+      expect(erreursDe(avec({}, ['demo/demo.component.ts']))).toEqual([
+        expect.stringContaining('fichier manquant « demo/demo.component.ts »'),
+      ]);
+      expect(erreursDe(avec({ 'autre.component.ts': 'x' }))).toEqual([
+        expect.stringContaining('exactement un « <nom>.component.ts »'),
+      ]);
+    });
+
+    it('refuse un composant sans la ligne de style ni templateUrl', () => {
+      const erreurs = erreursDe(avec({ 'barre.component.ts': 'export class A {}' }));
+      expect(erreurs).toEqual([
+        expect.stringContaining('doit contenir une fois la ligne /*STYLE*/'),
+        expect.stringContaining('doit déclarer templateUrl'),
+      ]);
+    });
+
+    it('refuse deux gabarits dont la structure diffère, pas seulement les classes', () => {
+      const differe = avec({ 'css/barre.component.html': '<a class="x"><ng-content /></a>' });
+      expect(erreursDe(differe)).toEqual([
+        expect.stringContaining('ne sont pas équivalents (hors classes)'),
+      ]);
+    });
+
+    it('exige l’input animations quand la ressource déclare un motion', () => {
+      const sansInput = {
+        chemin: 'blocs/navbar-test',
+        meta: ressource({ motion: MOTION }),
+        fichiers: {
+          ...FICHIERS,
+          'barre.component.ts': FICHIERS['barre.component.ts'].replace(
+            'animations = input',
+            'x = input',
+          ),
+        },
+      };
+      expect(erreursDe(sansInput)).toEqual([
+        expect.stringContaining('exige l’input « animations »'),
+      ]);
+    });
+
+    it('refuse une fiche.json mal formée', () => {
+      expect(erreursDe(avec({ 'fiche.json': '{ pas du json' }))).toEqual([
+        expect.stringContaining('n’est pas du JSON'),
+      ]);
+      expect(erreursDe(avec({ 'fiche.json': '{"usage":"x","api":[{"nom":"a"}]}' }))).toEqual([
+        expect.stringContaining('« api » doit lister'),
+      ]);
+    });
   });
 });

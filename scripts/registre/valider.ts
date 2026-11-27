@@ -1,4 +1,7 @@
 import type { MetaDesign, MetaRessource } from '../../src/app/shared/models/ressource.model.ts';
+import type { FichiersRessource } from './sources.ts';
+import { validerSources } from './valider-sources.ts';
+import { MOMENTS } from '../../src/app/shared/models/motion.model.ts';
 import {
   CATEGORIES,
   SECTEURS,
@@ -18,6 +21,8 @@ export type MetaRegistre = MetaRessource | MetaDesign;
 export interface EntreeBrute {
   readonly chemin: string;
   readonly meta: unknown;
+  /** Autres fichiers du dossier (code, gabarits, fiche.json), chemins relatifs ; absents pour un design. */
+  readonly fichiers?: FichiersRessource;
 }
 
 export interface ResultatValidation {
@@ -71,11 +76,12 @@ const CLES_RESSOURCE = [
   'auteur',
   'dependances',
   'designsMisEnAvant',
-  'animee',
+  'motion',
   'tailleCase',
   'modifieLe',
   'anciensChemins',
 ];
+const CLES_MOTION = ['resume', 'moments', 'technique', 'rejouer'];
 const CLES_DESIGN = [...CLES_COMMUNES, 'valeurs'];
 
 type Objet = Readonly<Record<string, unknown>>;
@@ -191,10 +197,65 @@ function validerType(meta: Objet, rapport: Rapport): void {
   }
 }
 
-function validerOptionsPlanche(meta: Objet, rapport: Rapport): void {
-  if (meta['animee'] !== undefined && typeof meta['animee'] !== 'boolean') {
-    rapport.signaler('« animee » doit valoir true ou false');
+function validerRejouer(rejouer: unknown, moments: readonly unknown[], rapport: Rapport): void {
+  if (!estObjet(rejouer)) {
+    rapport.signaler('« motion.rejouer » doit être un objet');
+    return;
   }
+  for (const cle of Object.keys(rejouer)) {
+    if (cle !== 'entree' && cle !== 'sortie') {
+      rapport.signaler(`« motion.rejouer » : champ inconnu « ${cle} »`);
+    }
+  }
+  if (rejouer['entree'] !== undefined && rejouer['entree'] !== true) {
+    rapport.signaler('« motion.rejouer.entree » doit valoir true');
+  }
+  if (rejouer['sortie'] !== undefined) {
+    if (!estChaine(rejouer['sortie']) || !MOTIF_SLUG.test(rejouer['sortie'])) {
+      rapport.signaler('« motion.rejouer.sortie » doit être une classe en kebab-case');
+    }
+    if (!moments.includes('sortie')) {
+      rapport.signaler('« motion.rejouer.sortie » exige « sortie » dans « motion.moments »');
+    }
+  }
+}
+
+/** Le champ `motion` est obligatoire : `null` pour une ressource sans animation propre (ADR 0007). */
+function validerMotion(meta: Objet, rapport: Rapport): void {
+  if (!('motion' in meta)) {
+    rapport.signaler("« motion » est obligatoire (null si la ressource n'a aucune animation)");
+    return;
+  }
+  const motion = meta['motion'];
+  if (motion === null) return;
+  if (!estObjet(motion)) {
+    rapport.signaler('« motion » doit valoir null ou un objet');
+    return;
+  }
+  for (const cle of Object.keys(motion)) {
+    if (!CLES_MOTION.includes(cle)) rapport.signaler(`« motion » : champ inconnu « ${cle} »`);
+  }
+  validerTexte(motion['resume'], 'motion.resume', rapport);
+  if (!estChaine(motion['technique']) || motion['technique'].trim() === '') {
+    rapport.signaler('« motion.technique » est obligatoire');
+  }
+  const moments = motion['moments'];
+  if (!Array.isArray(moments) || moments.length === 0) {
+    rapport.signaler('« motion.moments » doit lister au moins un moment');
+  } else {
+    for (const moment of moments) {
+      if (!inclus(MOMENTS, moment)) {
+        rapport.signaler(`« motion.moments » : moment inconnu « ${String(moment)} »`);
+      }
+    }
+  }
+  if (motion['rejouer'] !== undefined) {
+    validerRejouer(motion['rejouer'], Array.isArray(moments) ? moments : [], rapport);
+  }
+}
+
+function validerOptionsPlanche(meta: Objet, rapport: Rapport): void {
+  validerMotion(meta, rapport);
   if (meta['tailleCase'] !== undefined && !inclus(TAILLES_CASE, meta['tailleCase'])) {
     rapport.signaler(`« tailleCase » doit être l'une de : ${TAILLES_CASE.join(', ')}`);
   }
@@ -293,6 +354,11 @@ function validerEntree(entree: EntreeBrute): readonly string[] {
   if (meta['categorie'] === 'design') validerDesign(meta, rapport);
   else validerRessource(meta, rapport);
   validerEmplacement(meta, entree.chemin, rapport);
+  if (meta['categorie'] !== 'design') {
+    for (const erreur of validerSources(entree.fichiers, estObjet(meta['motion']))) {
+      rapport.signaler(erreur);
+    }
+  }
   return rapport.erreurs;
 }
 

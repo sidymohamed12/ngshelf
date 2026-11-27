@@ -1,0 +1,6 @@
+@keyframes ngs-faq-reponse {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

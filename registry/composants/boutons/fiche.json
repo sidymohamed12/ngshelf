@@ -1,0 +1,29 @@
+{
+  "usage": "<ngs-bouton (click)=\"reserver()\" [chargement]=\"envoi()\">Réserver une table</ngs-bouton>\n<ngs-bouton variante=\"secondaire\">Voir la carte</ngs-bouton>\n<ngs-bouton variante=\"discrete\">Annuler</ngs-bouton>",
+  "api": [
+    {
+      "nom": "variante",
+      "type": "input<'principale' | 'secondaire' | 'discrete'>()",
+      "defaut": "'principale'",
+      "role": "Poids visuel du bouton."
+    },
+    {
+      "nom": "type",
+      "type": "input<'button' | 'submit'>()",
+      "defaut": "'button'",
+      "role": "Type natif du bouton."
+    },
+    {
+      "nom": "chargement",
+      "type": "input<boolean>()",
+      "defaut": "false",
+      "role": "Désactive et annonce aria-busy."
+    },
+    {
+      "nom": "desactive",
+      "type": "input<boolean>()",
+      "defaut": "false",
+      "role": "Bouton inactif."
+    }
+  ]
+}

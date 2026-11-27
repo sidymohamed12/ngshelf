@@ -1,26 +1,250 @@
-<section class="ngs-container grid content-start gap-6 py-16" aria-labelledby="titre">
-  @if (chargement.error()) {
+<div class="ngs-container pt-6 pb-24">
+  @if (resultat().etat === 'erreur') {
     <div class="ngs-state ngs-state--error" role="alert">
-      <h1 class="ngs-state__title" id="titre">{{ etats.erreurTitre }}</h1>
-      <p class="ngs-muted m-0">{{ etats.erreurTexte }}</p>
+      <span class="ngs-state__icon"><svg appIcone="warning-circle" taille="lg"></svg></span>
+      <h1 class="ngs-state__title">{{ erreur.erreurTitre }}</h1>
+      <p class="ngs-muted m-0">{{ erreur.erreurTexte }}</p>
+      <button class="ngs-btn" type="button" (click)="reessayer()">
+        <svg appIcone="arrow-clockwise"></svg>
+        <span>{{ erreur.reessayer }}</span>
+      </button>
+    </div>
+  } @else if (fiche(); as f) {
+    <nav [attr.aria-label]="textes.fil">
+      <ol class="fil">
+        <li>
+          <a class="ngs-link" routerLink="/catalogue">{{ textes.catalogue }}</a>
+        </li>
+        @for (etape of chemins(); track etape.chemin) {
+          <li>
+            <a class="ngs-link" [routerLink]="etape.chemin">{{ etape.libelle }}</a>
+          </li>
+        }
+        <li aria-current="page">{{ f.meta.titre.fr }}</li>
+      </ol>
+    </nav>
+
+    <div class="fiche-haut mt-6">
+      <div class="fiche-identite">
+        <div class="fiche-identite__corps">
+          <div class="grid content-start gap-4">
+            <div class="flex flex-wrap gap-1.5">
+              <span class="ngs-badge" [class]="'ngs-badge ' + classeCategorie()">{{
+                chemins()[1]?.libelle
+              }}</span>
+              @if (f.meta.contratTokens !== null) {
+                <span class="ngs-badge ngs-badge--reglable">{{ textes.badges.reglable }}</span>
+              }
+              @if (f.meta.statut === 'provisoire') {
+                <span class="ngs-badge ngs-badge--provisoire">{{ textes.badges.provisoire }}</span>
+              }
+              @if (motion()) {
+                <span class="ngs-badge ngs-badge--anime">
+                  <svg appIcone="wave-sine" taille="sm"></svg>
+                  {{ textes.meta.animations }}
+                </span>
+              }
+            </div>
+            <h1 class="ngs-h2 m-0">{{ f.meta.titre.fr }}</h1>
+            <p class="m-0 ngs-muted">{{ f.meta.description.fr }}</p>
+          </div>
+          <div class="grid content-start gap-4">
+            <div class="grid gap-3 sm:flex sm:flex-wrap xl:grid">
+              <button class="ngs-btn ngs-btn--lg" type="button" (click)="copierTout()">
+                <svg appIcone="copy"></svg>
+                <span>{{ copie() ? textes.copie : textes.copier }}</span>
+              </button>
+              <button
+                class="ngs-btn ngs-btn--lg ngs-btn--secondary"
+                type="button"
+                [disabled]="telechargement() === 'encours'"
+                (click)="telecharger()"
+              >
+                <svg appIcone="download-simple"></svg>
+                <span>{{ libelleTelecharger() }}</span>
+              </button>
+            </div>
+            @if (telechargement() === 'erreur') {
+              <p class="m-0 ngs-small ngs-contrast--ko" role="alert">
+                {{ textes.zipErreur }}
+                <button class="ngs-link" type="button" (click)="telecharger()">
+                  {{ textes.reessayer }}
+                </button>
+              </p>
+            }
+            <dl class="ngs-meta">
+              <dt>{{ textes.meta.angular }}</dt>
+              <dd>{{ textes.meta.angularValeur(f.meta.angularMin) }}</dd>
+              <dt>{{ textes.meta.dependances }}</dt>
+              <dd>{{ textes.meta.aucune }}</dd>
+              <dt>{{ textes.meta.animations }}</dt>
+              <dd>{{ momentsTexte() }}</dd>
+              <dt>{{ textes.meta.licence }}</dt>
+              <dd>{{ f.meta.licence }}</dd>
+              <dt>{{ textes.meta.ajout }}</dt>
+              <dd>
+                <time [attr.datetime]="f.meta.ajouteLe">{{ f.meta.ajouteLe }}</time>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <section class="ngs-preview app-apercu" aria-labelledby="apercu-titre">
+        <div class="ngs-preview__bar">
+          <h2 class="sr-only" id="apercu-titre">{{ textes.apercu.titre }}</h2>
+          <div class="ngs-seg" role="radiogroup" [attr.aria-label]="textes.apercu.taille">
+            @for (taille of tailles; track taille.valeur) {
+              <button
+                class="ngs-seg__btn"
+                type="button"
+                role="radio"
+                [attr.aria-checked]="etat.largeur() === taille.valeur"
+                [attr.aria-label]="largeurAriaLabel(taille.valeur)"
+                (click)="etat.largeur.set(taille.valeur)"
+              >
+                @if (taille.icone; as icone) {
+                  <svg [appIcone]="icone"></svg>
+                  <span class="tabular">{{ taille.valeur }}</span>
+                } @else {
+                  <span>{{ textes.apercu.tailleAutoCourt }}</span>
+                }
+              </button>
+            }
+          </div>
+          @if (motion()?.rejouer; as rejouer) {
+            <div class="flex flex-wrap gap-1">
+              @if (rejouer.entree) {
+                <button
+                  class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+                  type="button"
+                  [disabled]="animationsCoupees()"
+                  (click)="rejouerEntree()"
+                >
+                  <svg appIcone="arrow-counter-clockwise"></svg>
+                  <span>{{ textes.apercu.rejouerEntree }}</span>
+                </button>
+              }
+              @if (rejouer.sortie) {
+                <button
+                  class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+                  type="button"
+                  [disabled]="animationsCoupees()"
+                  (click)="rejouerSortie()"
+                >
+                  <svg appIcone="arrow-up-right"></svg>
+                  <span>{{ textes.apercu.rejouerSortie }}</span>
+                </button>
+              }
+            </div>
+          }
+          <div class="ngs-seg ml-auto" role="radiogroup" [attr.aria-label]="textes.apercu.mode">
+            <button
+              class="ngs-seg__btn"
+              type="button"
+              role="radio"
+              [attr.aria-checked]="etat.mode() === 'clair'"
+              (click)="etat.mode.set('clair')"
+            >
+              <svg appIcone="sun"></svg><span>{{ textes.apercu.clair }}</span>
+            </button>
+            <button
+              class="ngs-seg__btn"
+              type="button"
+              role="radio"
+              [attr.aria-checked]="etat.mode() === 'sombre'"
+              (click)="etat.mode.set('sombre')"
+            >
+              <svg appIcone="moon"></svg><span>{{ textes.apercu.sombre }}</span>
+            </button>
+          </div>
+        </div>
+        <app-apercu-frame
+          [slug]="f.meta.slug"
+          [titre]="f.meta.titre.fr"
+          [largeur]="etat.largeur()"
+          [reglages]="etat.messageApercu()"
+          [rechargement]="rechargement()"
+          [sortie]="sortie()"
+        />
+      </section>
+
+      <app-reglages-fiche />
+    </div>
+
+    <div class="mt-16 grid gap-12 lg:mt-24 lg:grid-cols-12">
+      <div class="min-w-0 lg:col-span-8">
+        <app-code-fiche />
+      </div>
+      <div class="grid min-w-0 content-start gap-12 lg:col-span-4">
+        <section class="grid gap-4" aria-labelledby="usage-titre">
+          <h2 class="ngs-h3 m-0" id="usage-titre">{{ textes.utilisation }}</h2>
+          <div class="ngs-code ngs-code--inline">
+            <pre tabindex="0"><code>{{ usage() }}</code></pre>
+          </div>
+        </section>
+        <section class="grid gap-4" aria-labelledby="installer-titre">
+          <h2 class="ngs-h3 m-0" id="installer-titre">{{ textes.installer }}</h2>
+          <ol class="etapes">
+            @for (etape of etapes(); track etape) {
+              <li>{{ etape }}</li>
+            }
+          </ol>
+        </section>
+        <section class="grid gap-3" aria-labelledby="dependances-titre">
+          <h2 class="ngs-h3 m-0" id="dependances-titre">{{ textes.dependances }}</h2>
+          <p class="m-0">{{ textes.dependancesAucune(versionAngular()) }}</p>
+          <p class="m-0 ngs-small ngs-muted">{{ textes.dependancesPlusTard }}</p>
+        </section>
+      </div>
+      @if (f.api.length > 0) {
+        <section class="grid gap-4 lg:col-span-12" aria-labelledby="api-titre">
+          <h2 class="ngs-h3 m-0" id="api-titre">{{ textes.api.titre }}</h2>
+          <div class="overflow-x-auto">
+            <table class="ngs-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ textes.api.nom }}</th>
+                  <th scope="col">{{ textes.api.type }}</th>
+                  <th scope="col">{{ textes.api.defaut }}</th>
+                  <th scope="col">{{ textes.api.role }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (ligne of f.api; track ligne.nom) {
+                  <tr>
+                    <td>
+                      <code>{{ ligne.nom }}</code>
+                    </td>
+                    <td>
+                      <code>{{ ligne.type }}</code>
+                    </td>
+                    <td>
+                      <code>{{ ligne.defaut }}</code>
+                    </td>
+                    <td>{{ ligne.role }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
+    </div>
+
+    @if (autres().length > 0) {
+      <section class="mt-24 grid gap-6" aria-labelledby="autres-titre">
+        <h2 class="ngs-h3 m-0" id="autres-titre">{{ textes.autres }}</h2>
+        <app-planche [entrees]="autres()" />
+      </section>
+    }
+  } @else {
+    <div class="ngs-state ngs-state--error">
+      <h1 class="ngs-state__title">{{ introuvable.introuvableTitre }}</h1>
+      <p class="ngs-muted m-0">{{ introuvable.introuvableTexte }}</p>
       <div>
-        <button class="ngs-btn" type="button" (click)="chargement.reload()">
-          {{ etats.reessayer }}
-        </button>
+        <a class="ngs-btn" routerLink="/catalogue">{{ introuvable.introuvableCta }}</a>
       </div>
     </div>
-  } @else if (chargement.isLoading()) {
-    <h1 class="ngs-h2 m-0" id="titre" role="status">{{ etats.chargement }}</h1>
-    <div class="ngs-skeleton h-6 max-w-prose" aria-hidden="true"></div>
-  } @else if (ressource(); as r) {
-    <p class="ngs-label ngs-muted m-0">{{ etiquette() }}</p>
-    <h1 class="ngs-h2 m-0" id="titre">{{ r.titre.fr }}</h1>
-    <p class="ngs-lead m-0 max-w-prose">{{ r.description.fr }}</p>
-  } @else {
-    <h1 class="ngs-h2 m-0" id="titre">{{ textes.introuvableTitre }}</h1>
-    <p class="ngs-lead m-0 max-w-prose">{{ textes.introuvableTexte }}</p>
-    <div>
-      <a class="ngs-btn" routerLink="/catalogue">{{ textes.introuvableCta }}</a>
-    </div>
   }
-</section>
+</div>

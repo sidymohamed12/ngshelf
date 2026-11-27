@@ -16,7 +16,7 @@ export interface EntreeIndex {
   readonly secteurs: readonly Secteur[];
   readonly tags: readonly string[];
   readonly contratTokens: 1 | null;
-  /** A ses propres animations (toujours renseigné dans l'index : faux par défaut, et pour un design). */
+  /** Dérivé de `motion` du meta.json (ADR 0007) : vrai si elle a des animations propres ; faux pour un design. */
   readonly animee: boolean;
   /** Taille de la case dans la planche (toujours renseignée : « normale » par défaut). */
   readonly tailleCase: TailleCase;

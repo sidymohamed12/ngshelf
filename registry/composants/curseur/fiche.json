@@ -1,0 +1,29 @@
+{
+  "usage": "<ngs-curseur label=\"Distance maximale\" unite=\"km\" [min]=\"1\" [max]=\"50\" [(valeur)]=\"distance\" />",
+  "api": [
+    {
+      "nom": "label",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Libellé lié au champ."
+    },
+    {
+      "nom": "unite",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Unité affichée après la valeur."
+    },
+    {
+      "nom": "min / max / pas",
+      "type": "input<number>()",
+      "defaut": "0 / 100 / 1",
+      "role": "Bornes et pas."
+    },
+    {
+      "nom": "valeur",
+      "type": "model<number>()",
+      "defaut": "50",
+      "role": "Valeur, liable en [(valeur)]."
+    }
+  ]
+}

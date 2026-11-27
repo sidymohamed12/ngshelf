@@ -1,0 +1,35 @@
+{
+  "usage": "<ngs-navbar-restaurant\n  marque=\"Chez Awa\"\n  [liens]=\"[\n    { libelle: 'Accueil', route: '/' },\n    { libelle: 'La carte', route: '/carte' },\n  ]\"\n  action=\"Réserver une table\"\n  routeAction=\"/reserver\"\n/>",
+  "api": [
+    {
+      "nom": "marque",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Nom affiché à gauche."
+    },
+    {
+      "nom": "liens",
+      "type": "input.required<readonly LienNav[]>()",
+      "defaut": "—",
+      "role": "Liens { libelle, route } (routerLinkActive)."
+    },
+    {
+      "nom": "action / routeAction",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Bouton d’action principal (optionnel)."
+    },
+    {
+      "nom": "menuOuvert",
+      "type": "model<boolean>()",
+      "defaut": "false",
+      "role": "État du menu replié, liable."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : la barre et ses liens s’affichent sans entrer (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

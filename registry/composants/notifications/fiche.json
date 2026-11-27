@@ -1,0 +1,29 @@
+{
+  "usage": "// dans un composant\nprivate readonly notifications = inject(NotificationsService);\n\nenregistrer(): void {\n  this.notifications.afficher('Brouillon enregistré');\n}\n\n<!-- une seule fois, dans app.component.html -->\n<ngs-notifications />",
+  "api": [
+    {
+      "nom": "afficher(texte)",
+      "type": "NotificationsService",
+      "defaut": "—",
+      "role": "Ajoute une notification (3 au plus à l’écran)."
+    },
+    {
+      "nom": "retirer(id)",
+      "type": "NotificationsService",
+      "defaut": "—",
+      "role": "Ferme une notification."
+    },
+    {
+      "nom": "duree",
+      "type": "number (ms)",
+      "defaut": "5000",
+      "role": "Délai avant fermeture automatique."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false coupe l’entrée et la sortie (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

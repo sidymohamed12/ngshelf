@@ -12,7 +12,16 @@
   "secteurs": ["restaurant"],
   "tags": ["navbar", "navigation", "header", "menu", "restaurant"],
   "contratTokens": 1,
-  "animee": true,
+  "motion": {
+    "resume": {
+      "fr": "À l’affichage, la barre descend de 8 px, puis les liens et l’action arrivent en cascade ; les liens du menu replié glissent à l’ouverture."
+    },
+    "moments": ["entree", "ouverture"],
+    "technique": "@keyframes CSS avec délais en cascade",
+    "rejouer": {
+      "entree": true
+    }
+  },
   "tailleCase": "large",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

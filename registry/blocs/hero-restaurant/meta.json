@@ -12,7 +12,17 @@
   "secteurs": ["restaurant"],
   "tags": ["hero", "photo", "accueil", "restaurant", "cta"],
   "contratTokens": 1,
-  "animee": true,
+  "motion": {
+    "resume": {
+      "fr": "À l’affichage, la photo se dévoile et se pose, puis le titre, le texte et les boutons montent en cascade. Retiré de la page, le hero s’efface en montant."
+    },
+    "moments": ["entree", "sortie"],
+    "technique": "@keyframes CSS en cascade ; sortie par animate.leave d’Angular (classe hero-sortie sur l’hôte)",
+    "rejouer": {
+      "entree": true,
+      "sortie": "hero-sortie"
+    }
+  },
   "tailleCase": "large-haute",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

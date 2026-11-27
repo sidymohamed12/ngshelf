@@ -1,0 +1,35 @@
+{
+  "usage": "<!-- animate.leave (facultatif) : la carte s'efface quand elle quitte une liste -->\n<ngs-carte-sejour\n  animate.leave=\"sejour-sortie\"\n  lieu=\"Saint-Louis, Sénégal\"\n  titre=\"Trois nuits au bord du fleuve\"\n  texte=\"Maison d’hôtes sur l’île, petit-déjeuner compris.\"\n  prix=\"À partir de 85 000 F CFA\"\n  image=\"/images/saint-louis.webp\"\n  alt=\"Pirogues amarrées sur le fleuve à Saint-Louis.\"\n  lien=\"/sejours/saint-louis\"\n/>",
+  "api": [
+    {
+      "nom": "lieu / titre / texte / prix",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Contenu de la carte (prix optionnel)."
+    },
+    {
+      "nom": "image",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Chemin de la photo (NgOptimizedImage)."
+    },
+    {
+      "nom": "alt",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Texte alternatif de la photo."
+    },
+    {
+      "nom": "lien",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Route ouverte par la carte (routerLink)."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : ni photo qui se pose, ni montée au survol (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

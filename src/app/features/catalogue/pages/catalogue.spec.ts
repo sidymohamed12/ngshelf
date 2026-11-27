@@ -162,7 +162,7 @@ describe('page catalogue', () => {
     expect(slugs()).toHaveLength(13);
   });
 
-  it('reste indexable sans filtre, passe en noindex avec canonique sans paramètres avec un filtre', async () => {
+  it('reste indexable sans filtre, passe en noindex avec un filtre', async () => {
     await ouvrir('/catalogue');
     const doc = TestBed.inject(DOCUMENT);
     expect(doc.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
@@ -172,9 +172,23 @@ describe('page catalogue', () => {
     cocher('input[name="secteur"][value="voyage"]');
     await stabiliser();
     expect(meta('robots')).toBe('noindex, follow');
-    expect(doc.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
-      '/catalogue',
-    );
+  });
+
+  it('pointe le canonique vers la page de chemin que les filtres décrivent (ADR 0012)', async () => {
+    const canonique = (): string | null | undefined =>
+      TestBed.inject(DOCUMENT).head.querySelector('link[rel="canonical"]')?.getAttribute('href');
+    await ouvrir('/catalogue?c=blocs');
+    expect(meta('robots')).toBe('noindex, follow');
+    expect(canonique()).toBe('/blocs');
+    await harness.navigateByUrl('/catalogue?c=blocs&type=navbar');
+    await stabiliser();
+    expect(canonique()).toBe('/blocs/navbar');
+    await harness.navigateByUrl('/catalogue?secteur=voyage');
+    await stabiliser();
+    expect(canonique()).toBe('/secteurs/voyage');
+    await harness.navigateByUrl('/catalogue?secteur=voyage,restaurant');
+    await stabiliser();
+    expect(canonique()).toBe('/catalogue');
   });
 
   it('retire le canonique en quittant la page de liste', async () => {

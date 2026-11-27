@@ -1,0 +1,21 @@
+<div class="grid w-full min-w-[min(14rem,100%)] gap-ngs-2">
+  <div class="flex items-baseline justify-between gap-3">
+    <label class="font-semibold" [for]="id">{{ label() }}</label>
+    <output class="text-xl font-semibold tabular-nums" [for]="id">{{ texte() }}</output>
+  </div>
+  <input
+    class="m-0 h-11 w-full cursor-pointer bg-transparent accent-ngs-action focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ngs-action"
+    type="range"
+    [id]="id"
+    [min]="min()"
+    [max]="max()"
+    [step]="pas()"
+    [value]="valeur()"
+    [attr.aria-valuetext]="texte()"
+    (input)="changer($event)"
+  />
+  <div class="flex justify-between text-[13px] tabular-nums text-ngs-text-muted" aria-hidden="true">
+    <span>{{ min() }} {{ unite() }}</span>
+    <span>{{ max() }} {{ unite() }}</span>
+  </div>
+</div>

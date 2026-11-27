@@ -1,0 +1,90 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+:host {
+  display: inline-block;
+  font-family: var(--ngs-font-family, system-ui, sans-serif);
+}
+.bouton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--ngs-density, 1) * 8px);
+  min-height: max(44px, calc(var(--ngs-density, 1) * 48px));
+  padding: 0 calc(var(--ngs-density, 1) * 20px);
+  border: 1.5px solid var(--ngs-color-action, #0b0b0c);
+  border-radius: var(--ngs-radius, 10px);
+  background: var(--ngs-color-action, #0b0b0c);
+  color: var(--ngs-color-on-action, #ffffff);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform var(--ngs-duration, 160ms) ease-out,
+    filter var(--ngs-duration, 160ms) ease-out,
+    background-color var(--ngs-duration, 160ms) ease-out;
+}
+.bouton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+.bouton:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985);
+}
+.bouton:focus-visible {
+  outline: 2px solid var(--ngs-color-action, #0b0b0c);
+  outline-offset: 3px;
+}
+.bouton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.bouton[data-variante='secondaire'] {
+  background: var(--ngs-color-surface, #ffffff);
+  color: var(--ngs-color-text, #0b0b0c);
+  border-color: var(--ngs-color-text, #0b0b0c);
+}
+.bouton[data-variante='discrete'] {
+  background: transparent;
+  color: var(--ngs-color-text, #0b0b0c);
+  border-color: transparent;
+}
+.bouton[data-variante='discrete']:hover:not(:disabled) {
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+  filter: none;
+}
+.bouton[aria-busy='true'] {
+  color: transparent;
+  pointer-events: none;
+}
+.bouton__roue {
+  display: none;
+}
+.bouton[aria-busy='true'] .bouton__roue {
+  display: block;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--ngs-color-on-action, #ffffff);
+  border-right-color: transparent;
+  animation: ngs-tourne 700ms linear infinite;
+}
+@keyframes ngs-tourne {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bouton {
+    transition: none;
+  }
+  .bouton[aria-busy='true'] .bouton__roue {
+    animation-duration: 2s;
+  }
+}

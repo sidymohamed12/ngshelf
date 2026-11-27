@@ -1,0 +1,29 @@
+{
+  "usage": "<ngs-questions-frequentes\n  titre=\"Questions fréquentes\"\n  [questions]=\"questions\"\n/>",
+  "api": [
+    {
+      "nom": "titre",
+      "type": "input<string>()",
+      "defaut": "'Questions fréquentes'",
+      "role": "Titre de la section (h2)."
+    },
+    {
+      "nom": "questions",
+      "type": "input.required<readonly Question[]>()",
+      "defaut": "—",
+      "role": "Liste { question, reponse }."
+    },
+    {
+      "nom": "ouverte",
+      "type": "input<number | null>()",
+      "defaut": "0",
+      "role": "Question ouverte au départ."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : la réponse s’affiche d’un coup (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

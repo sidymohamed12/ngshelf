@@ -12,7 +12,7 @@
   "secteurs": [],
   "tags": ["formulaire", "slider", "range", "réglage"],
   "contratTokens": 1,
-  "animee": false,
+  "motion": null,
   "tailleCase": "normale",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

@@ -12,7 +12,13 @@
   "secteurs": [],
   "tags": ["faq", "accordéon", "section", "details"],
   "contratTokens": 1,
-  "animee": true,
+  "motion": {
+    "resume": {
+      "fr": "La réponse se déplie en douceur et descend de 4 px en apparaissant ; la flèche pivote."
+    },
+    "moments": ["ouverture"],
+    "technique": "transition CSS sur ::details-content (interpolate-size), @keyframes"
+  },
   "tailleCase": "large",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

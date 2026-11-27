@@ -12,7 +12,7 @@
   "secteurs": [],
   "tags": ["bouton", "action", "cta", "chargement"],
   "contratTokens": 1,
-  "animee": false,
+  "motion": null,
   "tailleCase": "normale",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

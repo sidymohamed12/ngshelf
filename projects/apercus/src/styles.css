@@ -1,0 +1,71 @@
+/*
+  Aperçu isolé d'une ressource (ADR 0003 et 0008). Ni les styles du site ni son thème : seulement Tailwind,
+  le pont ngshelf-theme.css et le tokens.css livrés avec la ressource, donc l'aperçu prouve ce qui est copié.
+  Les classes des ressources viennent des gabarits Tailwind du registre, générés dans ./generated/.
+*/
+@import 'tailwindcss';
+@import './generated/ngshelf-theme.css';
+@import './generated/tokens.css';
+@source './generated';
+
+html {
+  background: var(--ngs-color-surface);
+  color: var(--ngs-color-text);
+  color-scheme: light;
+  transition: background-color 0.25s ease-out;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  /* Colonne à la largeur de la fenêtre : sans cela, un contenu sans largeur propre (@container) tombe à 0. */
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: 32px 20px;
+  box-sizing: border-box;
+  font-family: var(--ngs-font-family);
+}
+
+.compo,
+app-root {
+  width: 100%;
+}
+
+.compo {
+  display: grid;
+  gap: 28px;
+  width: 100%;
+  justify-items: center;
+}
+
+/*
+  Chaque pièce occupe toute la largeur de la grille. Sans cela, un hôte « @container »
+  (container-type: inline-size, sans largeur intrinsèque) dans un élément ajusté à son contenu retombe
+  à 0 px de large : l'aperçu de la carte de séjour était vide (HANDOFF 7.5).
+*/
+.compo > * {
+  /* La scène routée est un élément personnalisé (inline par défaut) : sans largeur, .piece retombe à 0. */
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.piece {
+  /* Largeur selon la famille : un composant reste étroit (44rem), un bloc prend la page (--largeur-scene). */
+  width: min(100%, var(--largeur-scene, 44rem));
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+}
+
+.introuvable {
+  font:
+    14px system-ui,
+    sans-serif;
+  color: var(--ngs-color-text-muted);
+}

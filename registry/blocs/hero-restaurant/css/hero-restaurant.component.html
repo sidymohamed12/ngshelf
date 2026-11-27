@@ -1,0 +1,28 @@
+<section class="hero" [attr.aria-labelledby]="id">
+  <div class="hero__cadre">
+    <img
+      class="hero__image"
+      [ngSrc]="image()"
+      [alt]="alt()"
+      fill
+      priority
+      sizes="(min-width: 1024px) 40vw, 90vw"
+    />
+  </div>
+  <div class="hero__contenu">
+    @if (niveauTitre() === 1) {
+      <h1 class="hero__titre" [id]="id">{{ titre() }}</h1>
+    } @else {
+      <h2 class="hero__titre" [id]="id">{{ titre() }}</h2>
+    }
+    <p class="hero__texte">{{ texte() }}</p>
+    <div class="hero__actions">
+      @if (action()) {
+        <a class="hero__action" [routerLink]="routeAction()">{{ action() }}</a>
+      }
+      @if (lien()) {
+        <a class="hero__lien" [routerLink]="routeLien()">{{ lien() }}</a>
+      }
+    </div>
+  </div>
+</section>

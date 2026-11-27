@@ -12,7 +12,17 @@
   "secteurs": ["voyage"],
   "tags": ["card", "carte", "voyage", "hôtel", "photo"],
   "contratTokens": 1,
-  "animee": true,
+  "motion": {
+    "resume": {
+      "fr": "La photo se pose à l’affichage ; au survol, la carte monte de 2 px et la photo zoome légèrement ; retirée d’une liste, la carte s’efface en rétrécissant."
+    },
+    "moments": ["entree", "survol", "sortie"],
+    "technique": "@keyframes et transitions CSS ; sortie par animate.leave d’Angular (classe sejour-sortie sur l’hôte)",
+    "rejouer": {
+      "entree": true,
+      "sortie": "sejour-sortie"
+    }
+  },
   "tailleCase": "normale",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

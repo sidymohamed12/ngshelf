@@ -1,0 +1,49 @@
+<header class="navbar">
+  <a class="navbar__marque" routerLink="/">{{ marque() }}</a>
+  <nav class="navbar__liens" aria-label="Navigation principale">
+    @for (lien of liens(); track lien.route) {
+      <a
+        class="navbar__lien"
+        [routerLink]="lien.route"
+        routerLinkActive
+        ariaCurrentWhenActive="page"
+        >{{ lien.libelle }}</a
+      >
+    }
+  </nav>
+  @if (action()) {
+    <a class="navbar__action" [routerLink]="routeAction()">{{ action() }}</a>
+  }
+  <button
+    class="navbar__menu"
+    type="button"
+    [attr.aria-expanded]="menuOuvert()"
+    [attr.aria-controls]="idMenu"
+    [attr.aria-label]="libelleMenu()"
+    (click)="basculerMenu()"
+  >
+    <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+      <path
+        d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"
+      />
+    </svg>
+  </button>
+  <nav
+    class="navbar__mobile"
+    [id]="idMenu"
+    aria-label="Navigation principale"
+    [hidden]="!menuOuvert()"
+  >
+    @for (lien of liens(); track lien.route) {
+      <a
+        class="navbar__lien"
+        [routerLink]="lien.route"
+        routerLinkActive
+        ariaCurrentWhenActive="page"
+        (click)="menuOuvert.set(false)"
+      >
+        {{ lien.libelle }}
+      </a>
+    }
+  </nav>
+</header>

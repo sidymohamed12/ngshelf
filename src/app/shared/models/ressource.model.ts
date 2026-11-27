@@ -1,4 +1,5 @@
 import { CategorieTypee, Secteur, TailleCase, TypeRessource } from './taxonomie.model';
+import { Motion } from './motion.model';
 import { Texte } from './texte.model';
 
 /** Cycle de vie d'une ressource ; `provisoire` affiche le badge « Démo provisoire ». */
@@ -38,8 +39,11 @@ export interface MetaRessource {
   /** Version majeure du contrat de tokens suivie ; null = non réglable. */
   readonly contratTokens: 1 | null;
   readonly designsMisEnAvant?: readonly string[];
-  /** Vrai si la ressource a ses propres animations, désactivables : badge « Animée » et filtre (absent = faux). */
-  readonly animee?: boolean;
+  /**
+   * Animations propres de la ressource (ADR 0007), `null` si elle n'en a aucune. Le badge « Animée » et le
+   * filtre du catalogue en dérivent : `animee` n'existe plus dans le meta.json, seulement dans l'index.
+   */
+  readonly motion: Motion | null;
   /** Taille de sa case dans la planche du catalogue (absent = « normale », 1×1). */
   readonly tailleCase?: TailleCase;
   readonly variantes: readonly VarianteStyle[];
