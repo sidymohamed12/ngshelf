@@ -12,12 +12,10 @@
           ariaCurrentWhenActive="page"
           [routerLinkActiveOptions]="{
             paths: 'exact',
-            queryParams: 'exact',
             fragment: 'ignored',
             matrixParams: 'ignored',
           }"
           [routerLink]="lien.chemin"
-          [queryParams]="lien.queryParams"
         >
           @if (lien.classeFamille) {
             <span class="ngs-nav-link__dot" aria-hidden="true"></span>

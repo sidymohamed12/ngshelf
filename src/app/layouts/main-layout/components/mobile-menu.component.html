@@ -30,7 +30,6 @@
             class="ngs-menu__link"
             [class]="lien.classeFamille"
             [routerLink]="lien.chemin"
-            [queryParams]="lien.queryParams"
             (click)="fermer()"
           >
             @if (lien.classeFamille) {
