@@ -145,10 +145,11 @@ export function libelleCompte(n: number): string {
     : $localize`:@@liste.compte.plusieurs:${n}:n: ressources`;
 }
 
-/** Liste de ressources : titre masqué pour les lecteurs d'écran, états, mentions des fiches. */
+/** Planche de ressources : titre masqué pour les lecteurs d'écran, états, mentions des cases. */
 export const TEXTES_LISTE = {
   titre: $localize`:@@liste.titre:Ressources`,
-  provisoire: $localize`:@@badge.provisoire:Démo provisoire`,
+  anime: $localize`:@@badge.anime:Animée`,
+  animeTitre: $localize`:@@badge.anime.titre:Cette ressource a ses propres animations, désactivables`,
   videTitre: $localize`:@@liste.vide.titre:Rien à afficher pour l’instant`,
   videTexte: $localize`:@@liste.vide.texte:Cette page n’a pas encore de ressource. Parcourez le catalogue pour en trouver d’autres.`,
   videCta: $localize`:@@liste.vide.cta:Voir le catalogue`,

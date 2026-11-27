@@ -22,8 +22,7 @@
 }
 
 <div class="ngs-container pb-24">
-  <app-liste-ressources
-    [afficherCategorie]="false"
+  <app-planche
     [entrees]="entrees()"
     [chargement]="chargement.isLoading()"
     [erreur]="chargement.error() !== undefined"

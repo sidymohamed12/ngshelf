@@ -9,7 +9,7 @@ import {
 } from '@core/i18n/textes.fr';
 import { cheminType } from '@core/registre/chemins';
 import { RegistreService, estVisible } from '@core/registre/registre.service';
-import { ListeRessourcesComponent } from '@shared/components/liste-ressources/liste-ressources.component';
+import { PlancheComponent } from '@shared/components/planche/planche.component';
 import { Categorie } from '@shared/models/taxonomie.model';
 import { classeCategorie } from '@shared/utils/taxonomie-affichage';
 
@@ -19,7 +19,7 @@ import { classeCategorie } from '@shared/utils/taxonomie-affichage';
  */
 @Component({
   selector: 'app-categorie',
-  imports: [RouterLink, ListeRessourcesComponent],
+  imports: [RouterLink, PlancheComponent],
   templateUrl: './categorie.component.html',
 })
 export class CategorieComponent {

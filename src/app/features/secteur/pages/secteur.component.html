@@ -9,7 +9,7 @@
     <p class="ngs-small ngs-muted m-0">{{ compte() }}</p>
   </div>
   <div class="ngs-container pb-24">
-    <app-liste-ressources
+    <app-planche
       [entrees]="entrees()"
       [chargement]="chargement.isLoading()"
       [erreur]="chargement.error() !== undefined"

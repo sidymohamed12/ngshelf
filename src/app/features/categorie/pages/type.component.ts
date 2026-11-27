@@ -4,7 +4,7 @@ import { LIBELLES_CATEGORIE, LIBELLES_TYPE, libelleCompte } from '@core/i18n/tex
 import { cheminCategorie } from '@core/registre/chemins';
 import { RegistreService } from '@core/registre/registre.service';
 import { IconeComponent } from '@shared/components/icone/icone.component';
-import { ListeRessourcesComponent } from '@shared/components/liste-ressources/liste-ressources.component';
+import { PlancheComponent } from '@shared/components/planche/planche.component';
 import { PageIntrouvableComponent } from '@shared/components/page-introuvable/page-introuvable.component';
 import { CategorieTypee, TYPES_PAR_CATEGORIE, TypeRessource } from '@shared/models/taxonomie.model';
 import { classeCategorie } from '@shared/utils/taxonomie-affichage';
@@ -19,7 +19,7 @@ function typeValide(categorie: CategorieTypee, type: string | undefined): type i
  */
 @Component({
   selector: 'app-type',
-  imports: [RouterLink, IconeComponent, ListeRessourcesComponent, PageIntrouvableComponent],
+  imports: [RouterLink, IconeComponent, PlancheComponent, PageIntrouvableComponent],
   templateUrl: './type.component.html',
 })
 export class TypeComponent {

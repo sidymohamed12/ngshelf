@@ -2,7 +2,7 @@ import { Component, computed, inject, input, resource } from '@angular/core';
 import { LIBELLES_SECTEUR, TEXTES, libelleCompte } from '@core/i18n/textes.fr';
 import { RegistreService } from '@core/registre/registre.service';
 import { IconeComponent } from '@shared/components/icone/icone.component';
-import { ListeRessourcesComponent } from '@shared/components/liste-ressources/liste-ressources.component';
+import { PlancheComponent } from '@shared/components/planche/planche.component';
 import { PageIntrouvableComponent } from '@shared/components/page-introuvable/page-introuvable.component';
 import { SECTEURS, Secteur } from '@shared/models/taxonomie.model';
 import { ICONE_SECTEUR } from '@shared/utils/taxonomie-affichage';
@@ -14,7 +14,7 @@ function secteurValide(secteur: string | undefined): secteur is Secteur {
 /** Page d'un secteur (/secteurs/restaurant), prérendue s'il a au moins une ressource (ADR 0004). */
 @Component({
   selector: 'app-secteur',
-  imports: [IconeComponent, ListeRessourcesComponent, PageIntrouvableComponent],
+  imports: [IconeComponent, PlancheComponent, PageIntrouvableComponent],
   templateUrl: './secteur.component.html',
 })
 export class SecteurComponent {

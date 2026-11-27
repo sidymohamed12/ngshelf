@@ -1,0 +1,46 @@
+/*
+  Mise en page de la page catalogue (maquette catalogue.html, bloc <style> de la page) :
+  colonne de filtres à gauche, outils au-dessus de la planche, et planche qui perd une colonne
+  quand la colonne de filtres prend de la place. Uniquement des valeurs de tokens.css.
+*/
+
+@layer components {
+  .catalogue {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media (min-width: 64rem) {
+    .catalogue {
+      grid-template-columns: 15.5rem minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+  }
+  .catalogue-outils {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .catalogue-grille {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  .catalogue-grille .ngs-case__stage {
+    min-height: 17.5rem;
+  }
+  @media (min-width: 40rem) {
+    .catalogue-grille {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 80rem) {
+    .catalogue-grille {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 110rem) {
+    .catalogue-grille {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+}

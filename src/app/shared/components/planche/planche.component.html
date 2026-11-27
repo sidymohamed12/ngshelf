@@ -1,0 +1,85 @@
+@if (erreur()) {
+  <div class="ngs-state ngs-state--error" role="alert">
+    <span class="ngs-state__icon"><svg appIcone="warning-circle" taille="lg"></svg></span>
+    <h2 class="ngs-state__title">{{ etats.erreurTitre }}</h2>
+    <p class="ngs-muted m-0">{{ etats.erreurTexte }}</p>
+    <button class="ngs-btn" type="button" (click)="reessayer.emit()">
+      <svg appIcone="arrow-clockwise"></svg>
+      <span>{{ etats.reessayer }}</span>
+    </button>
+  </div>
+} @else if (chargement() || entrees() === undefined) {
+  <div role="status">
+    <span class="sr-only">{{ etats.chargement }}</span>
+    <div class="ngs-planche" [class.catalogue-grille]="avecFacettes()" aria-hidden="true">
+      @for (fantome of casesChargement; track fantome) {
+        <div class="ngs-case">
+          <div class="ngs-case__stage"><div class="ngs-skeleton h-24 w-3/4"></div></div>
+          <div class="ngs-case__foot">
+            <div class="grid w-full gap-2">
+              <div class="ngs-skeleton h-4 w-1/2"></div>
+              <div class="ngs-skeleton h-5 w-1/3"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+} @else if (vide()) {
+  <div class="ngs-state">
+    <span class="ngs-state__icon"><svg appIcone="squares-four" taille="lg"></svg></span>
+    <h2 class="ngs-state__title">{{ titreVide() ?? textes.videTitre }}</h2>
+    <p class="ngs-muted m-0 max-w-prose">{{ texteVide() ?? textes.videTexte }}</p>
+    <a class="ngs-btn ngs-btn--secondary" routerLink="/catalogue">{{ textes.videCta }}</a>
+  </div>
+} @else {
+  <h2 class="sr-only">{{ textes.titre }}</h2>
+  <ul class="ngs-planche m-0 list-none p-0" [class.catalogue-grille]="avecFacettes()">
+    @for (ressource of cases(); track ressource.entree.slug) {
+      <li class="ngs-case" [class]="ressource.classes" [attr.data-slug]="ressource.entree.slug">
+        <div class="ngs-case__stage" aria-hidden="true">
+          <svg [appIcone]="ressource.icone" class="size-14 text-(--cat)"></svg>
+        </div>
+        <div class="ngs-case__foot">
+          <div class="grid min-w-0 gap-1.5">
+            <h3 class="ngs-case__title">
+              @if (ressource.chemin) {
+                <a
+                  class="ngs-case__link after:inset-0 after:h-auto after:rounded-(--radius-case)"
+                  [routerLink]="ressource.chemin"
+                  [attr.aria-describedby]="ressource.idDescription"
+                  >{{ ressource.entree.titre.fr }}</a
+                >
+              } @else {
+                {{ ressource.entree.titre.fr }}
+              }
+            </h3>
+            <p class="sr-only" [id]="ressource.idDescription">
+              {{ ressource.entree.description.fr }}
+            </p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="ngs-badge">{{ ressource.libelle }}</span>
+              @for (secteur of ressource.secteurs; track secteur.libelle) {
+                <span class="ngs-badge ngs-badge--secteur">
+                  <svg [appIcone]="secteur.icone" taille="sm"></svg>
+                  <span class="sr-only">{{ secteurLibelle }} : </span>{{ secteur.libelle }}
+                </span>
+              }
+              @if (ressource.entree.animee) {
+                <span class="ngs-badge ngs-badge--anime" [title]="textes.animeTitre">
+                  <svg appIcone="wave-sine" taille="sm"></svg>
+                  {{ textes.anime }}
+                </span>
+              }
+            </div>
+          </div>
+          @if (ressource.chemin) {
+            <span class="ngs-case__open" aria-hidden="true"
+              ><svg appIcone="arrow-up-right"></svg
+            ></span>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+}
