@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { TEXTES } from '@core/i18n/textes.fr';
+import { PageIntrouvableComponent } from '@shared/components/page-introuvable/page-introuvable.component';
 
 @Component({
   selector: 'app-not-found',
-  imports: [RouterLink],
-  templateUrl: './not-found.component.html',
+  imports: [PageIntrouvableComponent],
+  template: '<app-page-introuvable />',
 })
-export class NotFoundComponent {
-  protected readonly textes = TEXTES.pages.introuvable;
-}
+export class NotFoundComponent {}

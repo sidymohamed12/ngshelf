@@ -1,0 +1,31 @@
+<div class="ngs-container grid gap-4 pt-10 pb-8 lg:pt-14" [class]="classe()">
+  <h1 class="ngs-h2 m-0">{{ titre() }}</h1>
+  <p class="ngs-lead m-0 max-w-[52ch]">{{ description() }}</p>
+  <p class="ngs-small ngs-muted m-0">{{ compte() }}</p>
+</div>
+
+@if (types().length) {
+  <nav class="ngs-container grid gap-3 pb-8" [class]="classe()" aria-labelledby="types-titre">
+    <h2 class="ngs-label ngs-muted m-0" id="types-titre">{{ textes.types }}</h2>
+    <ul class="m-0 flex list-none flex-wrap gap-2 p-0">
+      @for (type of types(); track type.chemin) {
+        <li>
+          <a class="ngs-chip" [routerLink]="type.chemin" [attr.aria-label]="type.nomAccessible">
+            <span class="ngs-chip__dot" aria-hidden="true"></span>
+            <span>{{ type.libelle }}</span>
+            <span class="ngs-chip__count">{{ type.compte }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+}
+
+<div class="ngs-container pb-24">
+  <app-liste-ressources
+    [entrees]="entrees()"
+    [chargement]="chargement.isLoading()"
+    [erreur]="chargement.error() !== undefined"
+    (reessayer)="chargement.reload()"
+  />
+</div>

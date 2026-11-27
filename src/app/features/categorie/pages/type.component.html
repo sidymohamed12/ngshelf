@@ -1,0 +1,20 @@
+@if (typeConnu()) {
+  <div class="ngs-container grid gap-4 pt-10 pb-8 lg:pt-14" [class]="classe()">
+    <a class="ngs-link ngs-link--rest justify-self-start" [routerLink]="cheminRetour()">
+      <svg appIcone="arrow-left" taille="sm"></svg>
+      <span>{{ retour() }}</span>
+    </a>
+    <h1 class="ngs-h2 m-0">{{ titre() }}</h1>
+    <p class="ngs-small ngs-muted m-0">{{ compte() }}</p>
+  </div>
+  <div class="ngs-container pb-24">
+    <app-liste-ressources
+      [entrees]="entrees()"
+      [chargement]="chargement.isLoading()"
+      [erreur]="chargement.error() !== undefined"
+      (reessayer)="chargement.reload()"
+    />
+  </div>
+} @else {
+  <app-page-introuvable />
+}
