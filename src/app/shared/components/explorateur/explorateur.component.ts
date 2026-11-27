@@ -49,6 +49,7 @@ import {
   versParametres,
 } from '@core/registre/filtres';
 import { RegistreService, estVisible } from '@core/registre/registre.service';
+import { cheminCanonique } from '@core/seo/canonique';
 import { IndexationService } from '@core/seo/indexation.service';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { FacettesComponent, OptionFacette, VueFacettes } from './facettes.component';
@@ -79,7 +80,7 @@ const FOCUSABLES = 'a[href], button:not([disabled]), input:not([disabled]), sele
  *
  * L'état est dans les paramètres d'URL (partageable) ; un changement de filtre ne remplace que les
  * paramètres de l'URL courante, sans entrée d'historique : ce n'est pas un changement de page. Ces URL
- * ne sont ni prérendues ni indexées (canonique = chemin sans paramètres, voir IndexationService).
+ * ne sont ni prérendues ni indexées (canonique = le chemin sans paramètres, ou la page de chemin que les filtres décrivent, voir cheminCanonique).
  * `portee` décrit ce que le chemin de la page impose déjà.
  */
 @Component({
@@ -293,7 +294,10 @@ export class ExplorateurComponent {
     });
     effect(() => {
       const chemin = this.#router.url.split(/[?#]/)[0];
-      this.#indexation.definir(chemin, aDesParametres(this.filtres(), this.portee()));
+      this.#indexation.definir(
+        cheminCanonique(chemin, this.filtres()),
+        aDesParametres(this.filtres(), this.portee()),
+      );
     });
     this.#destroyRef.onDestroy(() => {
       clearTimeout(this.#minuteurSaisie);
