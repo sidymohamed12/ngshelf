@@ -131,4 +131,34 @@ describe('EtatFiche', () => {
     expect(Object.keys(message?.vars ?? {})).toHaveLength(12);
     expect(message?.animations).toBe(true);
   });
+
+  it('règle les paramètres propres sur leur définition et les envoie à l’aperçu', () => {
+    const etat = creer();
+    etat.ouvrir({
+      ...FICHE,
+      meta: {
+        ...FICHE.meta,
+        parametres: [
+          {
+            nom: 'hauteur',
+            genre: 'nombre',
+            libelle: { fr: 'H' },
+            min: 100,
+            max: 500,
+            pas: 50,
+            defaut: 300,
+          },
+          { nom: 'legendes', genre: 'interrupteur', libelle: { fr: 'L' }, defaut: true },
+        ],
+      },
+    });
+    expect(etat.parametres()).toEqual({ hauteur: 300, legendes: true });
+    etat.reglerParametre('hauteur', 9999);
+    etat.reglerParametre('legendes', false);
+    etat.reglerParametre('intrus', 'x');
+    expect(etat.parametres()).toEqual({ hauteur: 500, legendes: false });
+    expect(etat.messageApercu()?.params).toEqual({ hauteur: 500, legendes: false });
+    etat.reinitialiser();
+    expect(etat.parametres()).toEqual({ hauteur: 300, legendes: true });
+  });
 });

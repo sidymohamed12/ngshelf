@@ -79,6 +79,8 @@ export const TEXTES_FICHE = {
     animationsAide: $localize`:@@ressource.reglages.animations.aide:Coupées ici, elles le sont aussi dans votre code avec [animations]="false", ou avec la classe .ngs-sans-animation sur un parent.`,
     animationsSans: $localize`:@@ressource.reglages.animations.sans:Cette ressource n’a pas d’animation propre : rien à couper.`,
     animationsReduit: $localize`:@@ressource.reglages.animations.reduit:Votre système demande moins de mouvement : l’aperçu garde les animations coupées.`,
+    parametres: $localize`:@@ressource.reglages.parametres:Paramètres de la ressource`,
+    parametresAide: $localize`:@@ressource.reglages.parametres.aide:Ce sont les paramètres du composant, décrits dans le tableau plus bas. Ils ne changent pas le tokens.css.`,
     reinitialiser: $localize`:@@ressource.reglages.reinitialiser:Réinitialiser les réglages`,
     contraste: (rapport: string) =>
       $localize`:@@ressource.contraste:Contraste du texte sur l’action : ${rapport}:r:`,

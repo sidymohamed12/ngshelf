@@ -2,7 +2,8 @@ import { Service, afterNextRender, computed, inject, signal } from '@angular/cor
 import { CookieService } from '@core/cookies/cookie.service';
 import { MotionService } from '@core/motion/motion.service';
 import { ThemeService } from '@core/theme/theme.service';
-import { ModeApercu, MessageReglages } from '@shared/apercu/protocole';
+import { parametresParDefaut, resoudreParametres } from '@shared/apercu/parametres';
+import { ModeApercu, ReglagesEnvoyes } from '@shared/apercu/protocole';
 import {
   DesignContrat,
   Surcharges,
@@ -13,6 +14,7 @@ import {
   valeursDuDesign,
 } from '@shared/livraison/livraison';
 import { FicheRessource } from '@shared/models/fiche.model';
+import { ParametreReglable, ValeurParametre } from '@shared/models/parametre.model';
 
 export const COOKIE_VARIANTE = 'ngs_variante';
 const DUREE_COOKIE_VARIANTE_SECONDES = 31_536_000;
@@ -70,6 +72,8 @@ export class EtatFiche {
   readonly largeur = signal<LargeurApercu>('auto');
   readonly variante = signal<VarianteLivree>('tailwind');
   readonly reglages = signal<ReglagesVisiteur>({});
+  /** Valeurs des paramètres propres de la ressource (ADR 0014), toujours résolues sur leur définition. */
+  readonly parametres = signal<Readonly<Record<string, ValeurParametre>>>({});
 
   constructor() {
     // Le prérendu ne connaît pas le cookie : la variante est lue après le premier rendu.
@@ -83,6 +87,7 @@ export class EtatFiche {
     this.fiche.set(fiche);
     this.design.set(this.#designInitial(fiche));
     this.reglages.set({});
+    this.parametres.set(parametresParDefaut(fiche.meta.parametres ?? []));
     this.animations.set(true);
   }
 
@@ -95,6 +100,11 @@ export class EtatFiche {
     const fiche = this.fiche();
     return fiche?.designs.find((d) => d.slug === this.design()) ?? fiche?.designs[0] ?? null;
   });
+
+  /** Paramètres propres réglables de la ressource ouverte (vide si elle n'a que les 12 tokens). */
+  readonly definitionsParametres = computed<readonly ParametreReglable[]>(
+    () => this.fiche()?.meta.parametres ?? [],
+  );
 
   readonly surcharges = computed(() => versSurcharges(this.reglages()));
 
@@ -131,10 +141,15 @@ export class EtatFiche {
     () => this.animations() && !this.#motion.mouvementReduit(),
   );
 
-  readonly messageApercu = computed<Omit<MessageReglages, 'v' | 'type'> | null>(() => {
+  readonly messageApercu = computed<ReglagesEnvoyes | null>(() => {
     const valeurs = this.valeurs();
     if (!valeurs) return null;
-    return { vars: valeurs, mode: this.mode(), animations: this.animationsPermises() };
+    return {
+      vars: valeurs,
+      mode: this.mode(),
+      animations: this.animationsPermises(),
+      params: this.parametres(),
+    };
   });
 
   choisirVariante(variante: VarianteLivree): void {
@@ -146,6 +161,15 @@ export class EtatFiche {
 
   regler(partiel: ReglagesVisiteur): void {
     this.reglages.update((actuels) => ({ ...actuels, ...partiel }));
+  }
+
+  /** Règle un paramètre propre : la valeur est résolue sur sa définition (bornes, liste, type). */
+  reglerParametre(nom: string, valeur: ValeurParametre): void {
+    const resolues = resoudreParametres(this.definitionsParametres(), {
+      ...this.parametres(),
+      [nom]: valeur,
+    });
+    this.parametres.set(resolues);
   }
 
   choisirDesign(slug: string): void {

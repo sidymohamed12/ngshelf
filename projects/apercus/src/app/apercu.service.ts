@@ -1,4 +1,11 @@
 import { DOCUMENT, DestroyRef, Service, afterNextRender, inject, signal } from '@angular/core';
+import { PARAMETRES_APERCUS } from '@generated-apercus/scenes';
+import {
+  parametresDepuisRecherche,
+  parametresParDefaut,
+  resoudreParametres,
+} from '@shared/apercu/parametres';
+import type { ParametreReglable, ValeursParametres } from '@shared/models/parametre.model';
 import {
   MessageReglages,
   MessageSortie,
@@ -40,13 +47,39 @@ export class ApercuService {
   readonly #destroyRef = inject(DestroyRef);
   readonly #animations = signal(true);
   readonly #mode = signal<ModeApercu>('clair');
+  #definitions: readonly ParametreReglable[] = [];
+  readonly #parametres = signal<ValeursParametres>({});
 
   /** Animations permises : les scènes la passent à l'input `animations` de leur ressource. */
   readonly animations = this.#animations.asReadonly();
   readonly mode = this.#mode.asReadonly();
+  /** Paramètres propres de la ressource montrée (ADR 0014) : défauts, puis URL, puis messages du site. */
+  readonly parametres = this.#parametres.asReadonly();
 
   constructor() {
     afterNextRender(() => this.#demarrer());
+  }
+
+  /** Appelé par la route de la scène : fixe la liste blanche des paramètres et leurs valeurs de départ. */
+  ouvrir(slug: string): void {
+    this.#definitions = PARAMETRES_APERCUS[slug] ?? [];
+    this.#parametres.set(parametresParDefaut(this.#definitions));
+  }
+
+  /** Un choix parmi `valides` : la scène re-vérifie, le type du résultat est donc sûr sans conversion. */
+  choix<T extends string>(nom: string, valides: readonly T[], repli: T): T {
+    const valeur = this.#parametres()[nom];
+    return valides.find((v) => v === valeur) ?? repli;
+  }
+
+  nombre(nom: string, repli: number): number {
+    const valeur = this.#parametres()[nom];
+    return typeof valeur === 'number' ? valeur : repli;
+  }
+
+  booleen(nom: string, repli: boolean): boolean {
+    const valeur = this.#parametres()[nom];
+    return typeof valeur === 'boolean' ? valeur : repli;
   }
 
   #demarrer(): void {
@@ -55,6 +88,7 @@ export class ApercuService {
     const initial = etatInitial(fenetre.location.search);
     this.#appliquerMode(initial.mode);
     this.#appliquerAnimations(initial.animations);
+    this.#parametres.set(parametresDepuisRecherche(this.#definitions, fenetre.location.search));
     const surMessage = (evenement: MessageEvent<unknown>): void => {
       if (!vientDuSite(evenement, fenetre.parent, ORIGINES_SITE)) return;
       const message = lireMessageVersApercu(evenement.data);
@@ -77,6 +111,7 @@ export class ApercuService {
     for (const [cle, valeur] of Object.entries(message.vars)) racine.style.setProperty(cle, valeur);
     this.#appliquerMode(message.mode);
     this.#appliquerAnimations(message.animations);
+    this.#parametres.set(resoudreParametres(this.#definitions, message.params));
   }
 
   #appliquerMode(mode: ModeApercu): void {

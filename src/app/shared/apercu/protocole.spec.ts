@@ -74,10 +74,27 @@ describe('lireMessageVersApercu', () => {
       vars: { '--ngs-radius': '4px', '--x': '1' },
       mode: 'sombre',
       animations: false,
+      params: { orientation: 'vertical', 'x-y': 1, hauteur: 460 },
     });
     expect(lu).toEqual(
-      messageReglages({ vars: { '--ngs-radius': '4px' }, mode: 'sombre', animations: false }),
+      messageReglages({
+        vars: { '--ngs-radius': '4px' },
+        mode: 'sombre',
+        animations: false,
+        params: { orientation: 'vertical', hauteur: 460 },
+      }),
     );
+  });
+
+  it('accepte un message sans params (ancien site) et le lit comme vide', () => {
+    const lu = lireMessageVersApercu({
+      v: 1,
+      type: 'ngs-reglages',
+      vars: {},
+      mode: 'clair',
+      animations: true,
+    });
+    expect(lu).toEqual(messageReglages({ vars: {}, mode: 'clair', animations: true, params: {} }));
   });
 
   it('refuse une version inconnue, un type inconnu et une forme invalide', () => {

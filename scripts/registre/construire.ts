@@ -53,6 +53,7 @@ function ecrireLivraisons(
     ressources.map((r) => ({
       slug: r.meta.slug,
       avecMotion: r.meta.motion !== null,
+      parametres: r.meta.parametres,
       fichiers: r.fichiers,
     })),
     planche,

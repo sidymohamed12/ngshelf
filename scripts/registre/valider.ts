@@ -1,5 +1,6 @@
 import type { MetaDesign, MetaRessource } from '../../src/app/shared/models/ressource.model.ts';
 import type { FichiersRessource } from './sources.ts';
+import { validerParametres } from './valider-parametres.ts';
 import { validerSources } from './valider-sources.ts';
 import { MOMENTS } from '../../src/app/shared/models/motion.model.ts';
 import {
@@ -77,6 +78,7 @@ const CLES_RESSOURCE = [
   'dependances',
   'designsMisEnAvant',
   'motion',
+  'parametres',
   'tailleCase',
   'modifieLe',
   'anciensChemins',
@@ -296,6 +298,12 @@ function validerRessource(meta: Objet, rapport: Rapport): void {
   validerDependances(meta['dependances'], rapport);
 }
 
+function validerParametresReglables(entree: EntreeBrute, meta: Objet, rapport: Rapport): void {
+  for (const erreur of validerParametres(meta['parametres'], entree.fichiers)) {
+    rapport.signaler(erreur);
+  }
+}
+
 function validerJeuDeValeurs(
   valeurs: unknown,
   nom: string,
@@ -358,6 +366,7 @@ function validerEntree(entree: EntreeBrute): readonly string[] {
     for (const erreur of validerSources(entree.fichiers, estObjet(meta['motion']))) {
       rapport.signaler(erreur);
     }
+    validerParametresReglables(entree, meta, rapport);
   }
   return rapport.erreurs;
 }

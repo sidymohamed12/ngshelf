@@ -187,6 +187,76 @@
     </div>
   </details>
 
+  @if (definitions().length > 0) {
+    <details class="ngs-reglage" open>
+      <summary>
+        <span>{{ textes.parametres }}</span>
+        <span class="ngs-reglage__valeur">{{ definitions().length }}</span>
+        <svg appIcone="caret-down" taille="sm"></svg>
+      </summary>
+      <div class="ngs-reglage__corps">
+        <p class="ngs-small ngs-muted m-0">{{ textes.parametresAide }}</p>
+        @for (parametre of definitions(); track parametre.nom) {
+          <div class="grid gap-2">
+            @if (parametre.genre === 'choix') {
+              <span class="ngs-small font-semibold" [id]="'p-' + parametre.nom">{{
+                parametre.libelle.fr
+              }}</span>
+              <div
+                class="ngs-seg w-full flex-wrap"
+                role="radiogroup"
+                [attr.aria-labelledby]="'p-' + parametre.nom"
+              >
+                @for (option of parametre.options; track option.valeur) {
+                  <button
+                    class="ngs-seg__btn flex-1"
+                    type="button"
+                    role="radio"
+                    [attr.aria-checked]="etat.parametres()[parametre.nom] === option.valeur"
+                    (click)="etat.reglerParametre(parametre.nom, option.valeur)"
+                  >
+                    {{ option.libelle.fr }}
+                  </button>
+                }
+              </div>
+            } @else if (parametre.genre === 'nombre') {
+              <label class="ngs-small font-semibold" [for]="'p-' + parametre.nom">{{
+                parametre.libelle.fr
+              }}</label>
+              <div class="ngs-range-row">
+                <input
+                  class="ngs-range"
+                  type="range"
+                  #curseur
+                  [id]="'p-' + parametre.nom"
+                  [min]="parametre.min"
+                  [max]="parametre.max"
+                  [step]="parametre.pas"
+                  [value]="etat.parametres()[parametre.nom]"
+                  (input)="surNombre(parametre.nom, curseur.value)"
+                />
+                <output [for]="'p-' + parametre.nom" class="tabular"
+                  >{{ etat.parametres()[parametre.nom] }} {{ parametre.unite ?? '' }}</output
+                >
+              </div>
+            } @else {
+              <label class="ngs-switch">
+                <input
+                  type="checkbox"
+                  #interrupteur
+                  [checked]="etat.parametres()[parametre.nom] === true"
+                  (change)="etat.reglerParametre(parametre.nom, interrupteur.checked)"
+                />
+                <span class="ngs-switch__track" aria-hidden="true"></span>
+                <span>{{ parametre.libelle.fr }}</span>
+              </label>
+            }
+          </div>
+        }
+      </div>
+    </details>
+  }
+
   <div class="ngs-panel__section">
     <button
       class="ngs-btn ngs-btn--ghost ngs-btn--sm justify-self-start"

@@ -75,6 +75,30 @@ describe('construireApercus', () => {
     );
   });
 
+  it('déclare les paramètres réglables par ressource, et seulement ceux des ressources qui en ont', () => {
+    const avec = construireApercus(
+      [
+        {
+          slug: 'barre',
+          avecMotion: false,
+          fichiers: FICHIERS,
+          parametres: [
+            { nom: 'legendes', genre: 'interrupteur', libelle: { fr: 'Légendes' }, defaut: true },
+          ],
+        },
+        { slug: 'autre', avecMotion: false, fichiers: FICHIERS },
+      ],
+      DESIGN,
+      '',
+      'NgShelf',
+    );
+    const scenes = avec.get('scenes.ts') ?? '';
+    expect(scenes).toContain('export const PARAMETRES_APERCUS');
+    expect(scenes).toContain('\'barre\': [{"nom":"legendes"');
+    expect(scenes).not.toContain("'autre': [{");
+    expect(sorties.get('scenes.ts')).toContain('PARAMETRES_APERCUS');
+  });
+
   it('charge le même tokens.css et le même pont que ceux livrés', () => {
     expect(sorties.get('tokens.css')).toContain('.dark {');
     expect(sorties.get('ngshelf-theme.css')).toBe('/* pont */');
