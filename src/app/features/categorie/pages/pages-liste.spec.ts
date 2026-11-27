@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { routes } from '../../../app.routes';
-import { TEXTES } from '@core/i18n/textes.fr';
+import { TEXTES, TEXTES_CATALOGUE } from '@core/i18n/textes.fr';
 import { CHARGEUR_INDEX, ChargeurIndex, chargerIndexGenere } from '@core/registre/registre.donnees';
 
 /** Les pages prérendues de catégorie, de type et de secteur, avec le vrai registre du dépôt. */
@@ -35,7 +35,7 @@ describe('pages de liste', () => {
 
   it('affiche l’état vide d’une catégorie sans ressource', async () => {
     await ouvrir('/templates');
-    expect(principal().textContent).toContain('Rien à afficher');
+    expect(principal().textContent).toContain(TEXTES_CATALOGUE.templatesTitre);
   });
 
   it('liste les ressources d’un type, avec le lien de retour vers sa catégorie', async () => {

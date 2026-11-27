@@ -188,12 +188,12 @@ describe('modification des filtres', () => {
       { axe: 'categorie', valeur: 'composant' },
       { axe: 'type', valeur: 'bouton' },
       { axe: 'secteur', valeur: 'voyage' },
-      { axe: 'animees', valeur: '' },
-      { axe: 'q', valeur: '' },
+      { axe: 'animees' },
+      { axe: 'q' },
     ]);
     expect(sansFiltre(filtres, { axe: 'type', valeur: 'bouton' }).types).toEqual([]);
-    expect(sansFiltre(filtres, { axe: 'q', valeur: '' }).q).toBe('');
-    expect(sansFiltre(filtres, { axe: 'animees', valeur: '' }).animees).toBe(false);
+    expect(sansFiltre(filtres, { axe: 'q' }).q).toBe('');
+    expect(sansFiltre(filtres, { axe: 'animees' }).animees).toBe(false);
     expect(sansFiltres(filtres)).toEqual({ ...FILTRES_VIDES, tri: 'az' });
     expect(sansFiltres(filtres, { secteur: 'voyage' }).secteurs).toEqual(['voyage']);
   });

@@ -1,0 +1,120 @@
+<div class="ngs-facettes">
+  @if (vue().familles; as familles) {
+    <details class="ngs-facette" open>
+      <summary>
+        <span>{{ textes.facetteFamille }}</span>
+        <svg appIcone="caret-down"></svg>
+      </summary>
+      <div class="ngs-facette__corps" role="radiogroup" [attr.aria-label]="textes.facetteFamille">
+        @for (option of familles; track option.libelle) {
+          <label class="ngs-option" [class]="option.classe" [class.is-vide]="option.compte === 0">
+            <input
+              type="radio"
+              name="famille"
+              [value]="option.valeur ?? ''"
+              [checked]="option.coche"
+              (change)="categorieChoisie.emit(option.valeur)"
+            />
+            @if (option.valeur) {
+              <span class="ngs-chip__dot" aria-hidden="true"></span>
+            }
+            <span>{{ option.libelle }}</span>
+            <span class="ngs-option__compte">{{ option.compte }}</span>
+          </label>
+        }
+      </div>
+    </details>
+  }
+
+  @if (vue().types; as types) {
+    <details class="ngs-facette" open>
+      <summary>
+        <span>{{ textes.facetteType }}</span>
+        <svg appIcone="caret-down"></svg>
+      </summary>
+      <div class="ngs-facette__corps" role="group" [attr.aria-label]="textes.facetteType">
+        @for (option of types.options; track option.valeur) {
+          <label class="ngs-option" [class]="option.classe" [class.is-vide]="option.compte === 0">
+            <input
+              type="checkbox"
+              name="type"
+              [value]="option.valeur"
+              [checked]="option.coche"
+              #caseType
+              (change)="typeBascule.emit({ type: option.valeur, coche: caseType.checked })"
+            />
+            <span>{{ option.libelle }}</span>
+            <span class="ngs-option__compte">{{ option.compte }}</span>
+          </label>
+        }
+        @if (types.repliables) {
+          <button
+            class="ngs-link ngs-link--rest mt-2 cursor-pointer justify-self-start border-0 bg-transparent p-0 text-sm"
+            type="button"
+            [attr.aria-expanded]="types.ouverts"
+            (click)="typesBascules.emit()"
+          >
+            {{ types.ouverts ? textes.typesMoins : textes.typesPlus(types.caches) }}
+          </button>
+        }
+      </div>
+    </details>
+  }
+
+  @if (vue().secteurs; as secteurs) {
+    <details class="ngs-facette" open>
+      <summary>
+        <span>{{ textes.facetteSecteur }}</span>
+        <svg appIcone="caret-down"></svg>
+      </summary>
+      <div class="ngs-facette__corps" role="group" [attr.aria-label]="textes.facetteSecteur">
+        @for (option of secteurs; track option.valeur) {
+          <label class="ngs-option" [class.is-vide]="option.compte === 0">
+            <input
+              type="checkbox"
+              name="secteur"
+              [value]="option.valeur"
+              [checked]="option.coche"
+              #caseSecteur
+              (change)="secteurBascule.emit({ secteur: option.valeur, coche: caseSecteur.checked })"
+            />
+            <svg [appIcone]="iconeSecteur[option.valeur]" taille="sm"></svg>
+            <span>{{ option.libelle }}</span>
+            <span class="ngs-option__compte">{{ option.compte }}</span>
+          </label>
+        }
+      </div>
+    </details>
+  }
+
+  <details class="ngs-facette" open>
+    <summary>
+      <span>{{ textes.facetteOptions }}</span>
+      <svg appIcone="caret-down"></svg>
+    </summary>
+    <div class="ngs-facette__corps">
+      <label class="ngs-switch">
+        <input
+          type="checkbox"
+          #optionReglables
+          [checked]="vue().reglables.coche"
+          (change)="reglablesBascule.emit(optionReglables.checked)"
+        />
+        <span class="ngs-switch__track" aria-hidden="true"></span>
+        <span>{{ textes.reglables }}</span>
+        <span class="ngs-option__compte">{{ vue().reglables.compte }}</span>
+      </label>
+      <label class="ngs-switch">
+        <input
+          type="checkbox"
+          #optionAnimees
+          [checked]="vue().animees.coche"
+          (change)="animeesBascule.emit(optionAnimees.checked)"
+        />
+        <span class="ngs-switch__track" aria-hidden="true"></span>
+        <span>{{ textes.animees }}</span>
+        <span class="ngs-option__compte">{{ vue().animees.compte }}</span>
+      </label>
+    </div>
+  </details>
+</div>

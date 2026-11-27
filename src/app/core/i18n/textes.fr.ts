@@ -155,6 +155,49 @@ export const TEXTES_LISTE = {
   videCta: $localize`:@@liste.vide.cta:Voir le catalogue`,
 } as const;
 
+/** Page catalogue et ses déclinaisons : facettes, filtres actifs, tri, pagination, états propres au filtrage. */
+export const TEXTES_CATALOGUE = {
+  facetteFamille: $localize`:@@catalogue.facette.famille:Famille`,
+  facetteType: $localize`:@@catalogue.facette.type:Type`,
+  facetteSecteur: $localize`:@@catalogue.facette.secteur:Secteur`,
+  facetteOptions: $localize`:@@catalogue.facette.options:Options`,
+  tout: $localize`:@@catalogue.tout:Tout`,
+  filtres: $localize`:@@catalogue.filtres.ouvrir:Filtres`,
+  filtresVoir: $localize`:@@catalogue.filtres.voir:Voir les résultats`,
+  filtresEffacer: $localize`:@@catalogue.filtres.effacer:Tout effacer`,
+  filtresFermer: $localize`:@@catalogue.filtres.fermer:Fermer les filtres`,
+  filtresActifs: $localize`:@@catalogue.filtres.actifs:Filtres actifs`,
+  filtreRetirer: (filtre: string) =>
+    $localize`:@@catalogue.filtre.retirer:Retirer le filtre ${filtre}:filtre:`,
+  typesPlus: (n: number) => $localize`:@@catalogue.types.plus:Afficher les ${n}:n: autres types`,
+  typesMoins: $localize`:@@catalogue.types.moins:Afficher moins de types`,
+  tri: $localize`:@@catalogue.tri:Trier`,
+  triRecent: $localize`:@@catalogue.tri.recent:Les plus récentes`,
+  triAz: $localize`:@@catalogue.tri.az:De A à Z`,
+  plus: $localize`:@@catalogue.plus:Afficher plus de ressources`,
+  /** « 24 sur 31 ressources » : la planche montre une partie des résultats. */
+  page: (n: number, total: string) => $localize`:@@catalogue.page:${n}:n: sur ${total}:total:`,
+  reglables: $localize`:@@catalogue.reglables:Réglables seulement`,
+  animees: $localize`:@@catalogue.animees:Animées seulement`,
+  rechercheLabel: $localize`:@@catalogue.recherche.label:Filtrer le catalogue`,
+  recherchePlaceholder: $localize`:@@catalogue.recherche.placeholder:Nom, usage, mot-clé…`,
+  videTitre: (requete: string) =>
+    $localize`:@@catalogue.vide.titre:Aucune ressource pour « ${requete}:requete: »`,
+  videTexte: $localize`:@@catalogue.vide.texte:Vérifiez l’orthographe ou retirez un filtre.`,
+  templatesTitre: $localize`:@@catalogue.templates.titre:Pas encore de template`,
+  templatesTexte: $localize`:@@catalogue.templates.texte:Un template est une page complète : connexion, tableau de bord, page d’accueil. Il n’y en a pas encore dans le catalogue.`,
+  /** Titre de la page /catalogue selon les filtres. */
+  titreCategorie: {
+    composant: $localize`:@@catalogue.h1.composants:Composants Angular`,
+    bloc: $localize`:@@catalogue.h1.blocs:Blocs de page Angular`,
+    template: $localize`:@@catalogue.h1.templates:Templates Angular`,
+    design: $localize`:@@catalogue.h1.designs:Designs : habillages visuels (tokens)`,
+  } satisfies Record<Categorie, string>,
+  titreType: (type: string) => $localize`:@@catalogue.h1.type:${type}:type: Angular`,
+  titreSecteur: (secteur: string) =>
+    $localize`:@@catalogue.h1.secteur:Secteur : ${secteur}:secteur:`,
+} as const;
+
 /** Phrase d'introduction d'une catégorie (page /composants, /blocs…). */
 export const DESCRIPTIONS_CATEGORIE: Record<Categorie, string> = {
   composant: $localize`:@@cat.composants.texte:Des pièces d’interface autonomes : champs, interrupteurs, calendriers, notifications.`,

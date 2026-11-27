@@ -156,11 +156,11 @@ export function aDesParametres(filtres: FiltresCatalogue, portee: Portee = {}): 
 }
 
 /** Un filtre actif et retirable : une puce de la barre « Filtres actifs ». */
-export interface FiltreActif {
-  readonly axe: AxeFiltre | 'q';
-  /** Valeur retirée (catégorie, type ou secteur) ; vide pour les autres axes. */
-  readonly valeur: string;
-}
+export type FiltreActif =
+  | { readonly axe: 'categorie'; readonly valeur: Categorie }
+  | { readonly axe: 'type'; readonly valeur: TypeRessource }
+  | { readonly axe: 'secteur'; readonly valeur: Secteur }
+  | { readonly axe: 'reglables' | 'animees' | 'q' };
 
 export function filtresActifs(filtres: FiltresCatalogue, portee: Portee = {}): FiltreActif[] {
   const actifs: FiltreActif[] = [];
@@ -172,9 +172,9 @@ export function filtresActifs(filtres: FiltresCatalogue, portee: Portee = {}): F
   if (!portee.secteur) {
     actifs.push(...filtres.secteurs.map((valeur) => ({ axe: 'secteur' as const, valeur })));
   }
-  if (filtres.reglables) actifs.push({ axe: 'reglables', valeur: '' });
-  if (filtres.animees) actifs.push({ axe: 'animees', valeur: '' });
-  if (filtres.q !== '') actifs.push({ axe: 'q', valeur: '' });
+  if (filtres.reglables) actifs.push({ axe: 'reglables' });
+  if (filtres.animees) actifs.push({ axe: 'animees' });
+  if (filtres.q !== '') actifs.push({ axe: 'q' });
   return actifs;
 }
 

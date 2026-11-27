@@ -1,8 +1,7 @@
-import { Component, computed, inject, input, resource } from '@angular/core';
-import { LIBELLES_SECTEUR, TEXTES, libelleCompte } from '@core/i18n/textes.fr';
-import { RegistreService } from '@core/registre/registre.service';
+import { Component, computed, input } from '@angular/core';
+import { LIBELLES_SECTEUR, TEXTES } from '@core/i18n/textes.fr';
+import { ExplorateurComponent } from '@shared/components/explorateur/explorateur.component';
 import { IconeComponent } from '@shared/components/icone/icone.component';
-import { PlancheComponent } from '@shared/components/planche/planche.component';
 import { PageIntrouvableComponent } from '@shared/components/page-introuvable/page-introuvable.component';
 import { SECTEURS, Secteur } from '@shared/models/taxonomie.model';
 import { ICONE_SECTEUR } from '@shared/utils/taxonomie-affichage';
@@ -14,13 +13,12 @@ function secteurValide(secteur: string | undefined): secteur is Secteur {
 /** Page d'un secteur (/secteurs/restaurant), prérendue s'il a au moins une ressource (ADR 0004). */
 @Component({
   selector: 'app-secteur',
-  imports: [IconeComponent, PlancheComponent, PageIntrouvableComponent],
+  imports: [IconeComponent, ExplorateurComponent, PageIntrouvableComponent],
   templateUrl: './secteur.component.html',
 })
 export class SecteurComponent {
   readonly secteur = input<string>();
 
-  readonly #registre = inject(RegistreService);
   protected readonly textes = TEXTES.pages.listes;
 
   protected readonly secteurConnu = computed(() => {
@@ -28,14 +26,10 @@ export class SecteurComponent {
     return secteurValide(secteur) ? secteur : undefined;
   });
 
-  protected readonly chargement = resource({
-    params: () => this.secteurConnu(),
-    loader: ({ params }) => this.#registre.duSecteur(params),
+  protected readonly portee = computed(() => {
+    const secteur = this.secteurConnu();
+    return secteur ? { secteur } : {};
   });
-
-  protected readonly entrees = computed(() =>
-    this.chargement.hasValue() ? this.chargement.value() : undefined,
-  );
 
   protected readonly titre = computed(() => {
     const secteur = this.secteurConnu();
@@ -44,9 +38,5 @@ export class SecteurComponent {
   protected readonly icone = computed(() => {
     const secteur = this.secteurConnu();
     return secteur ? ICONE_SECTEUR[secteur] : 'squares-four';
-  });
-  protected readonly compte = computed(() => {
-    const secteur = this.secteurConnu();
-    return libelleCompte(secteur ? (this.#registre.compteurs.secteurs[secteur] ?? 0) : 0);
   });
 }

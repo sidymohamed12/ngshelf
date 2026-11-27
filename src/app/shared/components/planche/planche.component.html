@@ -30,7 +30,13 @@
     <span class="ngs-state__icon"><svg appIcone="squares-four" taille="lg"></svg></span>
     <h2 class="ngs-state__title">{{ titreVide() ?? textes.videTitre }}</h2>
     <p class="ngs-muted m-0 max-w-prose">{{ texteVide() ?? textes.videTexte }}</p>
-    <a class="ngs-btn ngs-btn--secondary" routerLink="/catalogue">{{ textes.videCta }}</a>
+    @if (libelleActionVide(); as libelle) {
+      <button class="ngs-btn ngs-btn--secondary" type="button" (click)="actionVide.emit()">
+        {{ libelle }}
+      </button>
+    } @else {
+      <a class="ngs-btn ngs-btn--secondary" routerLink="/catalogue">{{ textes.videCta }}</a>
+    }
   </div>
 } @else {
   <h2 class="sr-only">{{ textes.titre }}</h2>

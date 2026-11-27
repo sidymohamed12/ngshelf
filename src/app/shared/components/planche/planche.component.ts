@@ -50,8 +50,11 @@ export class PlancheComponent {
   /** Texte de l'état vide propre à la page ; sinon le texte générique. */
   readonly titreVide = input<string>();
   readonly texteVide = input<string>();
+  /** Libellé d'une action propre à l'état vide (ex. « Tout effacer ») ; sans elle, un lien vers le catalogue. */
+  readonly libelleActionVide = input<string>();
 
   readonly reessayer = output();
+  readonly actionVide = output();
 
   protected readonly etats = TEXTES.etats;
   protected readonly textes = TEXTES_LISTE;
