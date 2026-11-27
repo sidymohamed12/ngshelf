@@ -1,3 +1,4 @@
+import type { DonneesFiche, ParametreApi } from '../../src/app/shared/models/fiche.model.ts';
 import type { FichiersRessource } from './sources.ts';
 import { MARQUEUR_STYLE, nomComposant, structureGabarit } from './sources.ts';
 
@@ -5,20 +6,6 @@ import { MARQUEUR_STYLE, nomComposant, structureGabarit } from './sources.ts';
  * Contrôles des fichiers d'une ressource (ADR 0002, décision 3 et « Conséquences ») : présence, gabarits
  * équivalents d'une variante à l'autre, animations désactivables. Un contrôle raté fait échouer le build.
  */
-
-/** Une API affichée sur la fiche : une ligne du tableau « Paramètres ». */
-export interface ParametreApi {
-  readonly nom: string;
-  readonly type: string;
-  readonly defaut: string;
-  readonly role: string;
-}
-
-/** `fiche.json` : ce que la fiche affiche en plus du meta.json (usage et API). */
-export interface DonneesFiche {
-  readonly usage: string;
-  readonly api: readonly ParametreApi[];
-}
 
 const CLES_PARAMETRE = ['nom', 'type', 'defaut', 'role'];
 

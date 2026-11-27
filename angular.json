@@ -52,6 +52,10 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/generated/public"
               }
             ],
             "styles": ["src/styles.css"],
