@@ -1,0 +1,25 @@
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { TEXTES } from '@core/i18n/textes.fr';
+
+/** Contenu « cette page n'existe pas » pour une route valide dont le paramètre ne l'est pas (type ou secteur inconnu). */
+@Component({
+  selector: 'app-page-introuvable',
+  imports: [RouterLink],
+  template: `
+    <section
+      class="ngs-container grid content-start gap-6 py-16 xl:py-24"
+      aria-labelledby="introuvable"
+    >
+      <h1 class="ngs-h2 m-0 max-w-[20ch]" id="introuvable">{{ textes.h1 }}</h1>
+      <p class="ngs-lead m-0 max-w-prose">{{ textes.texte }}</p>
+      <div class="flex flex-wrap gap-3">
+        <a class="ngs-btn" routerLink="/catalogue">{{ textes.cta }}</a>
+        <a class="ngs-btn ngs-btn--secondary" routerLink="/">{{ textes.accueil }}</a>
+      </div>
+    </section>
+  `,
+})
+export class PageIntrouvableComponent {
+  protected readonly textes = TEXTES.pages.introuvable;
+}

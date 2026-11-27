@@ -82,6 +82,16 @@ export const TEXTES = {
       h1: $localize`:@@apropos.h1:Des pièces Angular libres, sans compte ni achat`,
       lead: $localize`:@@apropos.lead:${NOM}:nom: rassemble des composants, des blocs et des designs Angular. Vous les essayez dans la page, puis vous copiez leur code ou vous le téléchargez. Ce code est sous licence MIT : il est à vous dès que vous le prenez.`,
     },
+    /** Pages de liste prérendues : catégorie (/composants), type (/blocs/navbar) et secteur. */
+    listes: {
+      /** « Navbar Angular — NgShelf » : le nom d'une catégorie ou d'un type. */
+      titrePage: (nom: string) => $localize`:@@liste.titre-page:${nom}:nom: Angular — ${NOM}:site:`,
+      titrePageSecteur: (secteur: string) =>
+        $localize`:@@liste.titre-page-secteur:${secteur}:secteur: : ressources Angular — ${NOM}:site:`,
+      types: $localize`:@@liste.types:Par type`,
+      secteur: $localize`:@@liste.secteur:Secteur`,
+      secteurAide: $localize`:@@liste.secteur-aide:Domaine d’activité pour lequel la ressource a été pensée : restaurant, voyage, transport…`,
+    },
     ressource: {
       titrePage: (titre: string) =>
         $localize`:@@ressource.titre-page:${titre}:titre: — ${NOM}:nom:`,
@@ -98,6 +108,30 @@ export const TEXTES = {
     },
   },
 } as const;
+
+/** Nombre de ressources : « 1 ressource », « 7 ressources ». */
+export function libelleCompte(n: number): string {
+  return n === 1
+    ? $localize`:@@liste.compte.un:${n}:n: ressource`
+    : $localize`:@@liste.compte.plusieurs:${n}:n: ressources`;
+}
+
+/** Liste de ressources : titre masqué pour les lecteurs d'écran, états, mentions des fiches. */
+export const TEXTES_LISTE = {
+  titre: $localize`:@@liste.titre:Ressources`,
+  provisoire: $localize`:@@badge.provisoire:Démo provisoire`,
+  videTitre: $localize`:@@liste.vide.titre:Rien à afficher pour l’instant`,
+  videTexte: $localize`:@@liste.vide.texte:Cette page n’a pas encore de ressource. Parcourez le catalogue pour en trouver d’autres.`,
+  videCta: $localize`:@@liste.vide.cta:Voir le catalogue`,
+} as const;
+
+/** Phrase d'introduction d'une catégorie (page /composants, /blocs…). */
+export const DESCRIPTIONS_CATEGORIE: Record<Categorie, string> = {
+  composant: $localize`:@@cat.composants.texte:Des pièces d’interface autonomes : champs, interrupteurs, calendriers, notifications.`,
+  bloc: $localize`:@@cat.blocs.texte:Des sections de page complètes, prêtes à recevoir votre contenu.`,
+  template: $localize`:@@cat.templates.texte:Des pages entières, de la navigation au pied de page.`,
+  design: $localize`:@@cat.designs.texte:Des habillages visuels prêts à l’emploi : couleurs, rayons, densité et police (tokens), en clair et en sombre.`,
+};
 
 /** Libellés des catégories : pluriel (navigation, listes) et singulier (badges). */
 export const LIBELLES_CATEGORIE: Record<Categorie, { pluriel: string; singulier: string }> = {

@@ -23,9 +23,12 @@ const IMPORTS_INDEX: Record<Categorie, () => Promise<{ default: unknown }>> = {
   design: () => import('@generated/registre/index-design.json'),
 };
 
+/** Chargeur par défaut : les index générés, un chunk par catégorie. */
+export const chargerIndexGenere: ChargeurIndex = async (categorie) => {
+  const module = await IMPORTS_INDEX[categorie]();
+  return module.default as readonly EntreeIndex[];
+};
+
 export const CHARGEUR_INDEX = new InjectionToken<ChargeurIndex>('CHARGEUR_INDEX', {
-  factory: () => async (categorie) => {
-    const module = await IMPORTS_INDEX[categorie]();
-    return module.default as readonly EntreeIndex[];
-  },
+  factory: () => chargerIndexGenere,
 });
