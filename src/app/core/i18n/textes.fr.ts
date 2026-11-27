@@ -58,6 +58,27 @@ export const TEXTES = {
     signature: $localize`:@@pied.signature:Développé par`,
     signatureAria: $localize`:@@pied.signature.aria:Développé par Sidy : voir son portfolio`,
   },
+  /** Recherche globale (dialogue ⌘K / Ctrl+K). */
+  recherche: {
+    declencheur: $localize`:@@recherche.declencheur:Rechercher une ressource`,
+    label: $localize`:@@recherche.label:Rechercher dans le catalogue`,
+    placeholder: $localize`:@@recherche.placeholder:Calendrier, formulaire, thème…`,
+    fermer: $localize`:@@recherche.fermer:Fermer la recherche`,
+    aide: $localize`:@@recherche.aide:Flèches pour choisir, Entrée pour ouvrir, Échap pour fermer.`,
+    toutes: $localize`:@@recherche.toutes:Toutes les ressources`,
+    raccourciCtrl: $localize`:@@recherche.raccourci-ctrl:Ctrl K`,
+    chargement: $localize`:@@recherche.chargement:Chargement de la recherche`,
+    videTitre: (requete: string) =>
+      $localize`:@@recherche.vide.titre:Aucune ressource ne correspond à « ${requete}:requete: »`,
+    videTexte: $localize`:@@recherche.vide.texte:Essayez un mot plus court, ou parcourez le catalogue.`,
+    /** Annonce aux lecteurs d'écran après chaque frappe. */
+    annonce: (n: number) =>
+      n === 1
+        ? $localize`:@@recherche.annonce.un:${n}:n: résultat`
+        : $localize`:@@recherche.annonce.plusieurs:${n}:n: résultats`,
+    voirTous: (famille: string, n: number) =>
+      $localize`:@@recherche.voir-tous:Voir tout : ${famille}:famille: (${n}:n:)`,
+  },
   /** États communs des zones qui chargent le registre (chunk d'index) : chargement, erreur. */
   etats: {
     chargement: $localize`:@@etat.chargement:Chargement du catalogue`,
@@ -109,9 +130,9 @@ export const TEXTES = {
   },
 } as const;
 
-/** Nombre de ressources : « 1 ressource », « 7 ressources ». */
+/** Nombre de ressources : « 0 ressource », « 1 ressource », « 7 ressources » (le zéro est singulier en français). */
 export function libelleCompte(n: number): string {
-  return n === 1
+  return n <= 1
     ? $localize`:@@liste.compte.un:${n}:n: ressource`
     : $localize`:@@liste.compte.plusieurs:${n}:n: ressources`;
 }

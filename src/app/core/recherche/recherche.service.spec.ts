@@ -53,10 +53,13 @@ describe('RechercheService', () => {
   it('ouvre, ferme et bascule le dialogue', () => {
     const recherche = service();
     expect(recherche.ouverte()).toBe(false);
+    expect(recherche.dejaOuverte()).toBe(false);
     recherche.ouvrir();
+    expect(recherche.dejaOuverte()).toBe(true);
     expect(recherche.ouverte()).toBe(true);
     recherche.fermer();
     expect(recherche.ouverte()).toBe(false);
+    expect(recherche.dejaOuverte()).toBe(true);
     recherche.basculer();
     expect(recherche.ouverte()).toBe(true);
   });

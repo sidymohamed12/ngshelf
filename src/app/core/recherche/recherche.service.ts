@@ -13,9 +13,14 @@ export class RechercheService {
   readonly #ouverte = signal(false);
   #index: Promise<IndexRecherche> | undefined;
 
+  readonly #dejaOuverte = signal(false);
+
   readonly ouverte = this.#ouverte.asReadonly();
+  /** Vrai dès la première ouverture : le dialogue ne charge l'index qu'à ce moment-là. */
+  readonly dejaOuverte = this.#dejaOuverte.asReadonly();
 
   ouvrir(): void {
+    this.#dejaOuverte.set(true);
     this.#ouverte.set(true);
   }
 
@@ -24,7 +29,8 @@ export class RechercheService {
   }
 
   basculer(): void {
-    this.#ouverte.update((ouverte) => !ouverte);
+    if (this.#ouverte()) this.fermer();
+    else this.ouvrir();
   }
 
   indexRecherche(): Promise<IndexRecherche> {
