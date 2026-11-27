@@ -13,6 +13,8 @@ const CARTE: EntreeIndex = {
   secteurs: ['voyage'],
   tags: [],
   contratTokens: 1,
+  animee: false,
+  tailleCase: 'normale',
   statut: 'provisoire',
   ajouteLe: '2026-11-26',
 };

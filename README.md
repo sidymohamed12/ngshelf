@@ -41,9 +41,11 @@ Le site est servi sur `http://localhost:4200/` et se recharge à chaque modifica
 
 ## Registre
 
-`registry/<categorie>/<slug>/meta.json` est la source unique des ressources (ADR 0002 et 0004) : `composants/`, `blocs/`, `templates/`, `designs/`. Pour ajouter une ressource, créer son dossier et son `meta.json` (modèle : `shared/models/ressource.model.ts`, textes au format `{ "fr": "…" }`), puis lancer `npm run registre:build`. Le script (`scripts/registre/`) refuse le build si un type ou un secteur est hors de la taxonomie (`shared/models/taxonomie.model.ts`), un slug en double, plus de 3 secteurs ou 8 tags, une dépendance non vide, un texte français absent, un champ inconnu.
+`registry/<categorie>/<slug>/meta.json` est la source unique des ressources (ADR 0002 et 0004) : `composants/`, `blocs/`, `templates/`, `designs/`. Pour ajouter une ressource, créer son dossier et son `meta.json` (modèle : `shared/models/ressource.model.ts`, textes au format `{ "fr": "…" }`), puis lancer `npm run registre:build`. Le script (`scripts/registre/`) refuse le build si un type ou un secteur est hors de la taxonomie (`shared/models/taxonomie.model.ts`), un slug en double, plus de 3 secteurs ou 8 tags, une dépendance non vide, un texte français absent, un champ inconnu, une valeur de `animee` qui n'est pas un booléen, une `tailleCase` hors de `normale`, `large`, `haute`, `large-haute`.
 
-Sorties, dans `src/generated/registre/` (non versionnées) : un index par catégorie (`index-<categorie>.json`, chargé à la demande, jamais dans le bundle initial) et `compteurs.json` (ressources publiées par catégorie, type et secteur, dans le bundle initial pour le méga-menu).
+Champs de la planche du catalogue (facultatifs, repris dans les index) : `animee` (la ressource a ses propres animations : badge « Animée » et filtre ; absent = faux) et `tailleCase` (taille de sa case dans la planche : 1×1, 2×1, 1×2 ou 2×2 ; absent = `normale`). Une ressource est « réglable » quand `contratTokens` vaut 1.
+
+Sorties, dans `src/generated/registre/` (non versionnées) : un index par catégorie (`index-<categorie>.json`, chargé à la demande, jamais dans le bundle initial) et `compteurs.json` (ressources publiées par catégorie, type et secteur, plus le nombre de ressources réglables et animées ; dans le bundle initial pour le méga-menu).
 
 ## Structure
 

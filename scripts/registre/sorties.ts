@@ -16,11 +16,21 @@ export interface Sorties {
   readonly compteurs: Compteurs;
 }
 
+/** Un design n'a ni type, ni animation propre, ni case de taille particulière. */
+function champsPropres(meta: MetaRegistre): Pick<EntreeIndex, 'type' | 'animee' | 'tailleCase'> {
+  if (meta.categorie === 'design') return { type: null, animee: false, tailleCase: 'normale' };
+  return {
+    type: meta.type,
+    animee: meta.animee ?? false,
+    tailleCase: meta.tailleCase ?? 'normale',
+  };
+}
+
 function versEntree(meta: MetaRegistre): EntreeIndex {
   return {
     slug: meta.slug,
     categorie: meta.categorie,
-    type: meta.categorie === 'design' ? null : meta.type,
+    ...champsPropres(meta),
     titre: meta.titre,
     description: meta.description,
     secteurs: meta.secteurs,
@@ -44,14 +54,17 @@ export function construireCompteurs(entrees: readonly EntreeIndex[]): Compteurs 
   const categories: Record<Categorie, number> = { composant: 0, bloc: 0, template: 0, design: 0 };
   const types: Partial<Record<TypeRessource, number>> = {};
   const secteurs: Partial<Record<Secteur, number>> = {};
+  const options = { reglables: 0, animees: 0 };
   let total = 0;
   for (const entree of entrees.filter((e) => e.statut !== 'deprecie')) {
     total += 1;
     categories[entree.categorie] += 1;
+    if (entree.contratTokens !== null) options.reglables += 1;
+    if (entree.animee) options.animees += 1;
     if (entree.type !== null) incrementer(types, entree.type);
     for (const secteur of entree.secteurs) incrementer(secteurs, secteur);
   }
-  return { total, categories, types, secteurs };
+  return { total, categories, types, secteurs, options };
 }
 
 export function construireSorties(metas: readonly MetaRegistre[]): Sorties {
