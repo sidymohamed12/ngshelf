@@ -60,7 +60,7 @@ ACCUEIL (desktop)
 DÉTAIL
 ┌─────────────────────────────┬────────────────────────────────┐
 │ Sélecteur de date           │ [Aperçu] [Couches] [Code]      │
-│ Composant · Angular 21      │ ┌────────────────────────────┐ │
+│ Composant · Angular 22      │ ┌────────────────────────────┐ │
 │ [Copier le code]            │ │ aperçu live (iframe)       │ │
 │ [Télécharger le composant]  │ │ 390 / 768 / 1280 px        │ │
 │ Installation, dépendances,  │ └────────────────────────────┘ │

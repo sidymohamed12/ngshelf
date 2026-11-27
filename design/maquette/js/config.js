@@ -20,12 +20,15 @@ window.NGS.site = {
     tiktok: 'https://www.tiktok.com/@sidymohamed_12',
     linkedin: 'https://www.linkedin.com/in/sidy-mohamed-saizonou/',
     github: 'https://github.com/sidymohamed12',
-    email: 'mohamedsaizonou86@gmail.com'
+    email: 'mohamedsaizonou86@gmail.com',
+    // Mentions légales (valeurs données par Sidy le 27 novembre 2026). Le téléphone n'est écrit que ici, jamais dans les pages.
+    telephone: '+221 76 182 36 98', // affichage ; le lien tel: en est dérivé (chiffres seulement)
+    statut: 'Particulier, développeur (éditeur non professionnel)',
+    adresse: 'Dakar, Sénégal' // ville et pays seulement, pas d'adresse postale complète
   },
-  // Hébergeur (mentions légales et confidentialité) : PAS ENCORE CHOISI. Pour le fixer, une seule valeur :
-  // `hebergeur: 'cloudflare'` ou `'netlify'`. Tant qu'elle vaut null, les pages légales affichent un champ « à compléter ».
-  // Coordonnées lues le 27 novembre 2026 sur les politiques de confidentialité officielles des deux services.
-  hebergeur: null,
+  // Hébergeur (mentions légales et confidentialité) : Cloudflare, confirmé par Sidy. Une seule valeur : 'cloudflare' ou 'netlify'.
+  // Même valeur à reporter dans `site.config.ts` côté Angular. Coordonnées lues le 27 novembre 2026 sur les politiques de confidentialité officielles.
+  hebergeur: 'cloudflare',
   hebergeurs: {
     cloudflare: { nom: 'Cloudflare, Inc.', adresse: '101 Townsend Street, San Francisco, CA 94107, États-Unis', site: 'https://www.cloudflare.com/' },
     netlify: { nom: 'Netlify, Inc.', adresse: '101 2nd Street, San Francisco, CA 94105, États-Unis', site: 'https://www.netlify.com/' }

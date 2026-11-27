@@ -1,9 +1,9 @@
 # HANDOFF — NgShelf : de la maquette à l'intégration Angular 22
 
-> Document de passation du designer vers `frontend-dev`. Version du 27 novembre 2026, établie sur `DESIGN.md` v0.8 et sur la maquette `design/maquette/` en l'état. **La maquette n'a pas encore reçu de validation finale écrite de Sidy** : tant qu'elle ne l'a pas, ce document décrit ce qui est à intégrer, pas ce qui est approuvé (voir « Points ouverts »).
+> Document de passation du designer vers `frontend-dev`. Version du 27 novembre 2026, établie sur `DESIGN.md` v0.10 et sur la maquette `design/maquette/` en l'état. **Tout vit maintenant dans le dépôt du front** (`design/`, `DESIGN.md`, `docs/`) ; les chemins sont relatifs à sa racine. **La maquette n'a pas encore reçu de validation finale écrite de Sidy** : tant qu'elle ne l'a pas, ce document décrit ce qui est à intégrer, pas ce qui est approuvé (voir « Points ouverts »).
 >
 > Règle de lecture : les fichiers cités sont la référence, ce document dit où regarder. Les références `fichier:ligne` valent pour l'état actuel des fichiers ; si une ligne a bougé, cherchez le nom de la fonction ou de la classe.
-> Ne rien réinventer. Si la maquette et un ADR se contredisent, la section 13 dit lequel suit quoi ; sinon, ne tranchez pas en codant : posez la question à Sidy.
+> Ne rien réinventer. Si la maquette et un ADR se contredisent, la section 13 et `docs/plans/arbitrage-contradictions-handoff.md` disent lequel suit quoi ; sinon, ne tranchez pas en codant : posez la question à Sidy.
 
 ## 1. Résumé
 
@@ -14,7 +14,7 @@
 **Périmètre v1.**
 - Langue : français (`lang="fr"`). L'anglais est préparé, pas livré : textes marqués `i18n` / `$localize`, textes du registre au format `{ fr, en? }`.
 - Pages : accueil, catalogue (avec pages de catégorie, de type et de secteur), fiche ressource, « À propos », pages légales, 404.
-- Thème du site clair, sombre ou système (livré depuis la v0.3).
+- Thème du site clair, sombre ou système (livré depuis la v0.3, **inclus en v1**). Hébergeur : Cloudflare. Catalogue : 10 ressources et 3 designs.
 
 **Décisions validées et leurs ADR.**
 
@@ -22,21 +22,21 @@
 | --- | --- | --- | --- |
 | Rendu et hébergement | Angular 22, prérendu statique (`outputMode: "static"`), Cloudflare Pages gratuit | `docs/adr/0001` | accepté |
 | Registre, variantes, tokens | Deux variantes de code (Tailwind v4 par défaut, CSS + tokens), 12 tokens `--ngs-*` communs, pont `@theme inline`, deux sources écrites à la main avec équivalence testée en CI | `docs/adr/0002` décisions 1 à 4 | accepté |
-| Distribution | Copier + un zip par variante, JSON de registre pour un futur CLI | `docs/adr/0002` décision 5 | **proposé, à valider** |
-| Aperçus isolés | Shadow DOM (accueil, grille), iframe sandbox (fiche) | `docs/adr/0003` | **proposé, à valider** |
-| Taxonomie et routes | Catégorie, type, secteur ; `/<categorie>/<type>/<slug>` ; pages prérendues pour catégorie, type, secteur | `docs/adr/0004` | accepté ; filtres client et champ `dependances` non validés explicitement |
+| Distribution | Copier + un zip par variante (`tokens.css` dans les deux), JSON de registre pour un futur CLI | `docs/adr/0002` décision 5 | **confirmée par Sidy** (27 nov. 2026) |
+| Aperçus isolés | Shadow DOM (accueil, grille, confirmé par mesure), iframe sandbox (fiche) | `docs/adr/0003` | **accepté par Sidy** (27 nov. 2026) ; changement du statut dans l'ADR par l'architecte |
+| Taxonomie et routes | Catégorie, type, secteur ; `/<categorie>/<type>/<slug>` ; pages prérendues pour catégorie, type, secteur | `docs/adr/0004` | accepté ; décisions 3 (filtres client) et 4 (`dependances` vide) **confirmées par Sidy** |
 | Splash et transitions | Splash plafonné, View Transitions du router, sorties en CSS | `docs/adr/0005` | accepté |
 | Identité | Nom NgShelf, préfixe `ngs`, logo avec pieds vides, splash en CSS, couleurs de marque réservées au logo | `docs/adr/0006` | accepté |
 
-**Hors périmètre v1** (`docs/plans/catalogue-arbitrage-design.md:9`) : back-end, comptes, favoris, statistiques, version anglaise, CLI npm, schematics, dépendances entre ressources ou vers des paquets (le champ est réservé et vide), Three.js, bouton global « Réduire les animations » (proposé seulement).
+**Hors périmètre v1** (`docs/plans/catalogue-arbitrage-design.md:9`) : back-end, comptes, favoris, statistiques, version anglaise, CLI npm, schematics, dépendances entre ressources ou vers des paquets (le champ est réservé et vide), Three.js, bouton global « Réduire les animations » et cookie `ngs_motion` (**reportés après la v1**, décision de Sidy ; la v1 suit `prefers-reduced-motion`).
 
 ## 2. Stack et setup
 
 | Élément | Choix | Remarque |
 | --- | --- | --- |
-| Framework | Angular `^22.3.0`, zoneless, standalone, signals, `OnPush` | Déjà en place dans `ngshelf-frontend/package.json` |
+| Framework | Angular `^22.3.0`, zoneless, standalone, signals, `OnPush` | Déjà en place dans `package.json` |
 | Rendu | Prérendu statique, `outputMode: "static"`, `getPrerenderParams` pour les routes dynamiques | ADR 0001. Aucun serveur Node |
-| Hébergement | **Cloudflare Pages ou Netlify, pas encore choisi** (Sidy, 27 nov. 2026) ; Cloudflare Pages gratuit si retenu : build `npm run build`, sortie `dist/ngshelf/browser`, `NODE_VERSION=26` | `ngshelf-frontend/README.md`, section Déploiement |
+| Hébergement | **Cloudflare**, confirmé par Sidy (27 nov. 2026) ; Pages ou Workers Static Assets, à trancher au lot 5 selon les limites ; build `npm run build`, sortie `dist/ngshelf/browser`, `NODE_VERSION=26` | `README.md`, section Déploiement |
 | Style | Tailwind CSS v4 via `@tailwindcss/postcss` | La maquette utilise `@tailwindcss/browser@4.3.5` ; **fixer la même version 4.3.5** (le projet a `^4.1.12`) |
 | Tokens | `design/design-system/tokens.css`, repris tel quel dans le `@theme` du projet | Voir section 4 |
 | Composants du site | `design/design-system/components.css` (classes `.ngs-*`) | Déjà copiés dans `src/styles/` ; ne modifier qu'à la source |
@@ -56,7 +56,7 @@
 
 Obligations Angular : toute création GSAP ou Lenis se fait dans `afterNextRender()` (rien ne doit casser le prérendu), avec `gsap.context()` ou `gsap.matchMedia()` et nettoyage dans `DestroyRef.onDestroy` (`revert()`, `kill()` des ScrollTrigger, `lenis.destroy()`). Licence GSAP « Standard No Charge » : gratuite, pas OSI ; elle ne s'applique qu'au site, jamais aux ressources livrées.
 
-**Déjà fait dans `ngshelf-frontend`** (constat du 27 novembre 2026, branche `feat/mega-menu`, 38 commits) : Angular 22.3, ESLint, Prettier, CI GitHub, tokens et components copiés, polices, sprite d'icônes, `site.config.ts`, textes `$localize`, routes lazy, layout (header, menu mobile, pied, menu de thème, recherche ⌘K, méga-menu), cookie et service de thème, script `registre:build`, pages de catégorie, de type et de secteur, `registry/` avec 10 `meta.json` et 3 designs. **Pas encore fait** : accueil, catalogue à facettes, fiche, « À propos » (squelettes de 4 à 26 lignes), splash, View Transitions, GSAP et Lenis, code coloré, copie et zip, aperçus, pages légales, `_redirects`, sitemap.
+**Déjà fait dans le front** (constat du 27 novembre 2026, branche `feat/mega-menu`, 38 commits) : Angular 22.3, ESLint, Prettier, CI GitHub, tokens et components copiés, polices, sprite d'icônes, `site.config.ts`, textes `$localize`, routes lazy, layout (header, menu mobile, pied, menu de thème, recherche ⌘K, méga-menu), cookie et service de thème, script `registre:build`, pages de catégorie, de type et de secteur, `registry/` avec 10 `meta.json` et 3 designs. **Pas encore fait** : accueil, catalogue à facettes, fiche, « À propos » (squelettes de 4 à 26 lignes), splash, View Transitions, GSAP et Lenis, code coloré, copie et zip, aperçus, pages légales, `_redirects`, sitemap.
 
 ## 3. Ordre de travail
 
@@ -125,7 +125,7 @@ Les valeurs sombres de chaque design sont dans `contrat-tokens.css:45-105` (clas
 
 ### 4.3 Pont Tailwind `ngshelf-theme.css`
 
-Fichier unique, identique pour toutes les ressources, livré avec chaque variante Tailwind. Version du projet : `ngshelf-frontend/src/styles/contrat/ngshelf-theme.css`. Il contient : (1) les valeurs par défaut du contrat dans `:root` ; (2) un `@theme inline` qui relie les utilitaires aux variables : `bg-ngs-action`, `text-ngs-text`, `border-ngs-border`, `rounded-ngs`, `rounded-ngs-lg`, `font-ngs`, et `p-ngs-N`, `gap-ngs-N`… pour N de 1 à 16 (valeur `calc(var(--ngs-density) * N × 4px)`). `inline` est indispensable : les tokens sont posés plus bas dans le DOM, sans lui le changement de design ne serait pas suivi.
+Fichier unique, identique pour toutes les ressources, livré avec chaque variante Tailwind. Version du projet : `src/styles/contrat/ngshelf-theme.css`. Il contient : (1) les valeurs par défaut du contrat dans `:root` ; (2) un `@theme inline` qui relie les utilitaires aux variables : `bg-ngs-action`, `text-ngs-text`, `border-ngs-border`, `rounded-ngs`, `rounded-ngs-lg`, `font-ngs`, et `p-ngs-N`, `gap-ngs-N`… pour N de 1 à 16 (valeur `calc(var(--ngs-density) * N × 4px)`). `inline` est indispensable : les tokens sont posés plus bas dans le DOM, sans lui le changement de design ne serait pas suivi.
 
 Écart connu avec l'ADR 0002 : l'ADR prévoyait des `@utility p-ngs-* { … --value(integer) … }`, le fichier actuel utilise des variables `--spacing-ngs-N` (liste fermée de 16). La couverture des `@utility` était à confirmer par le spike (lot 0). La table token ↔ utilitaire doit devenir l'annexe du contrat (le plan l'attribuait au designer, elle n'est pas écrite : point ouvert 13).
 
@@ -206,11 +206,12 @@ Mobile : rien d'épinglé, séquences jouées une fois à l'entrée.
 
 - **404** : `.ngs-state` n'est pas utilisé ; l'étagère est propre à la page (`<style>` de `404.html`, valeurs en tokens). Animation CSS seule (aucun GSAP), uniquement sous `prefers-reduced-motion: no-preference`. L'adresse demandée vient de `location` (texte seulement). Le formulaire envoie `?q=` au catalogue. Les pièces (`ngs-apercu` : Interrupteur, Boutons) prennent le design `planche` (`NGS.habiller`, `js/erreur-404.js`).
 - **Pages légales** : un seul gabarit **`.ngs-lecture`** (déjà dans `components.css`, démontré dans la section « Lecture » du design system) ; `js/legal.js` : sommaire déplié sur ordinateur, replié sur mobile, section lue marquée. **Pas de Lenis, pas de GSAP d'entrée.** Les contenus sont dans `textes.fr.js` (clés `legal.*`) ; en Angular, les mettre en données TypeScript (sections, blocs) plutôt qu'en innerHTML, avec les liens internes en `routerLink`.
-- **Valeurs lues dans la config, jamais en dur** : `{auteur}`, `{email}` (`site.config.ts`), et l'hébergeur (`hebergeur` = `null` | `'cloudflare'` | `'netlify'` + table `hebergeurs`). **L'hébergeur n'est pas choisi** : tant que la valeur est `null`, la page affiche des champs « à compléter ». À reporter dans `site.config.ts`.
-- **Champs à compléter par Sidy** (visibles en pointillés, `.ngs-acompleter`) : statut de l'éditeur, adresse postale, téléphone, NINEA / RCCM, conditions d'utilisation du nom et du logo, formalité auprès de la CDP (récépissé ou « sans objet »), durée de conservation des e-mails, hébergeur (Cloudflare ou Netlify). **Ne pas mettre en ligne tant qu'il en reste.**
+- **Valeurs lues dans la config, jamais en dur** : `{auteur}`, `{email}`, `{statut}`, `{adresse}`, `{telephone}` (`NGS.site.auteur` dans la maquette, `site.config.ts` en Angular) et l'hébergeur (`hebergeur` = `'cloudflare'` | `'netlify'` + table `hebergeurs`). **Hébergeur : Cloudflare, confirmé.** **Reporter à l'identique `hebergeur: 'cloudflare'` dans `site.config.ts`**, ainsi que `statut`, `adresse` (« Dakar, Sénégal » : ville et pays seulement) et `telephone` (`+221 76 182 36 98`, donné par Sidy pour la page « Mentions légales » ; ne jamais l'écrire dans un gabarit ni un texte, seulement dans la config).
+- **Champs remplis par Sidy** (27 nov. 2026) : statut « Particulier, développeur (éditeur non professionnel) », adresse « Dakar, Sénégal », téléphone, NINEA / RCCM « Sans objet », formalité auprès de la CDP « sans objet », directeur de la publication (Sidy), hébergeur Cloudflare. **Restent à valider (marqués en pointillés, `.ngs-acompleter`, rédaction proposée par le designer)** : conditions d'utilisation du nom et du logo (« non couverts par la licence MIT ; usage permis pour citer le projet ») et durée de conservation des e-mails (« le temps de traiter l'échange, au plus 12 mois »). **Ne pas mettre en ligne tant que ces deux marquages sont visibles.**
+- **Lien « Licence MIT » du pied de page** : `mentions-legales.html#propriete` sur toutes les pages (en Angular : route `/mentions-legales` avec le fragment `propriete`). Plus de lien en `#`.
 - **Section « Ressources d'autres serveurs » de la confidentialité** : vraie si GSAP, Lenis, polices et icônes sont servis par le site (npm, CSP `default-src 'self'` du `_headers`). **La maquette, elle, charge jsdelivr** (GSAP 3.15.1, ScrollTrigger, Flip, SplitText, Lenis 1.3.28 et `lenis.css`, Tailwind navigateur 4.3.5) : écart voulu, propre à la maquette. Si un CDN est gardé en production, la section et la page « Cookies » doivent le dire.
-- **Cookies** : seuls `ngs_theme` et `ngs_variante` sont posés (vérifié dans le code de la maquette et dans `cookie.service.ts`). `ngs_motion` n'existe pas (point ouvert n° 2) : s'il était ajouté, le tableau de la page « Cookies » et la politique de confidentialité changeraient.
-- **Reste à créer, sans maquette** : « Démarrer », « Contribuer », « Licence » (le lien « Licence MIT » du pied reste `#`), états `hors-ligne` et `serveur injoignable`.
+- **Cookies** : seuls `ngs_theme` et `ngs_variante` sont posés (vérifié dans le code de la maquette et dans `cookie.service.ts`). `ngs_motion` n'existe pas (reporté après la v1) : s'il était ajouté, le tableau de la page « Cookies » et la politique de confidentialité changeraient.
+- **Reste à créer, sans maquette** : « Démarrer », « Contribuer », états `hors-ligne` et `serveur injoignable`.
 - Textes à **faire relire par un juriste** (droit sénégalais, RGPD) avant la mise en ligne.
 
 ## 6. Composants du site
@@ -251,7 +252,7 @@ Pour la marque (`DESIGN.md:359`) : le texte à côté du logo est « Shelf » se
 
 ### 7.1 Modèle de données
 
-Source de vérité : ADR 0004, décision 2 (`MetaRessource`, `MetaDesign`), déjà typé dans `ngshelf-frontend/src/app/shared/models/ressource.model.ts`. Chaque ressource est un dossier de `registry/` ; le script `registre:build` valide et génère `src/generated/registre/`.
+Source de vérité : ADR 0004, décision 2 (`MetaRessource`, `MetaDesign`), déjà typé dans `src/app/shared/models/ressource.model.ts`. Chaque ressource est un dossier de `registry/` ; le script `registre:build` valide et génère `src/generated/registre/`.
 
 **Écarts entre la maquette, l'ADR et le projet à régler avant le lot 6** :
 
@@ -276,7 +277,7 @@ Animations propres des ressources (`DESIGN.md:273-309`) : sobres, `transform` et
 - Contrôles CI bloquants : équivalence de structure (gabarits identiques une fois les attributs `class` retirés) et équivalence visuelle Playwright (2 designs, clair et sombre, 390 et 1280 px).
 - Le code Angular exact attendu pour chaque ressource est dans `registre.js` (propriété `angular`) : standalone, `OnPush`, `input()` / `model()`, `inject()`, `@if` / `@for` avec `track`, `NgOptimizedImage`, aucune icône tierce (SVG en ligne).
 
-### 7.3 Aperçus isolés (ADR 0003, proposé)
+### 7.3 Aperçus isolés (ADR 0003, accepté)
 
 | Aperçu | Isolation | Variante rendue |
 | --- | --- | --- |
@@ -285,16 +286,20 @@ Animations propres des ressources (`DESIGN.md:273-309`) : sobres, `transform` et
 
 La maquette fait déjà : `<ngs-apercu ressource="…">` en Shadow DOM (`apercu.js`) et iframe en `srcdoc` (`ressource.js:47-120`). **Ne pas transposer** le `srcdoc` : en production l'iframe pointe vers `/apercu/<slug>`, application prérendue avec son propre build Tailwind. Les tokens `--ngs-*` posés sur l'hôte traversent la frontière Shadow DOM par héritage.
 
-Messages : la maquette utilise `ngs-tokens` (site vers aperçu), `ngs-sortie`, `ngs-pret`, `ngs-sortie-fin`, avec la cible `'*'`. Le plan fixe `{ type: 'reglages', design, mode, valeurs }`, `{ type: 'pret' }`, `{ type: 'hauteur', px }`. **Forme finale à fixer au spike.** Dans tous les cas : côté site, comparer `event.source` à la fenêtre de l'iframe (l'origine sandbox vaut `null`) ; côté aperçu, vérifier l'origine du site ; ignorer tout autre message ; ne jamais utiliser `'*'` en production.
+**Messages (tranchés, ADR 0010)** : union discriminée typée `{ v: 1, type, … }`, partagée par les deux applications. Site vers aperçu : `ngs-reglages` (`vars`, `mode`, `animations` ; la maquette a renommé l'ancien `ngs-tokens`). Aperçu vers site : `ngs-pret`, `ngs-sortie`, `ngs-sortie-fin`, `ngs-hauteur` (`ngs-hauteur` n'existe pas encore dans la maquette). Un `type` inconnu est ignoré.
+- **Production** : `<iframe src="/apercu/<slug>" sandbox="allow-scripts" referrerpolicy="no-referrer" loading="lazy">` ; jamais `srcdoc`. Une iframe sandboxée sans `allow-same-origin` a une origine opaque (`"null"`) : `targetOrigin '*'` est le seul choix possible côté parent, acceptable parce que rien de secret n'est envoyé. Le risque est de **recevoir** des messages falsifiés.
+- **Côté site** : accepter seulement si `e.source === iframe.contentWindow`, `e.origin === 'null'` et la forme est valide. **Côté aperçu** : seulement si `e.source === window.parent` et l'origine est dans la liste fournie au build.
+- **Liste blanche de clés** : seules les 12 clés `--ngs-*` du contrat sont posées (`style.setProperty`) ; valeur : chaîne de 120 caractères au plus, sans `url(`, `;`, `{`, `}`, `@`. `mode` ∈ {`clair`, `sombre`} ; `animations` booléen.
+- **Maquette** : `srcdoc` et `'*'` restent (montage de maquette) ; le sélecteur sombre de l'aperçu est `html.dark` (`ressource.js`), comme dans le code livré.
 
 ### 7.4 Copier, télécharger, zip
 
 Maquette : `livraison.js:33-86`, `contrat.js`, `zip.js`. En production :
 - **Zips standards** produits au build (un par variante), servis statiquement ; seul le zip « avec mes réglages » est assemblé dans le navigateur (bibliothèque zip en `import()` à la demande ; `zip.js` de la maquette est un zip « stored » maison pour la maquette seulement).
-- Contenu de `<slug>-tailwind.zip` : `.ts`, `.html` (+ `.component.css` si `@keyframes`), `ngshelf-theme.css`, `tokens.css`, `README.md`, `LICENSE` (MIT). `<slug>-css.zip` : `.ts` (avec `styleUrl`), `.html`, `.css`, `tokens.css`, `README.md`, `LICENSE`. Le README remplace bien `{slug}` dans les étapes d'installation (corrigé en v0.8). Texte du README : clés `zip.*` de `textes.fr.js`.
-- **Écart à trancher** : l'ADR 0002 met `ngshelf-theme.css` seul dans le zip Tailwind et `tokens.css` « facultatif » dans le zip CSS ; la maquette met `tokens.css` dans les deux et ne contient pas les valeurs par défaut dans le pont. Suivre l'ADR si Sidy ne dit pas le contraire.
+- Contenu de `<slug>-tailwind.zip` : `.ts`, `.html` (+ `.component.css` si `@keyframes`), `ngshelf-theme.css` (**pont + valeurs par défaut Planche clair**), `tokens.css`, `README.md`, `LICENSE` (MIT). `<slug>-css.zip` : `.ts` (avec `styleUrl`), `.html`, `.css`, `tokens.css`, `README.md`, `LICENSE`. Le README remplace bien `{slug}` dans les étapes d'installation (corrigé en v0.8). Texte du README : clés `zip.*` de `textes.fr.js`.
+- **Tranché** (ADR 0002 décision 5 confirmée, ADR 0008) : **`tokens.css` est dans les deux zips**, celui du design choisi (ou « avec mes réglages »), avec `:root` et `.dark`, importé **après** le pont ; le même fichier sert aux deux variantes. `ngshelf-theme.css` contient le pont et les valeurs par défaut Planche clair : sans `tokens.css`, tout marche en Planche clair, mais sans mode sombre ni autre design. **Le pont de la maquette (`contrat.js`) n'a pas encore les valeurs par défaut** : le générateur du lot 4 les ajoute.
 - « Copier le code » copie les fichiers de la variante choisie ; « Copier avec mes réglages » ajoute le bloc de valeurs du design réglé. Les lignes de `tokens.css` modifiées s'allument en vert puis s'éteignent (1,2 s).
-- **Mode sombre dans le code livré : trois sélecteurs différents dans les sources.** `.ngs-sombre` (`contrat-tokens.css`), `.dark` (`tokens.css` généré par `contrat.js` (fonction `fichier`, lignes 78-95), et son en-tête dit « ajoutez la classe .dark sur `<html>` »), `html.sombre` (iframe de la maquette). **À unifier** avant la génération réelle ; choix recommandé : `.dark`, convention de Tailwind (point ouvert 13).
+- **Mode sombre dans le code livré : `.dark`, tranché.** Quatre rôles distincts : (a) site : `data-theme="sombre"` (interne) ; (b) source du contrat : `.ngs-theme-X.ngs-sombre` dans `contrat-tokens.css` (interne, choix de design) ; (c) **code livré** : `tokens.css` avec `:root` et **`.dark`** (convention Tailwind et shadcn : « ajoutez `.dark` sur `<html>` ou sur un parent ») ; (d) **iframe d'aperçu : `html.dark`**, avec exactement le `tokens.css` livré, pour que l'aperçu prouve ce qui est copié. Les ressources n'utilisent jamais `dark:`, elles lisent des variables ; le README du zip explique en une ligne comment faire correspondre `.dark` à un autre sélecteur. Le générateur de `tokens.css` du front reste à écrire (le front n'a pas `contrat.js`).
 - Hors ligne ou 404 sur un zip : état `erreur` avec « Réessayer ».
 
 ### 7.5 Bug corrigé en v0.5 : largeur nulle d'un hôte `@container`
@@ -369,17 +374,18 @@ Conventions : « GSAP » = timeline ou tween dans `afterNextRender`, « batch »
 - **Sauter** la transition (`transition.skipTransition()`) si `prefers-reduced-motion`, si seuls les paramètres d'URL ou le fragment changent, ou si la route est la même.
 - **Sens** : attribut `data-transition` sur `<html>` posé dans `onViewTransitionCreated`, retiré à `transition.finished`. Pas de « types » de View Transitions (Firefox 144 ne les a pas).
 - **Élément partagé** case → fiche : un seul `view-transition-name: apercu-ressource` à la fois, posé sur `.ngs-case__stage` juste avant la navigation, retiré après ; au retour, posé sur la case dont le slug correspond (maquette : `app.js:249-331`, dont `pagereveal` ligne 314). Durée du morph : 480 ms.
-- **Important : la maquette utilise des transitions *entre documents*** (`@view-transition { navigation: auto; }`, nom `root`, en-tête nommé `entete`, `index.html:68-80`). **En Angular, ce sont des transitions du router dans le même document** : remplacer `root` par `contenu` et supprimer la règle `navigation: auto`. L'ADR 0005 prévoit « aucun code de repli » ; le repli GSAP de la maquette (sortie de `<main>` et voile, `sortirVers`, `app.js:284-298`) **n'est donc pas à porter**, sauf demande contraire de Sidy (point ouvert).
+- **Tranché (ADR 0011, décision de Sidy)** : **les View Transitions du router seulement**, sans transitions entre documents et **sans repli GSAP**. La maquette, multipage, utilise des transitions *entre documents* (`@view-transition { navigation: auto; }`, nom `root`, en-tête nommé `entete`) et un repli GSAP (`sortirVers`, voile, `app.js`) : **rien de cela n'est porté**. Raisons : une SPA hydratée ne charge pas de document, la règle `root` ferait bouger l'en-tête, le splash se rejouerait, et le repli GSAP contredit la règle « GSAP n'anime jamais une route ». Sans prise en charge du navigateur, la navigation se fait sans animation. Les règles `::view-transition-*` vont dans **`src/styles.css`**.
+- Pièges : la fiche doit avoir ses données (`ResolveFn`) avant la capture, sinon le morph vise un cadre vide ; un seul `view-transition-name: apercu-ressource` à la fois ; `data-transition` posé par `onViewTransitionCreated` et retiré à `finished`.
 - Lenis est arrêté avant la transition ; GSAP n'anime jamais un changement de route.
 
 ### 8.4 Splash (ADR 0006, décision 7)
 
 - Contenu : SVG en ligne (logo recadré `viewBox="320 236 896 491"`) et `@keyframes` CSS, **sans GSAP**. Markup : `index.html:156-162` ; CSS critique : `index.html:30-67`. Fond blanc en clair, bleu nuit `#191f42` en sombre (tuiles `#ededf0`, planche orange).
-- Temps : minimum affiché **600 ms**, sortie (`clip-path`, 320 ms) lancée **au plus tard à 880 ms**, pour que le splash ait disparu à **1,2 s** ; un minuteur CSS (`animation: … 0s 1.2s forwards; visibility: hidden`) le masque seul si le JS échoue. `<noscript>` le masque. Mesure du plancher depuis `performance.now()` pris dans le `<head>`.
-- Dans le projet : le CSS critique et le SVG vont dans `src/index.html` ; le retrait s'appuie sur `ApplicationRef.whenStable()` ; **le script d'amorçage doit être un fichier externe** (CSP `script-src 'self'`, `public/_headers`), comme `theme-init.js`. Un script en ligne casserait la CSP.
+- Temps : minimum affiché **600 ms**, sortie (`clip-path`, 320 ms) lancée **au plus tard à 880 ms**, pour que le splash ait disparu à **1,2 s** ; un minuteur CSS (`animation: … 0s 1.2s forwards; visibility: hidden`) le masque seul si le JS échoue. `<noscript>` le masque. Le plancher se mesure avec `performance.now()`, qui part déjà de la navigation : aucun script dans le `<head>`.
+- **Tranché (ADR 0009)** : **le splash n'a aucun script d'amorçage.** Le markup SVG et le CSS (chorégraphie et filet à 1,2 s) vont dans `src/index.html` (CSS en ligne autorisé : `style-src 'unsafe-inline'`) ; la sortie anticipée est déclenchée par Angular après `ApplicationRef.whenStable()` (lecture de `performance.getEntriesByName('first-paint')`). Il disparaît de lui-même si le JS échoue. **Mouvement réduit : splash absent** (et non « retrait sans fondu »). Le `setTimeout(fermerSplash, 880)` et la détection par `document.referrer` de la maquette ne sont pas portés. Garde-fou CI : un test qui échoue si un fichier de `dist/` contient un `<script>` sans `src` exécutable ou un attribut `on…=` (le bloc `ng-state` d'Angular est une donnée) ; garder `withNoIncrementalHydration` et `inlineCritical: false`.
 - **Écouter seulement `animationend` de `ngs-splash-sortie`** (`e.target === splash`) : les fins d'animation des tuiles remontent jusqu'à l'élément et le retiraient trop tôt (bug corrigé en v0.8, `app.js:343-350`).
 - L'accueil enchaîne : son intro démarre pendant la sortie du splash (promesse résolue 120 ms après le début de la sortie).
-- Premier chargement d'un document seulement ; la maquette détecte une navigation interne avec `document.referrer` (même origine), ce que le router remplace naturellement. Pas de `sessionStorage` (interdit).
+- Premier chargement d'un document seulement ; la navigation interne ne recharge pas le document, donc le splash ne se rejoue pas. Pas de `sessionStorage` (interdit).
 - Si les mesures du lot 0 dépassent LCP mobile 2,5 s ou Lighthouse performance 90 sur l'accueil prérendu, **basculer sur l'option 2 de l'ADR 0005** (splash non masquant) : demander le design au designer.
 
 ### 8.5 Règles apprises (v0.3, à respecter partout)
@@ -394,10 +400,11 @@ Conventions : « GSAP » = timeline ou tween dans `afterNextRender`, « batch »
 ## 9. Thème clair, sombre, système
 
 - Cookie fonctionnel **`ngs_theme`** : `clair`, `sombre` ou `systeme` (défaut), `SameSite=Lax`, `Max-Age=31536000`, `Path=/`. Jamais `localStorage`.
-- **Un script bloquant dans le `<head>`, avant le premier rendu, sans flash** : il lit le cookie et `prefers-color-scheme`, pose `data-theme-choix` (le choix) et `data-theme="sombre"` (si sombre) sur `<html>`, et met à jour `<meta name="theme-color">` (`#111113` en sombre, `#ffffff` en clair). Maquette : `index.html:11-28`. Projet : `public/theme-init.js`, **fichier externe** à cause de la CSP (la maquette le met en ligne ; l'écart est voulu). Le fichier garde un nom stable donc un cache court (`_headers`).
+- **Un script bloquant dans le `<head>`, avant le premier rendu, sans flash** : il lit le cookie et `prefers-color-scheme`, pose `data-theme-choix` (le choix) et `data-theme="sombre"` (si sombre) sur `<html>`, et met à jour `<meta name="theme-color">` (`#111113` en sombre, `#ffffff` en clair). Maquette : `index.html:11-28`. Projet : `public/theme-init.js`, **seul script d'amorçage, fichier externe** à cause de la CSP (la maquette le met en ligne ; l'écart est voulu ; **à compléter** : le fichier du front ne met pas encore à jour `theme-color`). Le fichier garde un nom stable donc un cache court (`_headers`). **Aucun autre script en ligne** (le splash n'en a pas, section 8.4).
 - Une règle critique en ligne pose le fond `#111113` avant le chargement du CSS. En mode système, un changement du réglage de l'appareil est suivi en direct. `ThemeService` reprend ensuite le même choix (mêmes valeurs de cookie et d'attributs ; ne pas les diverger).
 - Changement de thème : immédiat (un fondu de toute la page ralentirait le geste). Événement `ngs-theme` pour les composants qui recalculent (accueil : jetons déjà allumés).
 - **Aperçu de la fiche : réglage propre.** L'aperçu démarre dans le thème du site, puis le segment « Clair / Sombre » de la fiche le règle indépendamment. **Ce réglage n'est pas mémorisé** dans la maquette (seul `ngs_variante` l'est ; le plan évoque « le mode de l'aperçu s'il est gardé » : point ouvert, par défaut ne pas le garder).
+- **Sélecteur dans le code livré : `.dark`** (`tokens.css` des zips et de l'aperçu, section 7.4) ; `data-theme="sombre"` reste le mécanisme interne du site. **Cookie** : `ngs_theme` est à citer dans la politique « Cookies » (déjà fait dans la maquette).
 - Blocs de code : inchangés dans les deux thèmes. Hero et planche : les cases sans mode imposé prennent les valeurs sombres du design choisi quand le site est sombre.
 
 ## 10. Accessibilité et performance
@@ -419,7 +426,7 @@ Conventions : « GSAP » = timeline ou tween dans `afterNextRender`, « batch »
 | Lighthouse | performance ≥ 90 (accueil, ADR 0005), SEO 100 (plan, lot 3) |
 | CLS | < 0,1 (repli de police aux métriques calculées, dimensions d'images explicites) |
 | Poids transféré | < 1,5 Mo ; images < 1,2 Mo |
-| JavaScript initial | < 450 Ko ; GSAP, Lenis et leurs plugins ≈ 65 Ko gzip, chargés **seulement** sur les pages qui s'en servent (chunk lazy) |
+| JavaScript initial | **Budget Angular : avertissement à 500 kB, erreur à 1 MB (`angular.json`)** ; cible du design : < 450 Ko (aligner les deux au lot 3, en gardant `angular.json` comme référence) ; GSAP, Lenis et leurs plugins ≈ 65 Ko gzip, chargés **seulement** sur les pages qui s'en servent (chunk lazy) |
 | CSS | < 120 Ko |
 | Polices | 2 familles, 2 fichiers (46 Ko), préchargés |
 | Chunks | un chunk lazy par feature ; index du catalogue découpé par catégorie, jamais dans le bundle initial |
@@ -441,66 +448,49 @@ Image de l'accueil (LCP) : la photo de la vitrine est en `fetchpriority="high"`,
 | --- | --- | --- |
 | `@tailwindcss/browser@4.3.5` (CDN) et `load.js` (`design-system/load.js` lit `tokens.css` et `components.css` par `fetch`, les injecte en `<style type="text/tailwindcss">`) | Outils de maquette ; exigent un serveur HTTP | Tailwind v4 compilé (`@tailwindcss/postcss`) ; `@import` de `tokens.css` et `components.css` dans `src/styles.css` |
 | Chargement de `contrat-tokens.css` par `fetch` et `NGS.contrat.charger` | Idem | Données générées au build par `registre:build` (valeurs des designs en JSON typé) |
-| Scripts GSAP, ScrollTrigger, Flip, SplitText, Lenis en CDN jsDelivr | Pas de CDN en production (CSP `script-src 'self'`) | Paquets npm aux versions exactes (3.15.1, 1.3.28), importés dans les chunks lazy des pages concernées |
+| Scripts GSAP, ScrollTrigger, Flip, SplitText, Lenis en CDN jsDelivr | Pas de CDN en production (CSP `script-src 'self'`) | Paquets npm aux versions exactes (GSAP 3.15.1 ; Lenis 1.3.28 dans la maquette, 1.3.29 sur npm : figer après lecture de la note de version), `await import()` dans `afterNextRender`, jamais `gsap/all`, un seul `chargerGsap()` mémorisé |
 | Données en JS global `window.NGS` (`registre.js`, `config.js`, `textes.fr.js`, `NGS.t`, `NGS.pret`, `NGS.motion`, `NGS.theme`) | Global mutable, sans type, incompatible avec le prérendu | `registry/*/meta.json` → `src/generated/registre/`, `site.config.ts`, `textes.fr.ts` (`$localize`), services injectables (`RegistreService`, `ThemeService`), un service d'état du mouvement réduit |
 | Attributs `data-t`, `data-t-aria`, `NGS.appliquerTextes` | Substitution de texte au runtime | Templates avec `i18n` / `$localize` |
 | Pages `.html` liées par `href="catalogue.html?c=…"`, `ressource.html?r=…` | Maquette multipage | `routerLink` vers les routes de l'ADR 0004 ; `RouterLinkActive` avec `ariaCurrentWhenActive` |
-| Transitions entre documents (`@view-transition { navigation: auto }`, `root`, `entete`) et repli GSAP (`sortirVers`, `.ngs-voile`, `pagereveal`, `pageshow`) | Propres au multipage | `withViewTransitions` (section 8.3) |
+| Transitions entre documents (`@view-transition { navigation: auto }`, `root`, `entete`) et repli GSAP (`sortirVers`, `.ngs-voile`, `pagereveal`, `pageshow`) | Propres au multipage ; **tranché : non porté** | `withViewTransitions` du router seul (section 8.3), règles dans `src/styles.css` |
 | 404 de `/maquette/tailwindcss` | Dans l'iframe d'aperçu, un `<style>` contenant `@import "tailwindcss"` déclenchait une requête (corrigé en v0.8 par un `<script type="text/plain">`) | Sans objet : l'app `apercus` a son propre build Tailwind ; ne jamais écrire `@import "tailwindcss"` dans un document servi tel quel |
-| Aperçu de la fiche en `srcdoc` avec `postMessage('*')` | Montage de maquette | Iframe vers `/apercu/<slug>` (`sandbox="allow-scripts"`), messages vérifiés (section 7.3) |
+| Aperçu de la fiche en `srcdoc` avec `postMessage('*')`, sélecteur `html.dark` | Montage de maquette | Iframe vers `/apercu/<slug>` (`sandbox="allow-scripts"`), messages `ngs-reglages` / `ngs-pret` / `ngs-sortie` / `ngs-sortie-fin` / `ngs-hauteur` en `{ v: 1, … }`, source et origine contrôlées, liste blanche de clés (section 7.3) |
 | Table `tw` et `NGS.mapperClasses` qui fabriquent la variante Tailwind depuis du BEM | Artifice de maquette | Deux gabarits écrits à la main + équivalence en CI (ADR 0002, option 3) |
 | `zip.js` « stored » maison, coloration `code.js`, MIT généré par `livraison.js` | Maquette | Zips au build ; **Shiki au build** ; fichier LICENSE du dépôt |
-| Script de thème et de splash **en ligne** dans le `<head>` | La CSP de production interdit les scripts en ligne | Fichiers externes (`theme-init.js`, script de splash) ; seul le CSS critique (`<style>`) reste en ligne (`style-src 'unsafe-inline'` autorisé) |
-| Timer `setTimeout(fermerSplash, 880)` et `document.referrer` | Maquette multipage | Retrait après `whenStable()` ; premier chargement détecté par l'absence de navigation du router |
-| Lien GitHub et « Licence MIT » en `#` | « Mentions légales », « Confidentialité » et « Cookies » pointent vers leurs pages (v0.9) ; « Licence » reste à créer | Vraie route ; lien GitHub depuis `site.config.ts` |
+| Script de thème **en ligne** dans le `<head>` et script d'amorçage du splash | La CSP de production interdit les scripts en ligne | `theme-init.js` externe ; **aucun script pour le splash** (Angular + filet CSS) ; seul le CSS critique (`<style>`) reste en ligne (`style-src 'unsafe-inline'` autorisé) |
+| Timer `setTimeout(fermerSplash, 880)` et `document.referrer` | Maquette multipage | Retrait après `whenStable()` ; filet CSS à 1,2 s |
+| Lien GitHub en `#` | « Licence MIT » pointe vers `mentions-legales.html#propriete` (v0.10) ; GitHub attend le dépôt public | Lien GitHub depuis `site.config.ts` |
 | `?etat=chargement`, `?etat=erreur` | Simulation de maquette | États réels du service de registre (signal d'état + `@defer`) |
 | Style `html.ngs-js:not(.ngs-styled) body > … { opacity: 0 }` (filet contre le flash de Tailwind navigateur) | Sans objet avec un CSS compilé | Supprimer |
 
 ## 13. Points ouverts et contradictions des sources
 
-**À ne pas résoudre en codant : poser la question à Sidy.**
+**Les 10 décisions de Sidy du 27 novembre 2026 ont tranché la plupart des points de cette section.** Le détail (sources, options, raisons) est dans [`docs/plans/arbitrage-contradictions-handoff.md`](../docs/plans/arbitrage-contradictions-handoff.md) ; les ADR 0007 à 0013 qui les portent sont à passer en `accepté` par l'architecte. Ne plus rouvrir ces points en codant.
+
+**Tranchés** (voir le document d'arbitrage) : hébergeur Cloudflare ; 10 ressources et 3 designs ; mode sombre en v1 ; transitions du router seulement, sans repli GSAP (section 8.3) ; `.dark` pour le code livré (7.4) ; `tokens.css` dans les deux zips (7.4) ; « Réduire les animations » après la v1 ; ADR 0003 accepté ; ADR 0002 décision 5 et ADR 0004 décisions 3 et 4 confirmées ; `meta.json` plutôt que `meta.ts` ; sprite SVG plutôt que `@ng-icons` ; pont `--spacing-ngs-N` gardé ; `?c=` et chemins prérendus ensemble ; aucun script en ligne ; messages de l'aperçu (7.3) ; GSAP et Lenis en npm (pas de CDN en production) ; `docs/`, `design/` et `DESIGN.md` sont versionnés dans le dépôt du front.
+
+**Restent ouverts**
 
 | # | Point | Source |
 | --- | --- | --- |
-| 1 | **Validation finale de la maquette** : aucune validation écrite de Sidy trouvée ; `DESIGN.md` v0.8 est « à valider par Sidy ». Le tableau de motion n'a pas été validé séparément (`DESIGN.md:233`) | `DESIGN.md:3`, `:233` |
-| 2 | **Bouton global « Réduire les animations »** : proposé (interrupteur dans le menu du thème, cookie `ngs_motion`, classe `ngs-motion-reduite` sur `<html>`), non validé, non implémenté. Le site suit seulement `prefers-reduced-motion`. Ne pas coder | `DESIGN.md:309` |
-| 3 | **Champ `motion` du registre** absent de l'ADR 0004 et de `MetaRessource` (à ajouter par l'architecte, avec `rejouer`) | `DESIGN.md:287` |
-| 4 | **Dépôt GitHub** : le plan dit « pas encore initialisé » et `site.config.ts` a `depot: null`, alors que `ngshelf-frontend` a un remote `github.com/sidymohamed12/ngshelf` et des PR fusionnées. **Les dossiers `design/`, `docs/` et `DESIGN.md` sont à la racine, qui n'est pas un dépôt git** : ils ne sont pas versionnés et les liens du README du front vers `docs/adr/` ne mènent nulle part dans le dépôt. Où vivent-ils ? | `docs/plans/…:123`, `ngshelf-frontend/src/app/core/config/site.config.ts` |
-| 5 | **Image sociale `og:image`** : aucune n'existe ; à produire à partir de `ngshelf-clair.svg`. Pas de `og:image` dans la maquette non plus | ADR 0006 « Conséquences » |
-| 6 | **Format de distribution** (ADR 0002, décision 5) non tranché ; JSON de registre produit dès la v1 pour ouvrir un futur CLI | ADR 0002 |
-| 7 | **ADR 0003** (aperçus) toujours `proposé` ; à confirmer par le spike | ADR 0003 |
-| 8 | **ADR 0004** : filtres client en mode mixte et champ `dependances` non validés explicitement | ADR 0004, Statut |
-| 9 | **Mentions légales** : champs à compléter par Sidy (statut, adresse, téléphone, NINEA / RCCM, nom et logo, CDP, durée des e-mails) et **hébergeur à choisir** (Cloudflare Pages ou Netlify) ; maquette faite en v0.9, texte à faire relire | section 5.5 |
-| 10 | **Pages sans maquette** : « Démarrer », « Contribuer », « Licence » ; états `hors-ligne` et `serveur injoignable` (la 404 et les pages légales ont leur maquette depuis la v0.9) | section 5.5 |
-| 11 | **Repli des transitions** : l'ADR dit « aucun repli », la maquette en a un (voile GSAP case → fiche, 500 ms) ; ce voile n'est pas dans l'ADR | section 8.3 |
-| 12 | **Nom du `<title>`, `<meta description>`, `aria-label`** : « NgShelf » écrit en dur dans chaque page de la maquette, en plus de `config.js` (`DESIGN.md:3`) ; en Angular, tout passer par `site.config.ts` | `DESIGN.md:3` |
-| 13 | **À écrire par l'architecte ou le designer** : table token ↔ utilitaire (annexe du contrat) ; unification du sélecteur du mode sombre des ressources (`.ngs-sombre`, `.dark`, `html.sombre`) ; messages `postMessage` définitifs ; forme exacte de `motion` dans `MetaRessource` | section 4.3, 7.3, 7.4 |
-| 14 | **Type `curseur`** absent du vocabulaire validé : la ressource « Curseur » est rangée sous `champ` ; aucun ajout proposé | `DESIGN.md:387-389` |
-| 15 | **Lot 0 (spike)** sans trace dans le dépôt : à confirmer ; sans ses mesures (LCP avec splash, Shiki, CLI shadcn, équivalence), les choix de splash et de grammaires restent des suppositions | plan `:38` |
-| 16 | **Splash** : le plafond de 1,2 s et le minimum de 600 ms n'ont pas été mesurés en production sur LCP mobile | ADR 0005, 0006 |
-| 17 | **Rattachement de « À propos »** à un lot du plan | section 3 |
+| 1 | **Validation finale de la maquette** : aucune validation écrite de Sidy sur l'ensemble ; `DESIGN.md` v0.10 est « à valider par Sidy ». Le tableau de motion n'a pas été validé séparément | `DESIGN.md:3` |
+| 2 | **Mentions légales** : deux rédactions proposées à valider (nom et logo, durée de conservation des e-mails) ; textes à faire relire par un juriste (droit sénégalais, RGPD) | section 5.5 |
+| 3 | **Champ `motion`** : forme retenue par l'arbitrage (`motion: Motion \| null` obligatoire dans `meta.json`, `animee` dérivé, schéma 1) ; à porter dans `ressource.model.ts`, `valider.ts` et les 3 `meta.json` animés | arbitrage, point 13 |
+| 4 | **Densité en `rem`** (accessibilité de la taille du texte) : piste non tranchée ; à tester à 200 % de taille de texte avant de décider | arbitrage, point 5 |
+| 5 | **Pages sans maquette** : « Démarrer », « Contribuer » ; états `hors-ligne` et `serveur injoignable` | section 5.5 |
+| 6 | **Nom du `<title>`, `<meta description>`, `aria-label`** : « NgShelf » est écrit en dur dans chaque page de la maquette, en plus de `config.js` ; en Angular, tout passe par `site.config.ts` (ainsi que `hebergeur: 'cloudflare'`, `statut`, `adresse`, `telephone`) | `DESIGN.md:3` |
+| 7 | **Type `curseur`** absent du vocabulaire validé : la ressource « Curseur » est rangée sous `champ` ; aucun ajout proposé | `DESIGN.md` |
+| 8 | **Lot 0 (spike)** sans trace : ses mesures (LCP avec splash, équivalence, Shiki, Shadow DOM de la grille) se font aux lots 3, 4, 5 et 9 ; plafond du splash à mesurer en Lighthouse CI (bascule vers l'option 2 de l'ADR 0005 si LCP mobile > 2,5 s) | arbitrage section 3 |
+| 9 | **« À propos »** à rattacher au lot 9 (accueil, motion et À propos) | arbitrage section 3 |
+| 10 | **`og:image`** : le PNG est fourni (section « Image sociale » ci-dessous) ; reste à le copier dans `public/` et à déclarer `og:image`, `og:image:width`, `og:image:height` et `twitter:card` | arbitrage section 3 |
 
-**Contradictions relevées entre les sources, avec la règle de lecture retenue.**
+**Image sociale.** `design/logo/ngshelf-og.png`, 1200 × 630 px, tirée de `design/logo/ngshelf-clair.svg` (logo sur fond blanc, sans texte inventé). À copier dans `public/` du front et à référencer par une URL absolue dans `og:image`.
 
-| Contradiction | Règle retenue |
-| --- | --- |
-| Le plan (`:9`, Q12 `:119`) classe le mode sombre « hors périmètre » / « clair en v1 » ; `DESIGN.md` l'a livré en v0.3 | **`DESIGN.md` (plus récent)** : mode sombre inclus |
-| Le plan (Q14 `:121`) et l'ADR 0005 limitent GSAP et Lenis à « l'accueil » ; `DESIGN.md` les utilise aussi sur « À propos », GSAP sur le catalogue et la fiche | **`DESIGN.md`** : accueil et « À propos » pour Lenis ; GSAP aussi catalogue et fiche |
-| Le plan parle de 6 à 8 ressources ; la maquette en a 10 + 3 designs ; `DESIGN.md:363-367` liste encore « 5 composants + 1 bloc » | **La maquette** (`registre.js`) |
-| ADR 0002 : `meta.ts` ; projet : `meta.json` | Projet (`meta.json`) ; ADR à corriger |
-| ADR 0002 : `@utility` de densité ; pont actuel : variables `--spacing-ngs-N` | Pont actuel, à confirmer au spike |
-| Plan Q13 : `@ng-icons/phosphor-icons` ; `DESIGN.md` et projet : sprite | Sprite |
-| `DESIGN.md:3` : le nom est « défini en un seul endroit » ; il est aussi en dur dans les pages | Voir point 12 |
-| `DESIGN.md:356` : les règles des transitions sont dans `components.css` ; elles sont en ligne dans le `<head>` des pages (`index.html:68-80`) | En ligne dans la maquette ; en Angular, dans `styles.css` |
-| `DESIGN.md` : script de thème « en ligne » ; projet : script externe (CSP) | Externe |
-| `DESIGN.md` : voile case → fiche 550 ms ; `app.js` : 0,5 s | Détail de repli, sans conséquence |
-| `DESIGN.md` journal : deux lignes « 0.8 » | Une seule version 0.8 à clarifier |
-| `design/brief.md` dit Angular 21 | Angular 22 (plan `:72`) |
-| `docs/diagrams/catalogue-architecture.md:3` dit « ADR 0001 à 0005 (statut `proposé`) » ; seuls les ADR 0003 et la décision 5 de l'ADR 0002 le sont encore | Voir tableau section 1 |
+**Contradictions mineures, règle retenue.** `DESIGN.md` fait foi sur les plans plus anciens (mode sombre, GSAP et Lenis sur « À propos », catalogue et fiche). Le journal de `DESIGN.md` n'a plus qu'une ligne 0.8. Le voile de 550 ms ou 0,5 s est sans objet (non porté). `design/brief.md` dit maintenant Angular 22. `docs/diagrams/catalogue-architecture.md:3` est à mettre à jour par l'architecte après la validation des ADR.
 
 ## 14. Checklist de recette finale
 
-Comparer l'intégration à la maquette servie par `python3 -m http.server 4173 --directory /Users/sidymohamed_12/Documents/projets/ngshelf/design` (liens dans `design/README.md`). Captures à **390, 768, 1024, 1440 et 2560 px, en clair puis en sombre** ; états à tester : chargement, vide, erreur, aucun résultat, titres longs, noms sans espace.
+Comparer l'intégration à la maquette servie par `python3 -m http.server 4173 --directory design`, lancé depuis la racine du dépôt (liens dans `design/README.md`). Captures à **390, 768, 1024, 1440 et 2560 px, en clair puis en sombre** ; états à tester : chargement, vide, erreur, aucun résultat, titres longs, noms sans espace.
 
 **Transversal**
 - [ ] `ng build` sans erreur ni alerte ; un chunk lazy par feature ; Lighthouse SEO 100 ; LCP mobile ≤ 2,5 s ; budgets de la section 10 tenus.

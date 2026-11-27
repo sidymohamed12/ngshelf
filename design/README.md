@@ -7,7 +7,7 @@ Tout ce dossier est du design : rien n'est intégré dans l'application. La réf
 Les pages lisent `tokens.css` et `contrat-tokens.css` avec `fetch` (chemins relatifs) : il faut les servir en HTTP (page hébergée ou serveur local), `file://` ne suffit pas.
 
 ```bash
-python3 -m http.server 4173 --directory /Users/sidymohamed_12/Documents/projets/ngshelf/design
+python3 -m http.server 4173 --directory design   # à lancer depuis la racine du dépôt (ngshelf-frontend)
 ```
 
 Une connexion internet est nécessaire : Tailwind (navigateur) 4.3.5, GSAP 3.15.1 et Lenis 1.3.28 viennent de `cdn.jsdelivr.net/npm/`, en version exacte.

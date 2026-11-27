@@ -15,7 +15,7 @@
     params = Object.assign({ nom: site.nom }, NGS.paramsLegaux(), params || {});
     return s.replace(/\{(\w+)\}/g, function (_, k) { return params[k] != null ? params[k] : '{' + k + '}'; });
   };
-  /* Valeurs des pages légales, lues dans config.js (jamais recopiées) ; hébergeur non choisi = champ « à compléter ». */
+  /* Valeurs des pages légales, lues dans config.js (jamais recopiées) ; champ manquant = « à compléter ». */
   var CHAMP = function (t) { return '<span class="ngs-acompleter">[à compléter par Sidy : ' + t + ']</span>'; };
   NGS.champ = CHAMP;
   NGS.paramsLegaux = function () {
@@ -24,6 +24,9 @@
     return {
       auteur: site.auteur.nomComplet || site.auteur.nom,
       email: site.auteur.email,
+      statut: site.auteur.statut,
+      adresse: site.auteur.adresse,
+      telephone: site.auteur.telephone ? '<a href="tel:+' + site.auteur.telephone.replace(/\D/g, '') + '">' + site.auteur.telephone + '</a>' : CHAMP('numéro de téléphone de l’éditeur'),
       hebergeur: h ? h.nom : CHAMP('hébergeur : Cloudflare ou Netlify'),
       hebergeurAdresse: h ? h.adresse : CHAMP('adresse de l’hébergeur'),
       hebergeurSite: lien

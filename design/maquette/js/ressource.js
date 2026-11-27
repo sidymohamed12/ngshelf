@@ -66,7 +66,7 @@
     var sansAnim = !etat.animations || NGS.motion.reduit;
     return '<!doctype html><html lang="fr"' + (sansAnim ? ' class="ngs-sans-animation"' : '') + '><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' + tete + '<style>' +
       'html{background:var(--ngs-color-surface,#fff);color:var(--ngs-color-text,#0b0b0c);transition:background-color .25s ease-out;color-scheme:light}' +
-      'html.sombre{color-scheme:dark}' +
+      'html.dark{color-scheme:dark}' +
       'body{margin:0;min-height:100vh;display:grid;place-items:center;padding:32px 20px;box-sizing:border-box;font-family:var(--ngs-font-family,system-ui)}' +
       // Version Tailwind : chaque pièce occupe toute la largeur de la grille. Sans cela, un hôte « @container »
       // (container-type: inline-size, sans largeur intrinsèque) dans un élément ajusté à son contenu retombe
@@ -76,9 +76,9 @@
       '</style></head><body>' + (tw && res.motion && res.motion.rejouer && res.motion.rejouer.sortie ? '<div hidden class="' + NGS.cls(res, 'tailwind')(res.motion.rejouer.sortie) + '"></div>' : '') + '<div class="compo">' + corps.replace(/<ngs-apercu /g, '<ngs-apercu' + (sansAnim ? ' class="ngs-sans-animation"' : '') + ' ') + '</div>' +
       '<script src="js/registre.js"><\/script><script src="js/variantes.js"><\/script><script src="js/apercu.js"><\/script><script>' +
       (tw ? 'document.querySelectorAll("[data-piece]").forEach(function(p){var r=NGS.trouver(p.dataset.piece);if(r.init)r.init(p,NGS.cls(r,"tailwind"));});' : '') +
-      'addEventListener("message",function(e){var d=e.data;if(!d||d.type!=="ngs-tokens")return;' +
+      'addEventListener("message",function(e){var d=e.data;if(!d||d.type!=="ngs-reglages")return;' +
       'Object.keys(d.vars).forEach(function(k){document.documentElement.style.setProperty(k,d.vars[k])});' +
-      'document.documentElement.classList.toggle("sombre",d.mode==="sombre");' +
+      'document.documentElement.classList.toggle("dark",d.mode==="sombre");' +
       // Réglage « Animations » : classe .ngs-sans-animation sur la page (Tailwind : variante in-[…]) et sur chaque hôte (CSS : :host(…)).
       'var off=d.animations===false;document.documentElement.classList.toggle("ngs-sans-animation",off);' +
       'document.querySelectorAll("ngs-apercu").forEach(function(h){h.classList.toggle("ngs-sans-animation",off)})});' +
@@ -92,7 +92,7 @@
       'parent.postMessage({type:"ngs-pret"},"*");<\/script></body></html>';
   }
   function envoyer() {
-    if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'ngs-tokens', vars: valeurs(), mode: etat.mode, animations: etat.animations && !NGS.motion.reduit }, '*');
+    if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'ngs-reglages', vars: valeurs(), mode: etat.mode, animations: etat.animations && !NGS.motion.reduit }, '*');
   }
   function ajuster() {
     var dispo = cadre.parentElement.clientWidth - 2 * parseFloat(getComputedStyle(cadre).top);

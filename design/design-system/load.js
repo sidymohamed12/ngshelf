@@ -8,7 +8,7 @@
   data-assets : dossier où la page trouve fonts/ (par défaut, celui du design system).
 
   Nécessite un serveur local (fetch ne marche pas en file://) :
-    python3 -m http.server 4173 --directory /Users/sidymohamed_12/Documents/projets/ngshelf/design
+    python3 -m http.server 4173 --directory design   (depuis la racine du dépôt)
 */
 (function () {
   var script = document.currentScript;
@@ -21,7 +21,7 @@
       var p = document.createElement('p');
       p.setAttribute('role', 'alert');
       p.style.cssText = 'position:fixed;inset:auto 1rem 1rem 1rem;z-index:9999;padding:1rem;background:#0b0b0c;color:#fff;font:16px/1.5 system-ui;border-radius:12px';
-      p.textContent = 'Cette maquette doit être servie en HTTP (page hébergée, ou serveur local : python3 -m http.server --directory design).';
+      p.textContent = 'Cette maquette doit être servie en HTTP (page hébergée, ou serveur local : python3 -m http.server 4173 --directory design, depuis la racine du dépôt).';
       document.body.appendChild(p);
     });
     return;
