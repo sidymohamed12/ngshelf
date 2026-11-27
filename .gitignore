@@ -6,6 +6,9 @@
 /out-tsc
 /bazel-out
 
+# Sorties du registre (scripts/registre), régénérées avant build, start, test et lint
+/src/generated
+
 # Node
 /node_modules
 npm-debug.log

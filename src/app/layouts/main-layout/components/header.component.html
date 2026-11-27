@@ -4,6 +4,7 @@
       <app-marque />
     </a>
     <nav class="ngs-nav" [attr.aria-label]="textes.commun.navigationPrincipale">
+      <app-mega-menu />
       @for (lien of liens; track lien.libelle) {
         <a
           class="ngs-nav-link"
@@ -12,12 +13,10 @@
           ariaCurrentWhenActive="page"
           [routerLinkActiveOptions]="{
             paths: 'exact',
-            queryParams: 'exact',
             fragment: 'ignored',
             matrixParams: 'ignored',
           }"
           [routerLink]="lien.chemin"
-          [queryParams]="lien.queryParams"
         >
           @if (lien.classeFamille) {
             <span class="ngs-nav-link__dot" aria-hidden="true"></span>
@@ -27,6 +26,7 @@
       }
     </nav>
     <div class="ml-auto flex items-center gap-2">
+      <app-recherche-declencheur />
       <app-theme-menu />
       @if (depot) {
         <a
@@ -51,4 +51,5 @@
     </div>
   </div>
   <app-mobile-menu [(ouvert)]="menuOuvert" />
+  <app-recherche-dialog />
 </header>

@@ -1,0 +1,52 @@
+import { Service, inject, signal } from '@angular/core';
+import { RegistreService, estVisible } from '@core/registre/registre.service';
+import { IndexRecherche, construireIndexRecherche } from './recherche';
+
+/**
+ * État de la recherche globale (dialogue ⌘K) et accès à son index. L'index est construit à la
+ * première demande depuis les index du registre (chunks lazy) puis mémorisé ; un échec n'est pas
+ * mémorisé, le bouton « Réessayer » relance donc vraiment le chargement.
+ */
+@Service()
+export class RechercheService {
+  readonly #registre = inject(RegistreService);
+  readonly #ouverte = signal(false);
+  #index: Promise<IndexRecherche> | undefined;
+
+  readonly #dejaOuverte = signal(false);
+
+  readonly ouverte = this.#ouverte.asReadonly();
+  /** Vrai dès la première ouverture : le dialogue ne charge l'index qu'à ce moment-là. */
+  readonly dejaOuverte = this.#dejaOuverte.asReadonly();
+
+  ouvrir(): void {
+    this.#dejaOuverte.set(true);
+    this.#ouverte.set(true);
+  }
+
+  fermer(): void {
+    this.#ouverte.set(false);
+  }
+
+  basculer(): void {
+    if (this.#ouverte()) this.fermer();
+    else this.ouvrir();
+  }
+
+  indexRecherche(): Promise<IndexRecherche> {
+    if (this.#index) return this.#index;
+    const construction = this.#registre
+      .toutes()
+      .then((toutes) => construireIndexRecherche(toutes.filter(estVisible)));
+    this.#index = construction;
+    construction.catch(() => {
+      this.#index = undefined;
+    });
+    return construction;
+  }
+
+  /** Charge l'index avant l'ouverture (survol, focus du bouton). Un échec est sans importance : l'ouverture réessaie. */
+  precharger(): void {
+    this.indexRecherche().catch(() => undefined);
+  }
+}

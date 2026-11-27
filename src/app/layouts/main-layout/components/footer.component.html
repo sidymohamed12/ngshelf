@@ -27,12 +27,7 @@
     <nav class="grid content-start gap-3 lg:col-span-3" aria-labelledby="pied-catalogue">
       <h2 class="ngs-label ngs-muted m-0" id="pied-catalogue">{{ textes.pied.catalogue }}</h2>
       @for (lien of familles; track lien.libelle) {
-        <a
-          class="ngs-link justify-self-start"
-          [routerLink]="lien.chemin"
-          [queryParams]="lien.queryParams"
-          >{{ lien.libelle }}</a
-        >
+        <a class="ngs-link justify-self-start" [routerLink]="lien.chemin">{{ lien.libelle }}</a>
       }
     </nav>
     <nav class="grid content-start gap-3 lg:col-span-4" aria-labelledby="pied-projet">

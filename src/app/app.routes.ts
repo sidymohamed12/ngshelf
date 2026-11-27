@@ -1,13 +1,56 @@
 import { inject } from '@angular/core';
-import { ResolveFn, Routes } from '@angular/router';
-import { TEXTES } from '@core/i18n/textes.fr';
+import { ResolveFn, Route, Routes } from '@angular/router';
+import { LIBELLES_CATEGORIE, LIBELLES_SECTEUR, LIBELLES_TYPE, TEXTES } from '@core/i18n/textes.fr';
+import { SEGMENT_SECTEURS } from '@core/registre/chemins';
 import { RegistreService } from '@core/registre/registre.service';
+import {
+  CATEGORIES,
+  CATEGORIES_TYPEES,
+  SECTEURS,
+  SEGMENT_CATEGORIE,
+  TYPES_PAR_CATEGORIE,
+} from '@shared/models/taxonomie.model';
 
-const titreFiche: ResolveFn<string> = (route) => {
-  const ressource = inject(RegistreService).trouver(route.params);
-  return ressource
-    ? TEXTES.pages.ressource.titrePage(ressource.titre.fr)
-    : TEXTES.pages.ressource.introuvableTitre;
+const titreFiche: ResolveFn<string> = async (route) => {
+  try {
+    const ressource = await inject(RegistreService).trouver(route.params);
+    return ressource
+      ? TEXTES.pages.ressource.titrePage(ressource.titre.fr)
+      : TEXTES.pages.ressource.introuvableTitre;
+  } catch {
+    // Index illisible : la page affiche son propre état d'erreur, le titre reste neutre.
+    return TEXTES.pages.ressource.introuvableTitre;
+  }
+};
+
+/** Page d'une catégorie : /composants, /blocs, /templates, /designs. */
+const routesCategories: Route[] = CATEGORIES.map((categorie) => ({
+  path: SEGMENT_CATEGORIE[categorie],
+  title: TEXTES.pages.listes.titrePage(LIBELLES_CATEGORIE[categorie].pluriel),
+  data: { categorie },
+  loadComponent: () =>
+    import('@features/categorie/pages/categorie.component').then((m) => m.CategorieComponent),
+}));
+
+/** Page d'un type : /composants/modale, /blocs/navbar… Un type inconnu reçoit le titre « introuvable ». */
+const routesTypes: Route[] = CATEGORIES_TYPEES.map((categorie) => ({
+  path: `${SEGMENT_CATEGORIE[categorie]}/:type`,
+  data: { categorie },
+  title: ((route) => {
+    const type = TYPES_PAR_CATEGORIE[categorie].find((t) => t === route.paramMap.get('type'));
+    return type
+      ? TEXTES.pages.listes.titrePage(LIBELLES_TYPE[type])
+      : TEXTES.pages.introuvable.titrePage;
+  }) satisfies ResolveFn<string>,
+  loadComponent: () =>
+    import('@features/categorie/pages/type.component').then((m) => m.TypeComponent),
+}));
+
+const titreSecteur: ResolveFn<string> = (route) => {
+  const secteur = SECTEURS.find((s) => s === route.paramMap.get('secteur'));
+  return secteur
+    ? TEXTES.pages.listes.titrePageSecteur(LIBELLES_SECTEUR[secteur])
+    : TEXTES.pages.introuvable.titrePage;
 };
 
 /** Toutes les routes sont lazy. L'ordre compte : les chemins fixes avant la fiche, le joker en dernier. */
@@ -28,6 +71,14 @@ export const routes: Routes = [
         title: TEXTES.pages.catalogue.titrePage,
         loadComponent: () =>
           import('@features/catalogue/pages/catalogue.component').then((m) => m.CatalogueComponent),
+      },
+      ...routesCategories,
+      ...routesTypes,
+      {
+        path: `${SEGMENT_SECTEURS}/:secteur`,
+        title: titreSecteur,
+        loadComponent: () =>
+          import('@features/secteur/pages/secteur.component').then((m) => m.SecteurComponent),
       },
       {
         path: 'a-propos',

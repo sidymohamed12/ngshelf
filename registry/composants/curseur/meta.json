@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "slug": "curseur",
+  "categorie": "composant",
+  "type": "champ",
+  "titre": {
+    "fr": "Curseur de valeur"
+  },
+  "description": {
+    "fr": "Régler une valeur continue en voyant le résultat écrit en grand, avec ses bornes."
+  },
+  "secteurs": [],
+  "tags": ["formulaire", "slider", "range", "réglage"],
+  "contratTokens": 1,
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

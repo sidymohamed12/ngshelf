@@ -58,6 +58,42 @@ export const TEXTES = {
     signature: $localize`:@@pied.signature:Développé par`,
     signatureAria: $localize`:@@pied.signature.aria:Développé par Sidy : voir son portfolio`,
   },
+  /** Méga-menu « Catalogue » du header et liste des secteurs du menu mobile. */
+  mega: {
+    familles: $localize`:@@mega.familles:Familles`,
+    tout: $localize`:@@mega.tout:Tout le catalogue`,
+    typesComposants: $localize`:@@mega.types.composants:Composants par type`,
+    typesBlocs: $localize`:@@mega.types.blocs:Blocs par type`,
+    secteurs: $localize`:@@mega.secteurs:Par secteur`,
+  },
+  /** Recherche globale (dialogue ⌘K / Ctrl+K). */
+  recherche: {
+    declencheur: $localize`:@@recherche.declencheur:Rechercher une ressource`,
+    label: $localize`:@@recherche.label:Rechercher dans le catalogue`,
+    placeholder: $localize`:@@recherche.placeholder:Calendrier, formulaire, thème…`,
+    fermer: $localize`:@@recherche.fermer:Fermer la recherche`,
+    aide: $localize`:@@recherche.aide:Flèches pour choisir, Entrée pour ouvrir, Échap pour fermer.`,
+    toutes: $localize`:@@recherche.toutes:Toutes les ressources`,
+    raccourciCtrl: $localize`:@@recherche.raccourci-ctrl:Ctrl K`,
+    chargement: $localize`:@@recherche.chargement:Chargement de la recherche`,
+    videTitre: (requete: string) =>
+      $localize`:@@recherche.vide.titre:Aucune ressource ne correspond à « ${requete}:requete: »`,
+    videTexte: $localize`:@@recherche.vide.texte:Essayez un mot plus court, ou parcourez le catalogue.`,
+    /** Annonce aux lecteurs d'écran après chaque frappe. */
+    annonce: (n: number) =>
+      n === 1
+        ? $localize`:@@recherche.annonce.un:${n}:n: résultat`
+        : $localize`:@@recherche.annonce.plusieurs:${n}:n: résultats`,
+    voirTous: (famille: string, n: number) =>
+      $localize`:@@recherche.voir-tous:Voir tout : ${famille}:famille: (${n}:n:)`,
+  },
+  /** États communs des zones qui chargent le registre (chunk d'index) : chargement, erreur. */
+  etats: {
+    chargement: $localize`:@@etat.chargement:Chargement du catalogue`,
+    erreurTitre: $localize`:@@etat.erreur.titre:Le catalogue n’a pas pu se charger`,
+    erreurTexte: $localize`:@@etat.erreur.texte:Vérifiez votre connexion, puis réessayez.`,
+    reessayer: $localize`:@@etat.reessayer:Réessayer`,
+  },
   pages: {
     accueil: {
       titrePage: $localize`:@@accueil.titre-page:${NOM}:nom: — composants Angular à copier ou télécharger`,
@@ -75,6 +111,16 @@ export const TEXTES = {
       h1: $localize`:@@apropos.h1:Des pièces Angular libres, sans compte ni achat`,
       lead: $localize`:@@apropos.lead:${NOM}:nom: rassemble des composants, des blocs et des designs Angular. Vous les essayez dans la page, puis vous copiez leur code ou vous le téléchargez. Ce code est sous licence MIT : il est à vous dès que vous le prenez.`,
     },
+    /** Pages de liste prérendues : catégorie (/composants), type (/blocs/navbar) et secteur. */
+    listes: {
+      /** « Navbar Angular — NgShelf » : le nom d'une catégorie ou d'un type. */
+      titrePage: (nom: string) => $localize`:@@liste.titre-page:${nom}:nom: Angular — ${NOM}:site:`,
+      titrePageSecteur: (secteur: string) =>
+        $localize`:@@liste.titre-page-secteur:${secteur}:secteur: : ressources Angular — ${NOM}:site:`,
+      types: $localize`:@@liste.types:Par type`,
+      secteur: $localize`:@@liste.secteur:Secteur`,
+      secteurAide: $localize`:@@liste.secteur-aide:Domaine d’activité pour lequel la ressource a été pensée : restaurant, voyage, transport…`,
+    },
     ressource: {
       titrePage: (titre: string) =>
         $localize`:@@ressource.titre-page:${titre}:titre: — ${NOM}:nom:`,
@@ -91,6 +137,30 @@ export const TEXTES = {
     },
   },
 } as const;
+
+/** Nombre de ressources : « 0 ressource », « 1 ressource », « 7 ressources » (le zéro est singulier en français). */
+export function libelleCompte(n: number): string {
+  return n <= 1
+    ? $localize`:@@liste.compte.un:${n}:n: ressource`
+    : $localize`:@@liste.compte.plusieurs:${n}:n: ressources`;
+}
+
+/** Liste de ressources : titre masqué pour les lecteurs d'écran, états, mentions des fiches. */
+export const TEXTES_LISTE = {
+  titre: $localize`:@@liste.titre:Ressources`,
+  provisoire: $localize`:@@badge.provisoire:Démo provisoire`,
+  videTitre: $localize`:@@liste.vide.titre:Rien à afficher pour l’instant`,
+  videTexte: $localize`:@@liste.vide.texte:Cette page n’a pas encore de ressource. Parcourez le catalogue pour en trouver d’autres.`,
+  videCta: $localize`:@@liste.vide.cta:Voir le catalogue`,
+} as const;
+
+/** Phrase d'introduction d'une catégorie (page /composants, /blocs…). */
+export const DESCRIPTIONS_CATEGORIE: Record<Categorie, string> = {
+  composant: $localize`:@@cat.composants.texte:Des pièces d’interface autonomes : champs, interrupteurs, calendriers, notifications.`,
+  bloc: $localize`:@@cat.blocs.texte:Des sections de page complètes, prêtes à recevoir votre contenu.`,
+  template: $localize`:@@cat.templates.texte:Des pages entières, de la navigation au pied de page.`,
+  design: $localize`:@@cat.designs.texte:Des habillages visuels prêts à l’emploi : couleurs, rayons, densité et police (tokens), en clair et en sombre.`,
+};
 
 /** Libellés des catégories : pluriel (navigation, listes) et singulier (badges). */
 export const LIBELLES_CATEGORIE: Record<Categorie, { pluriel: string; singulier: string }> = {

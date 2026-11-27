@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "slug": "questions-frequentes",
+  "categorie": "bloc",
+  "type": "faq",
+  "titre": {
+    "fr": "Questions fréquentes"
+  },
+  "description": {
+    "fr": "Une section de questions-réponses dépliables, construite sur <details> : utilisable sans JavaScript et au clavier."
+  },
+  "secteurs": [],
+  "tags": ["faq", "accordéon", "section", "details"],
+  "contratTokens": 1,
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

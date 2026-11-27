@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "slug": "laterite",
+  "categorie": "design",
+  "titre": {
+    "fr": "Design Latérite"
+  },
+  "description": {
+    "fr": "Rouge de terre cuite, angles presque droits, densité serrée et police à empattements."
+  },
+  "secteurs": [],
+  "tags": ["design", "tokens", "couleurs", "mode-sombre", "thème-visuel"],
+  "contratTokens": 1,
+  "valeurs": {
+    "clair": {
+      "--ngs-color-action": "#b4361c",
+      "--ngs-color-on-action": "#ffffff",
+      "--ngs-color-surface": "#ffffff",
+      "--ngs-color-surface-alt": "#f4f2f1",
+      "--ngs-color-text": "#1c1210",
+      "--ngs-color-text-muted": "#66524d",
+      "--ngs-color-border": "#9a847f",
+      "--ngs-color-danger": "#9f1239",
+      "--ngs-radius": "3px",
+      "--ngs-density": "0.85",
+      "--ngs-font-family": "ui-serif, Georgia, \"Times New Roman\", serif",
+      "--ngs-duration": "120ms"
+    },
+    "sombre": {
+      "--ngs-color-action": "#ff8e6b",
+      "--ngs-color-on-action": "#2a0d05",
+      "--ngs-color-surface": "#1a1210",
+      "--ngs-color-surface-alt": "#261a17",
+      "--ngs-color-text": "#f7ece9",
+      "--ngs-color-text-muted": "#c2a9a2",
+      "--ngs-color-border": "#7a615b",
+      "--ngs-color-danger": "#ff8fb0"
+    }
+  },
+  "licence": "MIT",
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26"
+}

@@ -1,0 +1,70 @@
+@if (erreur()) {
+  <div class="ngs-state ngs-state--error" role="alert">
+    <span class="ngs-state__icon"><svg appIcone="warning-circle"></svg></span>
+    <h2 class="ngs-state__title">{{ etats.erreurTitre }}</h2>
+    <p class="ngs-muted m-0">{{ etats.erreurTexte }}</p>
+    <button class="ngs-btn" type="button" (click)="reessayer.emit()">
+      <svg appIcone="arrow-clockwise"></svg>
+      <span>{{ etats.reessayer }}</span>
+    </button>
+  </div>
+} @else if (chargement() || entrees() === undefined) {
+  <div role="status">
+    <span class="sr-only">{{ etats.chargement }}</span>
+    <div class="ngs-planche" aria-hidden="true">
+      @for (ligne of lignesChargement; track ligne) {
+        <div class="ngs-skeleton h-40"></div>
+      }
+    </div>
+  </div>
+} @else if (vide()) {
+  <div class="ngs-state">
+    <span class="ngs-state__icon"><svg appIcone="squares-four"></svg></span>
+    <h2 class="ngs-state__title">{{ titreVide() ?? textes.videTitre }}</h2>
+    <p class="ngs-muted m-0 max-w-prose">{{ texteVide() ?? textes.videTexte }}</p>
+    <a class="ngs-btn ngs-btn--secondary" routerLink="/catalogue">{{ textes.videCta }}</a>
+  </div>
+} @else {
+  <h2 class="sr-only">{{ textes.titre }}</h2>
+  <ul class="ngs-planche m-0 list-none p-0">
+    @for (ligne of lignes(); track ligne.entree.slug) {
+      <li class="ngs-case" [class]="ligne.classe">
+        <div class="grid content-start gap-3 p-4">
+          <div class="flex flex-wrap items-center gap-2">
+            @if (afficherCategorie()) {
+              <span class="ngs-badge">{{ ligne.categorie }}</span>
+            }
+            @if (ligne.type) {
+              <span class="ngs-label ngs-muted">{{ ligne.type }}</span>
+            }
+            @if (ligne.provisoire) {
+              <span class="ngs-badge ngs-badge--provisoire">{{ textes.provisoire }}</span>
+            }
+          </div>
+          <h3 class="ngs-case__title">
+            @if (ligne.chemin) {
+              <a
+                class="ngs-case__link after:absolute after:inset-0 after:h-auto after:rounded-(--radius-case)"
+                [routerLink]="ligne.chemin"
+                >{{ ligne.entree.titre.fr }}</a
+              >
+            } @else {
+              {{ ligne.entree.titre.fr }}
+            }
+          </h3>
+          <p class="ngs-small ngs-muted m-0">{{ ligne.entree.description.fr }}</p>
+          @if (ligne.secteurs.length) {
+            <ul class="m-0 flex list-none flex-wrap gap-2 p-0">
+              @for (secteur of ligne.secteurs; track secteur.libelle) {
+                <li class="ngs-badge ngs-badge--secteur">
+                  <svg [appIcone]="secteur.icone" taille="sm"></svg>
+                  <span>{{ secteur.libelle }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+}

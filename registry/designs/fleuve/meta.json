@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "slug": "fleuve",
+  "categorie": "design",
+  "titre": {
+    "fr": "Design Fleuve"
+  },
+  "description": {
+    "fr": "Vert d’eau profond, angles très doux, espacements généreux et police arrondie du système."
+  },
+  "secteurs": [],
+  "tags": ["design", "tokens", "couleurs", "mode-sombre", "thème-visuel"],
+  "contratTokens": 1,
+  "valeurs": {
+    "clair": {
+      "--ngs-color-action": "#0b6464",
+      "--ngs-color-on-action": "#ffffff",
+      "--ngs-color-surface": "#ffffff",
+      "--ngs-color-surface-alt": "#eef6f6",
+      "--ngs-color-text": "#0f1a1a",
+      "--ngs-color-text-muted": "#4d5f5f",
+      "--ngs-color-border": "#7f9696",
+      "--ngs-color-danger": "#b42318",
+      "--ngs-radius": "18px",
+      "--ngs-density": "1.2",
+      "--ngs-font-family": "ui-rounded, system-ui, sans-serif",
+      "--ngs-duration": "220ms"
+    },
+    "sombre": {
+      "--ngs-color-action": "#5fd0c8",
+      "--ngs-color-on-action": "#062020",
+      "--ngs-color-surface": "#0f1a1a",
+      "--ngs-color-surface-alt": "#172626",
+      "--ngs-color-text": "#e8f2f2",
+      "--ngs-color-text-muted": "#9db5b5",
+      "--ngs-color-border": "#557070",
+      "--ngs-color-danger": "#ff8a7a"
+    }
+  },
+  "licence": "MIT",
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26"
+}

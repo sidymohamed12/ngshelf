@@ -3,7 +3,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["vitest/globals", "node", "@angular/localize"]
+    "types": ["vitest/globals", "node", "@angular/localize"],
+    "rewriteRelativeImportExtensions": true
   },
-  "include": ["src/**/*.d.ts", "src/**/*.spec.ts"]
+  "include": ["src/**/*.d.ts", "src/**/*.spec.ts", "scripts/**/*.spec.ts"]
 }

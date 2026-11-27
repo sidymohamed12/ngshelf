@@ -1,0 +1,20 @@
+<button
+  class="ngs-search-trigger"
+  type="button"
+  aria-haspopup="dialog"
+  aria-keyshortcuts="Control+K Meta+K"
+  [attr.aria-label]="textes.declencheur"
+  (click)="recherche.ouvrir()"
+  (pointerenter)="recherche.precharger()"
+  (focus)="recherche.precharger()"
+>
+  <svg appIcone="magnifying-glass"></svg>
+  <span class="ngs-search-trigger__text">{{ textes.declencheur }}</span>
+  <kbd class="ngs-kbd" aria-hidden="true">
+    @if (apple()) {
+      <svg appIcone="command" taille="sm"></svg>K
+    } @else {
+      {{ textes.raccourciCtrl }}
+    }
+  </kbd>
+</button>

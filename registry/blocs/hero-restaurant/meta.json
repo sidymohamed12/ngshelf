@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "slug": "hero-restaurant",
+  "categorie": "bloc",
+  "type": "hero",
+  "titre": {
+    "fr": "Hero avec photo"
+  },
+  "description": {
+    "fr": "Un hero qui pose une vraie photo et un panneau de texte lisible, sans voile sur l’image. Il passe en colonne dans un conteneur étroit."
+  },
+  "secteurs": ["restaurant"],
+  "tags": ["hero", "photo", "accueil", "restaurant", "cta"],
+  "contratTokens": 1,
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

@@ -1,0 +1,118 @@
+<dialog #dialogue class="ngs-dialog" [attr.aria-label]="textes.label" (close)="surFermeture()">
+  <div class="ngs-dialog__head">
+    <svg appIcone="magnifying-glass" taille="lg"></svg>
+    <label class="sr-only" for="recherche-globale">{{ textes.label }}</label>
+    <input
+      #champ
+      class="ngs-input"
+      id="recherche-globale"
+      type="search"
+      autocomplete="off"
+      role="combobox"
+      aria-autocomplete="list"
+      aria-describedby="recherche-aide"
+      [attr.aria-expanded]="groupes().length > 0"
+      [attr.aria-controls]="groupes().length > 0 ? 'recherche-resultats' : null"
+      [attr.aria-activedescendant]="idActif()"
+      [attr.placeholder]="textes.placeholder"
+      [value]="requete()"
+      (input)="surSaisie($event)"
+      (keydown)="surTouche($event)"
+    />
+    <button
+      class="ngs-btn ngs-btn--ghost ngs-btn--icon"
+      type="button"
+      [attr.aria-label]="textes.fermer"
+      (click)="recherche.fermer()"
+    >
+      <svg appIcone="x"></svg>
+    </button>
+  </div>
+  <div class="ngs-dialog__body">
+    <p class="sr-only" id="recherche-aide">{{ textes.aide }}</p>
+    <p class="sr-only" role="status">{{ annonce() }}</p>
+    @if (index.error()) {
+      <div class="ngs-state ngs-state--error" role="alert">
+        <span class="ngs-state__icon"><svg appIcone="warning-circle"></svg></span>
+        <h2 class="ngs-state__title">{{ etats.erreurTitre }}</h2>
+        <p class="ngs-muted m-0">{{ etats.erreurTexte }}</p>
+        <button class="ngs-btn" type="button" (click)="index.reload()">
+          <svg appIcone="arrow-clockwise"></svg>
+          <span>{{ etats.reessayer }}</span>
+        </button>
+      </div>
+    } @else if (index.isLoading()) {
+      <div role="status">
+        <span class="sr-only">{{ textes.chargement }}</span>
+        <div class="grid gap-2 p-2" aria-hidden="true">
+          @for (ligne of lignesChargement; track ligne) {
+            <div class="ngs-skeleton h-14"></div>
+          }
+        </div>
+      </div>
+    } @else if (aucunResultat()) {
+      <div class="grid gap-1 p-6">
+        <p class="m-0 font-semibold">{{ textes.videTitre(requete()) }}</p>
+        <p class="ngs-muted ngs-small m-0">{{ textes.videTexte }}</p>
+        <p class="m-0 mt-2">
+          <a class="ngs-link ngs-link--rest" routerLink="/catalogue" (click)="recherche.fermer()">{{
+            textes.toutes
+          }}</a>
+        </p>
+      </div>
+    } @else if (groupes().length > 0) {
+      <ul
+        class="ngs-results"
+        id="recherche-resultats"
+        role="listbox"
+        [attr.aria-label]="textes.label"
+      >
+        @for (groupe of groupes(); track groupe.id) {
+          <li role="presentation" class="grid gap-1 pb-2">
+            <p class="ngs-label ngs-muted m-0 px-3 pt-2" [id]="groupe.id" role="presentation">
+              {{ groupe.titre }}
+            </p>
+            <ul class="ngs-results" role="group" [attr.aria-labelledby]="groupe.id">
+              @for (ligne of groupe.lignes; track ligne.id) {
+                <li role="presentation">
+                  <a
+                    class="ngs-result"
+                    role="option"
+                    tabindex="-1"
+                    [class]="ligne.classe"
+                    [id]="ligne.id"
+                    [attr.aria-selected]="ligne.id === idActif()"
+                    [routerLink]="ligne.chemin"
+                    (click)="recherche.fermer()"
+                  >
+                    <span class="ngs-chip__dot" aria-hidden="true"></span>
+                    <span class="grid min-w-0 gap-0.5">
+                      <span class="ngs-result__title">
+                        @for (segment of ligne.titre; track $index) {
+                          @if (segment.surligne) {
+                            <mark>{{ segment.texte }}</mark>
+                          } @else {
+                            <span>{{ segment.texte }}</span>
+                          }
+                        }
+                      </span>
+                      <span class="ngs-result__desc">{{ ligne.detail }}</span>
+                    </span>
+                  </a>
+                </li>
+              }
+            </ul>
+            @if (groupe.voirTout; as voirTout) {
+              <a
+                class="ngs-link ngs-link--rest justify-self-start px-3"
+                [routerLink]="voirTout.chemin"
+                (click)="recherche.fermer()"
+                >{{ voirTout.libelle }}</a
+              >
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</dialog>

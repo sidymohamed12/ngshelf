@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "slug": "navbar-restaurant",
+  "categorie": "bloc",
+  "type": "navbar",
+  "titre": {
+    "fr": "Barre de navigation"
+  },
+  "description": {
+    "fr": "Une navbar qui s’adapte à la largeur de son conteneur (container queries) : liens en ligne, ou menu repliable annoncé."
+  },
+  "secteurs": ["restaurant"],
+  "tags": ["navbar", "navigation", "header", "menu", "restaurant"],
+  "contratTokens": 1,
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

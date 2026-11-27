@@ -19,6 +19,12 @@ export type SegmentCategorie = (typeof SEGMENT_CATEGORIE)[Categorie];
 /** Catégories qui contiennent des ressources typées (un design n'a pas de type). */
 export type CategorieTypee = Exclude<Categorie, 'design'>;
 
+export const CATEGORIES_TYPEES = [
+  'composant',
+  'bloc',
+  'template',
+] as const satisfies readonly CategorieTypee[];
+
 export const TYPES_PAR_CATEGORIE = {
   composant: [
     'bouton',

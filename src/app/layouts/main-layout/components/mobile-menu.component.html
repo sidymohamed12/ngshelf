@@ -30,7 +30,6 @@
             class="ngs-menu__link"
             [class]="lien.classeFamille"
             [routerLink]="lien.chemin"
-            [queryParams]="lien.queryParams"
             (click)="fermer()"
           >
             @if (lien.classeFamille) {
@@ -41,6 +40,17 @@
         </li>
       }
     </ul>
+    <details class="ngs-facette">
+      <summary>
+        <span>{{ textes.mega.secteurs }}</span>
+        <svg appIcone="caret-down"></svg>
+      </summary>
+      <ul class="ngs-mega__liste px-2 pb-4">
+        @for (lien of secteurs; track lien.libelle) {
+          <li><app-ligne-compte [lien]="lien" (navigue)="fermer()" /></li>
+        }
+      </ul>
+    </details>
   </div>
   @if (depot) {
     <a class="ngs-btn ngs-btn--secondary mt-auto" [href]="depot" rel="noopener">

@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "slug": "champ-email",
+  "categorie": "composant",
+  "type": "champ",
+  "titre": {
+    "fr": "Champ e-mail validé"
+  },
+  "description": {
+    "fr": "Un champ avec label visible, aide, et une erreur qui dit quoi corriger, au bon moment (à la sortie du champ)."
+  },
+  "secteurs": [],
+  "tags": ["formulaire", "input", "validation", "email"],
+  "contratTokens": 1,
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}
