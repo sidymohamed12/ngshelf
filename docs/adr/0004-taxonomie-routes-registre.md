@@ -2,7 +2,9 @@
 
 ## Statut
 
-Renvoi (2026-11-27, ADR proposés 0007 et 0012) : `meta.json`, champ `motion`, `tailleCase` (0007) ; route `/catalogue` et paramètres (0012). Corps inchangé.
+Renvoi (2026-11-27, ADR 0007 et 0012, acceptés) : `meta.json`, champ `motion`, `tailleCase` (0007) ; route `/catalogue` et paramètres (0012). Corps inchangé.
+
+Confirmation (2026-11-27, décisions de Sidy) : les décisions 3 (filtres côté client) et 4 (`dependances` vide) sont confirmées (`docs/plans/arbitrage-contradictions-handoff.md`, section 3, question 9).
 
 accepté (2026-11-26, validation de Sidy relayée par le coordinateur) : taxonomie et vocabulaire initial, libellé « Secteur », URL de détail `/<categorie>/<type>/<slug>`. Les pages de filtres en mode mixte (décision 3, partie échelle) et le champ réservé `dependances` (décision 4) n'ont pas été validés explicitement : ils restent à confirmer par Sidy ; un changement passera par un nouvel ADR.
 

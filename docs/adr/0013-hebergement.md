@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-27). Sidy indique que l'hébergeur n'est pas tranché (Cloudflare ou Netlify) ; l'ADR 0001 le disait Cloudflare Pages. Ne remplace pas encore l'ADR 0001 : si Sidy accepte, l'ADR 0001 passera en « hébergeur remplacé par 0013 ».
+accepté (2026-11-27, décisions de Sidy). Sidy retient Cloudflare ; le choix entre Pages et Workers Static Assets se fait au lot 5. L'ADR 0001 reçoit un renvoi vers 0013 pour l'hébergeur ; son corps n'est pas réécrit.
 
 ## Contexte
 

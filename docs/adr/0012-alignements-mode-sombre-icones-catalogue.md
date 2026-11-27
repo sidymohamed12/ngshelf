@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-27). Arbitrage : points 2, 6, 7.
+accepté (2026-11-27, décisions de Sidy). Arbitrage : points 2, 6, 7.
 
 ## Contexte
 

@@ -2,9 +2,9 @@
 
 ## Statut
 
-Renvoi (2026-11-27) : protocole `postMessage`, sandbox et en-têtes précisés par l'ADR 0010 (proposé) ; acceptation recommandée dans `docs/plans/arbitrage-contradictions-handoff.md`, point 14. Statut inchangé.
+Renvoi (2026-11-27) : protocole `postMessage`, sandbox et en-têtes précisés par l'ADR 0010 (accepté) ; accepté par Sidy le 2026-11-27 (`docs/plans/arbitrage-contradictions-handoff.md`, section 3, question 8).
 
-proposé (2026-11-26, révisé le 2026-11-26 pour les deux variantes de style de l'ADR 0002)
+accepté (2026-11-27, décisions de Sidy). Auparavant : proposé (2026-11-26, révisé le 2026-11-26 pour les deux variantes de style de l'ADR 0002)
 
 ## Contexte
 

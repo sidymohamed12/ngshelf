@@ -2,7 +2,7 @@
 
 ## Statut
 
-Renvoi (2026-11-27, ADR proposés 0009 et 0011) : splash sans script d'amorçage (0009) ; périmètre de Lenis et GSAP, pas de transitions entre documents, pas de repli GSAP, mouvement réduit (0011). Corps inchangé.
+Renvoi (2026-11-27, ADR 0009 et 0011) : splash sans script d'amorçage (0009) ; périmètre de Lenis et GSAP, pas de transitions entre documents, pas de repli GSAP, mouvement réduit (0011). Corps inchangé.
 
 Forme du splash (scénario, couleurs) et minimum affiché passé à 600 ms : précisés par l'ADR 0006 (2026-11-27). Le reste est inchangé.
 

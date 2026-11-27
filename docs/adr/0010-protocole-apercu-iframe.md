@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-27). Précise l'ADR 0003. Arbitrage : point 12.
+accepté (2026-11-27, décisions de Sidy). Précise l'ADR 0003. Arbitrage : point 12.
 
 ## Contexte
 

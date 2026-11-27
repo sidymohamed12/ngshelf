@@ -1,6 +1,6 @@
 # Identité NgShelf : nom, préfixe, logo, splash, couleurs
 
-Étude du 2026-11-27, **aucune modification faite** (code, maquette et design system intacts). Statut : **appliqué le 2026-11-27 selon l'ADR 0006** (document historique figé : il cite volontairement l'ancien nom et l'ancien préfixe ; la recommandation « logo sans pied » est remplacée par « pieds vides »). Avant : à trancher par Sidy, puis application par `designer`. Le projet n'est pas un dépôt git : aucune branche ni PR n'a été créée.
+Étude du 2026-11-27, **aucune modification faite** (code, maquette et design system intacts). Statut : **appliqué le 2026-11-27 selon l'ADR 0006** (document historique figé : il cite volontairement l'ancien nom et l'ancien préfixe ; la recommandation « logo sans pied » est remplacée par « pieds vides »). Avant : à trancher par Sidy, puis application par `designer`. À l'époque, ces fichiers n'étaient pas versionnés ; ils le sont depuis le 2026-11-27 dans le dépôt du front.
 
 ## 0. Constats de départ (à lire avant les choix)
 

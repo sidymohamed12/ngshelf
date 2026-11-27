@@ -1,6 +1,6 @@
 # Catalogue Angular — plan d'exécution
 
-Plan du site catalogue (NgShelf). Rien n'est construit. ADR 0001, 0002 (décisions 1 à 4), 0004 et 0005 acceptés le 2026-11-26 ; ADR 0003 et la décision 5 de l'ADR 0002 restent `proposé`. L'arbitrage initial des 17 questions du designer est conservé en annexe.
+Plan du site catalogue (NgShelf). Rien n'est construit. ADR 0001, 0002 (décisions 1 à 4), 0004 et 0005 acceptés le 2026-11-26 ; ADR 0003, 0007 à 0013 et la décision 5 de l'ADR 0002 acceptés le 2026-11-27 (décisions de Sidy). L'arbitrage initial des 17 questions du designer est conservé en annexe.
 
 ## 1. Objectif
 
@@ -73,12 +73,12 @@ Pas d'API : les contrats sont le format du registre, les routes et les fichiers 
 
 ## 7. Risques et questions ouvertes
 
-- Double écriture du style (option 3) : coût réel à mesurer sur les 6 ressources du lot 6 ; décision de bascule vers la compilation à la fin du lot 4.
+- Double écriture du style (option 3) : coût réel à mesurer sur les 10 ressources du lot 6 ; décision de bascule vers la compilation à la fin du lot 4.
 - Stabilité des captures visuelles en CI (polices, anticrénelage) : seuil à régler au lot 5.
 - Utilitaires de densité `@utility … --value()` : couverture à confirmer au spike.
 - Splash et LCP sur page prérendue : mesure du spike, décide entre les deux options de l'ADR 0005.
 - Grammaires Shiki `angular-ts` / `angular-html` et compatibilité du CLI shadcn avec Angular : spike.
-- En attente de Sidy : informations des mentions légales (avant le lot 3), création du dépôt GitHub, format de distribution (ADR 0002, décision 5), aperçus (ADR 0003), filtres côté client et champ `dependances` (ADR 0004).
+- En attente de Sidy : informations des mentions légales (avant le lot 3). Validés le 2026-11-27 : format de distribution (ADR 0002, décision 5), aperçus (ADR 0003), filtres côté client et champ `dependances` (ADR 0004).
 
 ## 8. Prompts prêts à donner
 
@@ -90,9 +90,9 @@ Pas d'API : les contrats sont le format du registre, les routes et les fichiers 
 
 **Lot 4** — « Utilise l'agent frontend-dev pour le pipeline du registre, branche `core/pipeline-registre`, PR vers `dev`. Lis les ADR 0002 et 0004. Script Node de build : validation du schéma et de la taxonomie, refus d'un champ `dependances` non vide, index par catégorie, code coloré Shiki (variante Tailwind dans la page, fragment pour la variante CSS), zips `-tailwind` et `-css`, JSON de registre (`<slug>`, `<slug>-css`, `ngshelf-theme`), `sitemap.xml`, `_redirects` depuis `anciensChemins`, lint de style des deux variantes, contrôles d'équivalence. Critère de fin : chaque cas d'échec de l'ADR 0004 a un test qui fait échouer la CI ; sorties générées pour 2 ressources ; avis option 1 / option 3 dans la PR. »
 
-**Lot 5** — « Utilise l'agent frontend-dev pour la CI, branche `ci/build-registre-deploiement`, PR vers `dev` : workflow GitHub Actions qui lance validation, lint, équivalence, build et Playwright, puis le déploiement Cloudflare Pages (secrets dans GitHub, jamais dans le dépôt). Copie `conventions.yml` et `check-conventions.mjs` de `git-sidy`. Critère de fin : une PR qui casse l'équivalence est rouge, une PR saine déploie un aperçu. »
+**Lot 5** — « Utilise l'agent frontend-dev pour la CI, branche `ci/build-registre-deploiement`, PR vers `dev` : workflow GitHub Actions qui lance validation, lint, équivalence, build et Playwright, puis le déploiement Cloudflare, Pages ou Workers Static Assets à choisir ici après vérification des limites, ADR 0013 (secrets dans GitHub, jamais dans le dépôt). Copie `conventions.yml` et `check-conventions.mjs` de `git-sidy`. Critère de fin : une PR qui casse l'équivalence est rouge, une PR saine déploie un aperçu. »
 
-**Lot 6** — « Utilise l'agent frontend-dev pour porter dans `registry/` les 6 ressources et les 3 designs de `design/maquette/js/registre.js`, branche `feat/ressources-provisoires`. Variante CSS reprise de la maquette, variante Tailwind écrite avec le pont `@theme`, `.ts` commun, `statut: 'provisoire'`. Critère de fin : validation et équivalence vertes pour les 9 entrées. »
+**Lot 6** — « Utilise l'agent frontend-dev pour porter dans `registry/` les 10 ressources et les 3 designs de `design/maquette/js/registre.js`, branche `feat/ressources-provisoires`. Variante CSS reprise de la maquette, variante Tailwind écrite avec le pont `@theme`, `.ts` commun, `statut: 'provisoire'`. Critère de fin : validation et équivalence vertes pour les 13 entrées. »
 
 **Lot 7** — « Utilise l'agent frontend-dev pour le catalogue, branche `feat/catalogue-filtres`. Pages prérendues de catégorie, type et secteur (ADR 0004), filtres client secteur, design, tag et recherche dans les paramètres d'URL, index lazy par catégorie, canonique sans paramètres, tous les états de `angular-sidy` §4. Critère de fin : parcours Playwright vert. »
 
@@ -107,7 +107,8 @@ Pas d'API : les contrats sont le format du registre, les routes et les fichiers 
 - 2026-11-26 : création, arbitrage des 17 questions de l'étape 1 du designer.
 - 2026-11-26 : passage en plan d'exécution après les choix de Sidy (B avec le réglage de C, français en v1, MIT, ressources provisoires, Angular 22). Ajout des deux variantes Tailwind / CSS (ADR 0002 révisé), de la taxonomie, du modèle du registre et des routes (ADR 0004), du splash et des View Transitions (ADR 0005), du champ réservé `dependances`, de la config centrale du footer. ADR 0003 révisé (variante rendue par type d'aperçu). Lots renumérotés : CI et portage des ressources deviennent des lots à part.
 - 2026-11-26 : Sidy valide deux sources testées en CI, l'URL `/<categorie>/<type>/<slug>`, le splash plafonné ou non masquant selon le LCP, le vocabulaire et le libellé « Secteur », Cloudflare Pages ; ADR 0001, 0002 (décisions 1 à 4), 0004 et 0005 passés en `accepté`. Réseaux du footer fournis (valeurs non recopiées ici).
-- 2026-11-27 : arbitrage des contradictions du HANDOFF (`docs/plans/arbitrage-contradictions-handoff.md`, ADR 0007 à 0013 proposés). Périmés après validation de Sidy : « 6 à 8 ressources » (10 + 3 designs), « mode sombre hors périmètre » (inclus), Q13 icônes (sprite), Q14 GSAP et Lenis (accueil, À propos, catalogue, fiche), prompt du lot 6 (10 ressources), messages d'iframe du §4 (ADR 0010), hébergeur (ADR 0013). Corps non réécrit.
+- 2026-11-27 : arbitrage des contradictions du HANDOFF (`docs/plans/arbitrage-contradictions-handoff.md`, ADR 0007 à 0013, alors proposés). Périmés après validation de Sidy : « 6 à 8 ressources » (10 + 3 designs), « mode sombre hors périmètre » (inclus), Q13 icônes (sprite), Q14 GSAP et Lenis (accueil, À propos, catalogue, fiche), prompt du lot 6 (10 ressources), messages d'iframe du §4 (ADR 0010), hébergeur (ADR 0013). Corps non réécrit.
+- 2026-11-27 : Sidy valide les 10 questions de l'arbitrage : ADR 0003 et 0007 à 0013 acceptés ; 10 ressources et 3 designs en v1, mode sombre inclus, transitions du router seulement, sélecteur `.dark`, hébergeur Cloudflare (Pages ou Static Assets au lot 5). Lots touchés : 3 (transitions, splash, `_headers`), 4 (`tokens.css`, `motion`, zips), 5 (hébergeur), 6 (10 ressources), 7 à 9 (GSAP, Lenis, protocole d'aperçu, mesures). `docs/`, `design/` et `DESIGN.md` sont versionnés dans le dépôt du front.
 
 ## Annexe — arbitrage initial des questions du designer (mis à jour)
 
@@ -121,4 +122,4 @@ Pas d'API : les contrats sont le format du registre, les routes et les fichiers 
 - **Q13 icônes** : Phosphor via `@ng-icons/phosphor-icons` sur le site ; aucune bibliothèque d'icônes dans les ressources.
 - **Q14 Three.js, Lenis, GSAP** : pas de Three.js (concept A non retenu) ; Lenis et GSAP sur l'accueil seulement ; jamais GSAP dans une ressource.
 - **Q16 maquette** : HTML/CSS.
-- **Q17 Git** : dépôt public unique, `main` en production, `dev` par défaut et cible des PR ; protection de `main` ; conventions `git-sidy` en CI. Le dépôt n'est pas encore initialisé (constaté le 2026-11-26).
+- **Q17 Git** : dépôt public unique, `main` en production, `dev` par défaut et cible des PR ; protection de `main` ; conventions `git-sidy` en CI. Dépôt du front initialisé ; `docs/`, `design/` et `DESIGN.md` y sont versionnés depuis le 2026-11-27.

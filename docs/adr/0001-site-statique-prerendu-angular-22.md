@@ -2,7 +2,7 @@
 
 ## Statut
 
-Hébergeur : non tranché par Sidy (2026-11-27), voir l'ADR 0013 (proposé). Le reste est inchangé.
+Hébergeur : Cloudflare confirmé par Sidy (2026-11-27) ; Pages ou Workers Static Assets à trancher au lot 5, voir l'ADR 0013 (accepté). Le reste est inchangé.
 
 accepté (2026-11-26, validation de Sidy relayée par le coordinateur) : Angular 22, prérendu statique, Cloudflare Pages gratuit.
 

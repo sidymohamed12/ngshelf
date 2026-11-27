@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-27). Arbitrage : `docs/plans/arbitrage-contradictions-handoff.md`, points 1, 4, 13.
+accepté (2026-11-27, décisions de Sidy). Arbitrage : `docs/plans/arbitrage-contradictions-handoff.md`, points 1, 4, 13.
 
 ## Contexte
 

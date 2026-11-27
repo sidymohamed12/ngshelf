@@ -2,7 +2,9 @@
 
 ## Statut
 
-Renvoi (2026-11-27, ADR proposés 0007 et 0008) : `meta.json` au lieu de `meta.ts` (0007) ; contenu des zips, sélecteur `.dark`, densité par variables `--spacing-ngs-N` (0008). Corps inchangé.
+Renvoi (2026-11-27, ADR 0007 et 0008) : `meta.json` au lieu de `meta.ts` (0007) ; contenu des zips, sélecteur `.dark`, densité par variables `--spacing-ngs-N` (0008). Corps inchangé.
+
+Confirmation (2026-11-27, décisions de Sidy) : la décision 5 (copier, zips et JSON de registre) est confirmée (`docs/plans/arbitrage-contradictions-handoff.md`, section 3, question 9).
 
 Nommage (préfixe, nom du fichier pont Tailwind) : remplacé par l'ADR 0006 (2026-11-27), préfixe `ngs` et `ngshelf-theme.css`. Le reste de l'ADR est inchangé.
 

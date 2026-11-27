@@ -1,6 +1,6 @@
 # Architecture prévue du catalogue
 
-Prévu, non construit. Décisions : ADR 0001 à 0005 (statut `proposé`).
+Prévu, non construit. Décisions : ADR 0001 à 0013, tous `accepté` au 2026-11-27 (décisions de Sidy).
 
 ## Comment une ressource devient des pages, des aperçus et des fichiers
 

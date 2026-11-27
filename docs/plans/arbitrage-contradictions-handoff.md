@@ -1,8 +1,8 @@
 # Arbitrage des contradictions de `design/HANDOFF.md` section 13
 
-Document de travail de l'architecte, 2026-11-27. **Rien n'est accepté** : chaque décision structurante a un ADR `proposé` (0007 à 0013). Ce document dit ce que je recommande ; la section 3 liste ce qui demande le choix de Sidy. Aucun fichier de `design/`, `DESIGN.md` ou du code n'a été modifié.
+Document de travail de l'architecte, 2026-11-27. **Validé par Sidy le 2026-11-27** (oui aux 10 questions de la section 3) : les ADR 0003 et 0007 à 0013 sont `accepté`. Ce document dit ce que je recommandais ; la section 3 garde les réponses de Sidy. Aucun fichier de `design/`, `DESIGN.md` ou du code n'a été modifié.
 
-Sources lues : `design/HANDOFF.md`, `DESIGN.md`, plan `docs/plans/catalogue-arbitrage-design.md`, ADR 0001 à 0006, maquette (`design/maquette/`), `ngshelf-frontend/` (branche `feat/catalogue-filtres`, 43 commits : `public/_headers`, `public/theme-init.js`, `src/styles/`, `registry/`, `scripts/registre/`, routes, `app.config.ts`). Vérifications web du 2026-11-27 : voir « Sources » en fin de document.
+Sources lues : `design/HANDOFF.md`, `DESIGN.md`, plan `docs/plans/catalogue-arbitrage-design.md`, ADR 0001 à 0006, maquette (`design/maquette/`), dépôt du front (branche `feat/catalogue-filtres`, 43 commits : `public/_headers`, `public/theme-init.js`, `src/styles/`, `registry/`, `scripts/registre/`, routes, `app.config.ts`). Vérifications web du 2026-11-27 : voir « Sources » en fin de document.
 
 ## 1. Synthèse
 
@@ -149,7 +149,7 @@ Sources lues : `design/HANDOFF.md`, `DESIGN.md`, plan `docs/plans/catalogue-arbi
 
 ### 14. ADR 0003 et décision 5 de l'ADR 0002
 
-- **0003** : toujours `proposé`, « à confirmer par le spike ». Le lot 0 n'a pas laissé de trace et le front a avancé sans lui. Le détail en iframe sandbox est maintenant le choix de la maquette, de la sécurité (code contribué) et du plan. **Recommandation : accepter 0003**, en retenant le détail en iframe tel quel et en gardant le Shadow DOM de la grille « confirmé par mesure » aux lots 7 et 9 (le front rend aujourd'hui des vignettes **statiques** dans `planche` ; le Shadow DOM n'est pas codé). Si la mesure échoue, la grille garde des vignettes statiques : repli déjà prévu par l'ADR. À Sidy de valider.
+- **0003** : était `proposé`, accepté le 2026-11-27, « à confirmer par le spike ». Le lot 0 n'a pas laissé de trace et le front a avancé sans lui. Le détail en iframe sandbox est maintenant le choix de la maquette, de la sécurité (code contribué) et du plan. **Recommandation : accepter 0003**, en retenant le détail en iframe tel quel et en gardant le Shadow DOM de la grille « confirmé par mesure » aux lots 7 et 9 (le front rend aujourd'hui des vignettes **statiques** dans `planche` ; le Shadow DOM n'est pas codé). Si la mesure échoue, la grille garde des vignettes statiques : repli déjà prévu par l'ADR. À Sidy de valider.
 - **0002 décision 5** : copier + zips au build + JSON de registre, CLI plus tard. **Recommandation : confirmer** ; c'est ce que le HANDOFF et la maquette implémentent.
 - **0004 décisions 3 (filtres client) et 4 (`dependances`)** : implémentés dans le front, validés par la pratique ; **recommandation : confirmer**.
 
@@ -196,24 +196,24 @@ Sources lues : `design/HANDOFF.md`, `DESIGN.md`, plan `docs/plans/catalogue-arbi
 
 - **Fait nouveau** : Cloudflare recommande désormais **Workers avec Static Assets** pour les nouveaux projets, Pages continuant de fonctionner ; je n'ai pas trouvé de date de fin de Pages (guide de migration officiel daté août 2026 dans un aperçu de la doc). `_headers` et `_redirects` existent aussi dans Static Assets (100 règles). Les limites de fichiers de Static Assets en gratuit sont à vérifier avant de choisir.
 - **Recommandation : Cloudflare.** Le quota de crédits Netlify (≈ 20 déploiements de production par mois, ≈ 15 Go) est trop serré pour un catalogue qui déploie à chaque PR fusionnée et sert des zips ; Cloudflare convient mieux au projet et rien n'est à refaire. Choisir **Pages ou Workers Static Assets au lot 5** (CI), selon les limites vérifiées à ce moment-là. Garder `_headers` simple pour rester portable.
-- **ADR** : nouvel ADR **0013 `proposé`** (hébergeur). L'ADR 0001 reçoit une ligne de renvoi, son corps n'est pas réécrit.
+- **ADR** : nouvel ADR **0013 (accepté le 2026-11-27)** (hébergeur). L'ADR 0001 reçoit une ligne de renvoi, son corps n'est pas réécrit.
 
-## 3. Décisions à faire valider par Sidy
+## 3. Décisions de Sidy (2026-11-27)
 
-Questions courtes, avec ma recommandation entre parenthèses.
+Sidy a répondu **oui aux 10 questions** le 2026-11-27 ; ma recommandation figure entre parenthèses.
 
-1. Hébergeur : Cloudflare ? (oui ; Pages ou Static Assets tranché au lot 5.)
+1. Hébergeur : Cloudflare ? (oui ; Pages ou Static Assets tranché au lot 5.) **Réponse de Sidy : oui.**
 2. Garder 10 ressources + 3 designs en v1, au lieu de 6 à 8 ? (oui)
-3. Garder le mode sombre en v1 ? (oui)
+3. Garder le mode sombre en v1 ? (oui) **Réponse de Sidy : oui.**
 4. Transitions : router seulement, sans transitions entre documents ni repli GSAP voile ? (oui)
-5. Sélecteur sombre du code livré : `.dark` ? (oui)
+5. Sélecteur sombre du code livré : `.dark` ? (oui) **Réponse de Sidy : oui.**
 6. `tokens.css` dans les deux zips, `ngshelf-theme.css` avec valeurs par défaut ? (oui)
-7. Bouton « Réduire les animations » et `ngs_motion` : après la v1 ? (oui)
+7. Bouton « Réduire les animations » et `ngs_motion` : après la v1 ? (oui) **Réponse de Sidy : oui.**
 8. Accepter l'ADR 0003 (iframe sandbox pour le détail, Shadow DOM de la grille confirmé par mesure) ? (oui)
-9. Confirmer ADR 0002 décision 5 (copier + zips + JSON) et ADR 0004 décisions 3 (filtres client) et 4 (`dependances` vide) ? (oui)
-10. Où versionner `docs/`, `design/` et `DESIGN.md` ? Ils sont à la racine, qui n'est pas un dépôt git (section 13, point 4). (les copier dans `ngshelf-frontend/` à la racine du dépôt GitHub après contrôle du poids : `design/` = 2,5 Mo, `docs/` = 128 Ko ; sinon un second dépôt. **Tant que ce n'est pas fait, mes fichiers ne sont pas versionnés et je n'ai ni branche ni PR à ouvrir.**)
+9. Confirmer ADR 0002 décision 5 (copier + zips + JSON) et ADR 0004 décisions 3 (filtres client) et 4 (`dependances` vide) ? (oui) **Réponse de Sidy : oui.**
+10. Où versionner `docs/`, `design/` et `DESIGN.md` ? **Réponse de Sidy : dans le dépôt `ngshelf-frontend`. C'est fait** : Sidy les a déplacés et commités sur la branche `docs/design-maquette-adr`. Les chemins de ces documents sont relatifs à la racine du dépôt.
 
-Autres points de la section 13, sans choix à faire : #5 `og:image` : le designer exporte un PNG 1200x630 depuis `ngshelf-clair.svg` dans `public/` ; #9 mentions légales : informations à fournir par Sidy avant le lot 3 ; #10 pages sans maquette : au designer (404 et pages légales en cours) ; #12 nom en dur : tout passe par `site.config.ts` côté Angular ; #15 lot 0 : le spike n'a pas eu lieu, ses mesures (LCP avec splash, équivalence, Shiki) se font aux lots 3, 4, 5 et 9 ; #16 plafond du splash : mesurer en Lighthouse CI sur l'accueil prérendu, bascule vers l'option 2 de l'ADR 0005 si LCP mobile > 2,5 s ; #17 « À propos » : l'ajouter au lot 9 (accueil, motion et À propos). Contradictions mineures : `DESIGN.md:356` (règles de transition dans `components.css`) : en Angular, dans `styles.css` ; voile 550 ms ou 0,5 s : sans objet (non porté) ; deux lignes « 0.8 » du journal et « Angular 21 » du brief : corrections du designer ; `docs/diagrams/catalogue-architecture.md:3` : à mettre à jour après validation (les statuts changent).
+Autres points de la section 13, sans choix à faire : #5 `og:image` : le designer exporte un PNG 1200x630 depuis `ngshelf-clair.svg` dans `public/` ; #9 mentions légales : informations à fournir par Sidy avant le lot 3 ; #10 pages sans maquette : au designer (404 et pages légales en cours) ; #12 nom en dur : tout passe par `site.config.ts` côté Angular ; #15 lot 0 : le spike n'a pas eu lieu, ses mesures (LCP avec splash, équivalence, Shiki) se font aux lots 3, 4, 5 et 9 ; #16 plafond du splash : mesurer en Lighthouse CI sur l'accueil prérendu, bascule vers l'option 2 de l'ADR 0005 si LCP mobile > 2,5 s ; #17 « À propos » : l'ajouter au lot 9 (accueil, motion et À propos). Contradictions mineures : `DESIGN.md:356` (règles de transition dans `components.css`) : en Angular, dans `styles.css` ; voile 550 ms ou 0,5 s : sans objet (non porté) ; deux lignes « 0.8 » du journal et « Angular 21 » du brief : corrections du designer ; `docs/diagrams/catalogue-architecture.md:3` : statuts mis à jour le 2026-11-27.
 
 ## 4. Listes d'actions
 
@@ -232,9 +232,9 @@ Autres points de la section 13, sans choix à faire : #5 `og:image` : le designe
 - Lots 7 à 9 : `chargerGsap()` mémorisé, `npm install --save-exact gsap lenis`, import dynamique dans `afterNextRender`, CSS de Lenis recopié dans `src/styles/`, `ScrollTrigger.refresh()` après polices et images ; vérifier `/catalogue?c=` (noindex, canonique) ; app `apercus` et protocole de l'ADR 0010 ; mesures LCP, Shadow DOM de la grille.
 - Lot 5 : choisir Pages ou Static Assets après vérification des limites ; déploiement.
 
-### À versionner (Sidy, puis documentaliste)
+### À versionner (fait)
 
-- Après validation : passer les ADR 0007 à 0013 en `accepté` (ou `remplacé`), mettre à jour `docs/diagrams/catalogue-architecture.md:3`, mettre le README du front en cohérence.
+- Fait le 2026-11-27 : `docs/`, `design/` et `DESIGN.md` sont versionnés dans le dépôt du front (branche `docs/design-maquette-adr`, commit par Sidy). ADR 0003 et 0007 à 0013 passés en `accepté`, `docs/diagrams/catalogue-architecture.md:3` mis à jour. Reste : README du front à mettre en cohérence (documentaliste, lot 10).
 
 ## Sources (consultées le 2026-11-27)
 
@@ -250,3 +250,4 @@ Autres points de la section 13, sans choix à faire : #5 `og:image` : le designe
 ## Historique
 
 - 2026-11-27 : création (mission de Sidy : section 13 du HANDOFF).
+- 2026-11-27 : Sidy répond oui aux 10 questions de la section 3 ; ADR 0003 et 0007 à 0013 acceptés ; confirmations ajoutées aux ADR 0002 (décision 5) et 0004 (décisions 3 et 4) ; `docs/`, `design/` et `DESIGN.md` versionnés dans le dépôt du front ; section « À versionner » soldée.
