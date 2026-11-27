@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   LIBELLES_CATEGORIE,
@@ -7,6 +7,7 @@ import {
   TEXTES,
   TEXTES_LISTE,
 } from '@core/i18n/textes.fr';
+import { MorphApercuService } from '@core/motion/morph-apercu.service';
 import { cheminFiche } from '@core/registre/chemins';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { NomIcone } from '@shared/components/icone/icones';
@@ -79,4 +80,12 @@ export class PlancheComponent {
   );
 
   protected readonly vide = computed(() => this.entrees()?.length === 0);
+
+  readonly #morph = inject(MorphApercuService);
+
+  /** Avant d'ouvrir la fiche : la scène de la case se transforme en cadre d'aperçu (ADR 0011). */
+  protected ouvrirFiche(lien: HTMLElement): void {
+    const scene = lien.closest('.ngs-case')?.querySelector<HTMLElement>('.ngs-case__stage');
+    this.#morph.nommer(scene ?? null);
+  }
 }

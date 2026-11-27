@@ -53,6 +53,8 @@
                 <a
                   class="ngs-case__link after:inset-0 after:h-auto after:rounded-(--radius-case)"
                   [routerLink]="ressource.chemin"
+                  #lien
+                  (click)="ouvrirFiche(lien)"
                   [attr.aria-describedby]="ressource.idDescription"
                   >{{ ressource.entree.titre.fr }}</a
                 >

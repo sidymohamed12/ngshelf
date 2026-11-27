@@ -12,3 +12,83 @@
 
 /* Mode sombre : attribut data-theme="sombre" sur <html> (posé avant le premier rendu, voir public/theme-init.js). */
 @custom-variant dark (&:where([data-theme="sombre"], [data-theme="sombre"] *));
+
+/*
+  Transitions de page (ADR 0011) : View Transitions du router, jamais entre documents, jamais GSAP.
+  Seule la zone principale (nom « contenu ») change ; l'en-tête et le pied ne bougent pas, d'où
+  l'animation de `root` neutralisée. Le morph case vers fiche passe par le nom « apercu-ressource »,
+  posé sur la scène de la case au clic et fixe sur le cadre d'aperçu de la fiche (un seul à la fois).
+  Rien de tout cela en mouvement réduit : le nom n'existe même pas, la page change sans animation.
+  Les durées des transitions de page ne sont pas des tokens du design system (DESIGN.md, HANDOFF 8.3).
+*/
+:root {
+  --duration-page-out: 180ms;
+  --duration-page-in: 300ms;
+  --delay-page-in: 60ms;
+  --duration-morph: 480ms;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #contenu {
+    view-transition-name: contenu;
+  }
+
+  ::view-transition-old(root) {
+    display: none;
+  }
+
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(contenu) {
+    animation: ngs-page-sortie var(--duration-page-out) var(--ease-in-out) both;
+  }
+
+  ::view-transition-new(contenu) {
+    animation: ngs-page-entree var(--duration-page-in) var(--ease-enter) var(--delay-page-in) both;
+  }
+
+  /* Retour : le mouvement va dans l'autre sens. */
+  html[data-transition='arriere']::view-transition-old(contenu) {
+    animation-name: ngs-page-sortie-arriere;
+  }
+
+  html[data-transition='arriere']::view-transition-new(contenu) {
+    animation-name: ngs-page-entree-arriere;
+  }
+
+  ::view-transition-group(apercu-ressource) {
+    animation-duration: var(--duration-morph);
+    animation-timing-function: var(--ease-in-out);
+  }
+
+  @keyframes ngs-page-sortie {
+    to {
+      opacity: 0;
+      translate: 0 -8px;
+    }
+  }
+
+  @keyframes ngs-page-entree {
+    from {
+      opacity: 0;
+      translate: 0 8px;
+    }
+  }
+
+  @keyframes ngs-page-sortie-arriere {
+    to {
+      opacity: 0;
+      translate: 0 8px;
+    }
+  }
+
+  @keyframes ngs-page-entree-arriere {
+    from {
+      opacity: 0;
+      translate: 0 -8px;
+    }
+  }
+}
