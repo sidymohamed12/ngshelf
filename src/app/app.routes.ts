@@ -14,32 +14,39 @@ const titreFiche: ResolveFn<string> = (route) => {
 export const routes: Routes = [
   {
     path: '',
-    title: TEXTES.pages.accueil.titrePage,
     loadComponent: () =>
-      import('@features/accueil/pages/accueil.component').then((m) => m.AccueilComponent),
-  },
-  {
-    path: 'catalogue',
-    title: TEXTES.pages.catalogue.titrePage,
-    loadComponent: () =>
-      import('@features/catalogue/pages/catalogue.component').then((m) => m.CatalogueComponent),
-  },
-  {
-    path: 'a-propos',
-    title: TEXTES.pages.apropos.titrePage,
-    loadComponent: () =>
-      import('@features/a-propos/pages/a-propos.component').then((m) => m.AProposComponent),
-  },
-  {
-    path: ':categorie/:type/:slug',
-    title: titreFiche,
-    loadComponent: () =>
-      import('@features/ressource/pages/ressource.component').then((m) => m.RessourceComponent),
-  },
-  {
-    path: '**',
-    title: TEXTES.pages.introuvable.titrePage,
-    loadComponent: () =>
-      import('@features/not-found/pages/not-found.component').then((m) => m.NotFoundComponent),
+      import('@layouts/main-layout/main-layout.component').then((m) => m.MainLayoutComponent),
+    children: [
+      {
+        path: '',
+        title: TEXTES.pages.accueil.titrePage,
+        loadComponent: () =>
+          import('@features/accueil/pages/accueil.component').then((m) => m.AccueilComponent),
+      },
+      {
+        path: 'catalogue',
+        title: TEXTES.pages.catalogue.titrePage,
+        loadComponent: () =>
+          import('@features/catalogue/pages/catalogue.component').then((m) => m.CatalogueComponent),
+      },
+      {
+        path: 'a-propos',
+        title: TEXTES.pages.apropos.titrePage,
+        loadComponent: () =>
+          import('@features/a-propos/pages/a-propos.component').then((m) => m.AProposComponent),
+      },
+      {
+        path: ':categorie/:type/:slug',
+        title: titreFiche,
+        loadComponent: () =>
+          import('@features/ressource/pages/ressource.component').then((m) => m.RessourceComponent),
+      },
+      {
+        path: '**',
+        title: TEXTES.pages.introuvable.titrePage,
+        loadComponent: () =>
+          import('@features/not-found/pages/not-found.component').then((m) => m.NotFoundComponent),
+      },
+    ],
   },
 ];

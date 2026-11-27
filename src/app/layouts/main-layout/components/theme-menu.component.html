@@ -1,0 +1,40 @@
+<div class="ngs-theme">
+  <button
+    #declencheur
+    class="ngs-btn ngs-btn--ghost ngs-btn--icon"
+    type="button"
+    aria-haspopup="menu"
+    aria-controls="menu-theme"
+    [attr.aria-expanded]="ouvert()"
+    [attr.aria-label]="libelleBouton()"
+    (click)="basculer()"
+  >
+    <svg [appIcone]="iconeCourante()"></svg>
+  </button>
+  <div
+    class="ngs-theme__menu"
+    id="menu-theme"
+    role="menu"
+    [attr.aria-label]="textes.titre"
+    [class.is-open]="ouvert()"
+    [attr.inert]="ouvert() ? null : ''"
+  >
+    <p class="ngs-theme__titre" aria-hidden="true">{{ textes.titre }}</p>
+    @for (option of options; track option.valeur; let i = $index) {
+      <button
+        #optionBtn
+        class="ngs-theme__option"
+        type="button"
+        role="menuitemradio"
+        tabindex="-1"
+        [attr.aria-checked]="option.valeur === choix()"
+        (click)="choisir(option.valeur)"
+        (keydown)="surTouche($event, i)"
+      >
+        <svg [appIcone]="option.icone"></svg>
+        <span>{{ option.libelle }}</span>
+        <svg class="ngs-theme__coche" appIcone="check" taille="sm"></svg>
+      </button>
+    }
+  </div>
+</div>

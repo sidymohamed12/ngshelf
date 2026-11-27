@@ -1,0 +1,54 @@
+<header class="ngs-header" [class.is-scrolled]="defile()">
+  <div class="ngs-container ngs-header__row">
+    <a class="ngs-brand" routerLink="/" [attr.aria-label]="textes.commun.accueilDe">
+      <app-marque />
+    </a>
+    <nav class="ngs-nav" [attr.aria-label]="textes.commun.navigationPrincipale">
+      @for (lien of liens; track lien.libelle) {
+        <a
+          class="ngs-nav-link"
+          [class]="lien.classeFamille"
+          routerLinkActive
+          ariaCurrentWhenActive="page"
+          [routerLinkActiveOptions]="{
+            paths: 'exact',
+            queryParams: 'exact',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          }"
+          [routerLink]="lien.chemin"
+          [queryParams]="lien.queryParams"
+        >
+          @if (lien.classeFamille) {
+            <span class="ngs-nav-link__dot" aria-hidden="true"></span>
+          }
+          <span>{{ lien.libelle }}</span>
+        </a>
+      }
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <app-theme-menu />
+      @if (depot) {
+        <a
+          class="ngs-btn ngs-btn--ghost ngs-btn--icon ngs-header__github"
+          rel="noopener"
+          [href]="depot"
+          [attr.aria-label]="textes.nav.github"
+        >
+          <svg appIcone="github-logo"></svg>
+        </a>
+      }
+      <button
+        class="ngs-btn ngs-btn--ghost ngs-btn--icon ngs-menu-btn"
+        type="button"
+        aria-controls="menu-mobile"
+        [attr.aria-expanded]="menuOuvert()"
+        [attr.aria-label]="textes.nav.menuOuvrir"
+        (click)="menuOuvert.set(true)"
+      >
+        <svg appIcone="list"></svg>
+      </button>
+    </div>
+  </div>
+  <app-mobile-menu [(ouvert)]="menuOuvert" />
+</header>
