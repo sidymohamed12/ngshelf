@@ -12,7 +12,13 @@
   "secteurs": [],
   "tags": ["date", "formulaire", "agenda", "datepicker", "réservation"],
   "contratTokens": 1,
-  "animee": true,
+  "motion": {
+    "resume": {
+      "fr": "Au changement de mois, les jours glissent de 12 px dans le sens de la navigation."
+    },
+    "moments": ["changement"],
+    "technique": "[animate.enter] d’Angular sur la grille du mois, @keyframes CSS"
+  },
   "tailleCase": "large-haute",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

@@ -16,12 +16,12 @@ export interface Sorties {
   readonly compteurs: Compteurs;
 }
 
-/** Un design n'a ni type, ni animation propre, ni case de taille particulière. */
+/** Un design n'a ni type, ni animation propre, ni case de taille particulière. `animee` dérive de `motion` (ADR 0007). */
 function champsPropres(meta: MetaRegistre): Pick<EntreeIndex, 'type' | 'animee' | 'tailleCase'> {
   if (meta.categorie === 'design') return { type: null, animee: false, tailleCase: 'normale' };
   return {
     type: meta.type,
-    animee: meta.animee ?? false,
+    animee: meta.motion !== null,
     tailleCase: meta.tailleCase ?? 'normale',
   };
 }

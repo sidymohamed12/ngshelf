@@ -1,7 +1,14 @@
 import { enJson, construireSorties, nomFichierIndex } from './sorties.ts';
 import type { MetaRegistre } from './valider.ts';
 import type { EntreeIndex } from '../../src/app/shared/models/index-catalogue.model.ts';
+import type { Motion } from '../../src/app/shared/models/motion.model.ts';
 import type { MetaDesign, MetaRessource } from '../../src/app/shared/models/ressource.model.ts';
+
+const MOTION: Motion = {
+  resume: { fr: 'La carte glisse en entrant.' },
+  moments: ['entree'],
+  technique: '@keyframes CSS',
+};
 
 const BASE = {
   schema: 1,
@@ -24,6 +31,7 @@ function ressource(partiel: Partial<MetaRessource> & Pick<MetaRessource, 'slug'>
     auteur: { nom: 'Sidy' },
     statut: 'publie',
     dependances: { npm: [], ressources: [] },
+    motion: null,
     ...partiel,
   };
 }
@@ -43,7 +51,7 @@ const METAS: readonly MetaRegistre[] = [
     slug: 'zebre',
     titre: { fr: 'Zèbre' },
     secteurs: ['voyage'],
-    animee: true,
+    motion: MOTION,
     tailleCase: 'large-haute',
   }),
   ressource({
@@ -94,7 +102,7 @@ describe('construireSorties', () => {
     });
   });
 
-  it('renseigne toujours animée et taille de case dans l’index, avec leurs valeurs par défaut', () => {
+  it('dérive animée de motion et renseigne toujours la taille de case dans l’index', () => {
     const parSlug = (slug: string): EntreeIndex | undefined =>
       sorties.index.composant.find((e) => e.slug === slug);
     expect(parSlug('zebre')).toMatchObject({ animee: true, tailleCase: 'large-haute' });

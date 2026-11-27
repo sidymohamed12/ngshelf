@@ -2,6 +2,12 @@ import { EntreeBrute, validerRegistre } from './valider.ts';
 
 const UN_SECTEUR = ['restaurant'];
 
+const MOTION = {
+  resume: { fr: 'La barre descend en entrant.' },
+  moments: ['entree'],
+  technique: '@keyframes CSS',
+};
+
 function ressource(surcharge: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     schema: 1,
@@ -20,6 +26,7 @@ function ressource(surcharge: Record<string, unknown> = {}): Record<string, unkn
     statut: 'provisoire',
     ajouteLe: '2026-11-26',
     dependances: { npm: [], ressources: [] },
+    motion: null,
     ...surcharge,
   };
 }
@@ -73,16 +80,21 @@ describe('validerRegistre', () => {
     expect(resultat.metas).toHaveLength(2);
   });
 
-  it('accepte les options de la planche : animée et taille de case', () => {
-    const meta = ressource({ animee: true, tailleCase: 'large-haute' });
-    expect(valider(meta)).toEqual([]);
-    expect(valider(ressource({ animee: false, tailleCase: 'normale' }))).toEqual([]);
+  it('accepte une taille de case et un motion complet', () => {
+    expect(valider(ressource({ motion: MOTION, tailleCase: 'large-haute' }))).toEqual([]);
+    expect(valider(ressource({ tailleCase: 'normale' }))).toEqual([]);
   });
 
-  it('refuse une animée qui n’est pas un booléen et une taille de case inconnue', () => {
-    expect(valider(ressource({ animee: 'oui' }))).toEqual([
-      expect.stringContaining('« animee » doit valoir true ou false'),
-    ]);
+  it('accepte rejouer quand la sortie figure dans les moments', () => {
+    const motion = {
+      ...MOTION,
+      moments: ['entree', 'sortie'],
+      rejouer: { entree: true, sortie: 'hero-sortie' },
+    };
+    expect(valider(ressource({ motion }))).toEqual([]);
+  });
+
+  it('refuse une taille de case inconnue', () => {
     expect(valider(ressource({ tailleCase: 'geante' }))).toEqual([
       expect.stringContaining(
         "« tailleCase » doit être l'une de : normale, large, haute, large-haute",
@@ -90,12 +102,57 @@ describe('validerRegistre', () => {
     ]);
   });
 
+  it('exige le champ motion, null quand la ressource n’a aucune animation', () => {
+    const sans = ressource();
+    delete sans['motion'];
+    expect(valider(sans)).toEqual([expect.stringContaining('« motion » est obligatoire')]);
+    expect(valider(ressource({ motion: 'oui' }))).toEqual([
+      expect.stringContaining('« motion » doit valoir null ou un objet'),
+    ]);
+  });
+
+  it('refuse un motion sans moment, avec un moment inconnu ou un champ inconnu', () => {
+    expect(valider(ressource({ motion: { ...MOTION, moments: [] } }))).toEqual([
+      expect.stringContaining('au moins un moment'),
+    ]);
+    expect(valider(ressource({ motion: { ...MOTION, moments: ['clic'] } }))).toEqual([
+      expect.stringContaining('moment inconnu « clic »'),
+    ]);
+    expect(valider(ressource({ motion: { ...MOTION, duree: 3 } }))).toEqual([
+      expect.stringContaining('champ inconnu « duree »'),
+    ]);
+  });
+
+  it('refuse un motion sans résumé français ni technique', () => {
+    expect(valider(ressource({ motion: { ...MOTION, resume: 'texte' } }))).toEqual([
+      expect.stringContaining('« motion.resume » doit être'),
+    ]);
+    expect(valider(ressource({ motion: { ...MOTION, technique: ' ' } }))).toEqual([
+      expect.stringContaining('« motion.technique » est obligatoire'),
+    ]);
+  });
+
+  it('refuse rejouer.sortie sans sortie dans les moments, et une entrée qui ne vaut pas true', () => {
+    expect(
+      valider(ressource({ motion: { ...MOTION, rejouer: { sortie: 'hero-sortie' } } })),
+    ).toEqual([expect.stringContaining('exige « sortie » dans « motion.moments »')]);
+    expect(valider(ressource({ motion: { ...MOTION, rejouer: { entree: false } } }))).toEqual([
+      expect.stringContaining('« motion.rejouer.entree » doit valoir true'),
+    ]);
+  });
+
+  it('refuse l’ancien champ animee (remplacé par motion, ADR 0007)', () => {
+    expect(valider(ressource({ animee: true }))).toEqual([
+      expect.stringContaining('champ inconnu « animee »'),
+    ]);
+  });
+
   it('refuse ces options sur un design, qui n’a ni animation ni case propre', () => {
     const erreurs = validerRegistre([
-      { chemin: 'designs/fleuve', meta: design({ animee: true, tailleCase: 'large' }) },
+      { chemin: 'designs/fleuve', meta: design({ motion: null, tailleCase: 'large' }) },
     ]).erreurs;
     expect(erreurs).toEqual([
-      expect.stringContaining('champ inconnu « animee »'),
+      expect.stringContaining('champ inconnu « motion »'),
       expect.stringContaining('champ inconnu « tailleCase »'),
     ]);
   });
