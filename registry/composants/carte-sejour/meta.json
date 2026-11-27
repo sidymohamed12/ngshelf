@@ -12,6 +12,8 @@
   "secteurs": ["voyage"],
   "tags": ["card", "carte", "voyage", "hôtel", "photo"],
   "contratTokens": 1,
+  "animee": true,
+  "tailleCase": "normale",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",
