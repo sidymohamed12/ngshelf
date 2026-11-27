@@ -58,6 +58,13 @@ export const TEXTES = {
     signature: $localize`:@@pied.signature:Développé par`,
     signatureAria: $localize`:@@pied.signature.aria:Développé par Sidy : voir son portfolio`,
   },
+  /** États communs des zones qui chargent le registre (chunk d'index) : chargement, erreur. */
+  etats: {
+    chargement: $localize`:@@etat.chargement:Chargement du catalogue`,
+    erreurTitre: $localize`:@@etat.erreur.titre:Le catalogue n’a pas pu se charger`,
+    erreurTexte: $localize`:@@etat.erreur.texte:Vérifiez votre connexion, puis réessayez.`,
+    reessayer: $localize`:@@etat.reessayer:Réessayer`,
+  },
   pages: {
     accueil: {
       titrePage: $localize`:@@accueil.titre-page:${NOM}:nom: — composants Angular à copier ou télécharger`,

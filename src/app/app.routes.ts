@@ -3,11 +3,16 @@ import { ResolveFn, Routes } from '@angular/router';
 import { TEXTES } from '@core/i18n/textes.fr';
 import { RegistreService } from '@core/registre/registre.service';
 
-const titreFiche: ResolveFn<string> = (route) => {
-  const ressource = inject(RegistreService).trouver(route.params);
-  return ressource
-    ? TEXTES.pages.ressource.titrePage(ressource.titre.fr)
-    : TEXTES.pages.ressource.introuvableTitre;
+const titreFiche: ResolveFn<string> = async (route) => {
+  try {
+    const ressource = await inject(RegistreService).trouver(route.params);
+    return ressource
+      ? TEXTES.pages.ressource.titrePage(ressource.titre.fr)
+      : TEXTES.pages.ressource.introuvableTitre;
+  } catch {
+    // Index illisible : la page affiche son propre état d'erreur, le titre reste neutre.
+    return TEXTES.pages.ressource.introuvableTitre;
+  }
 };
 
 /** Toutes les routes sont lazy. L'ordre compte : les chemins fixes avant la fiche, le joker en dernier. */

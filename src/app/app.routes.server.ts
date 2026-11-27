@@ -7,7 +7,7 @@ export const serverRoutes: ServerRoute[] = [
   {
     path: ':categorie/:type/:slug',
     renderMode: RenderMode.Prerender,
-    getPrerenderParams: async () => inject(RegistreService).parametresPrerendu(),
+    getPrerenderParams: () => inject(RegistreService).parametresPrerendu(),
   },
   {
     path: '**',

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, resource } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RegistreService } from '@core/registre/registre.service';
 import { LIBELLES_CATEGORIE, LIBELLES_TYPE, TEXTES } from '@core/i18n/textes.fr';
@@ -19,18 +19,20 @@ export class RessourceComponent {
   readonly slug = input<string>();
 
   protected readonly textes = TEXTES.pages.ressource;
+  protected readonly etats = TEXTES.etats;
   readonly #registre = inject(RegistreService);
 
+  protected readonly chargement = resource({
+    params: () => ({ categorie: this.categorie(), type: this.type(), slug: this.slug() }),
+    loader: ({ params }) => this.#registre.trouver(params),
+  });
+
   protected readonly ressource = computed(() =>
-    this.#registre.trouver({
-      categorie: this.categorie(),
-      type: this.type(),
-      slug: this.slug(),
-    }),
+    this.chargement.hasValue() ? this.chargement.value() : undefined,
   );
 
   protected readonly etiquette = computed(() => {
     const r = this.ressource();
-    return r ? `${LIBELLES_CATEGORIE[r.categorie].singulier} · ${LIBELLES_TYPE[r.type]}` : '';
+    return r?.type ? `${LIBELLES_CATEGORIE[r.categorie].singulier} · ${LIBELLES_TYPE[r.type]}` : '';
   });
 }
