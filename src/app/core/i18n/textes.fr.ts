@@ -58,6 +58,14 @@ export const TEXTES = {
     signature: $localize`:@@pied.signature:Développé par`,
     signatureAria: $localize`:@@pied.signature.aria:Développé par Sidy : voir son portfolio`,
   },
+  /** Méga-menu « Catalogue » du header et liste des secteurs du menu mobile. */
+  mega: {
+    familles: $localize`:@@mega.familles:Familles`,
+    tout: $localize`:@@mega.tout:Tout le catalogue`,
+    typesComposants: $localize`:@@mega.types.composants:Composants par type`,
+    typesBlocs: $localize`:@@mega.types.blocs:Blocs par type`,
+    secteurs: $localize`:@@mega.secteurs:Par secteur`,
+  },
   /** Recherche globale (dialogue ⌘K / Ctrl+K). */
   recherche: {
     declencheur: $localize`:@@recherche.declencheur:Rechercher une ressource`,

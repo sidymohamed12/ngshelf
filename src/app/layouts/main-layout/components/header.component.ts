@@ -5,6 +5,7 @@ import { TEXTES } from '@core/i18n/textes.fr';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { MarqueComponent } from '@shared/components/marque/marque.component';
 import { LIENS_HEADER } from './liens-navigation';
+import { MegaMenuComponent } from './mega-menu.component';
 import { MobileMenuComponent } from './mobile-menu.component';
 import { RechercheDeclencheurComponent } from './recherche-declencheur.component';
 import { RechercheDialogComponent } from './recherche-dialog.component';
@@ -20,6 +21,7 @@ const SEUIL_DEFILEMENT_PX = 8;
     RouterLinkActive,
     IconeComponent,
     MarqueComponent,
+    MegaMenuComponent,
     MobileMenuComponent,
     RechercheDeclencheurComponent,
     RechercheDialogComponent,

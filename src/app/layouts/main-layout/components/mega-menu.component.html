@@ -1,0 +1,60 @@
+<button
+  #declencheur
+  class="ngs-nav-link cursor-pointer"
+  type="button"
+  data-mega
+  aria-controls="mega-catalogue"
+  [attr.aria-expanded]="ouvert()"
+  (click)="basculer($event)"
+  (keydown.arrowdown)="surFlecheBas($event)"
+  (pointerenter)="surEntree($event)"
+  (pointerleave)="surSortie($event)"
+>
+  <span>{{ nav.catalogue }}</span>
+  <svg appIcone="caret-down" taille="sm"></svg>
+</button>
+<div
+  class="ngs-mega"
+  id="mega-catalogue"
+  role="region"
+  [attr.aria-label]="nav.catalogue"
+  [class.is-open]="ouvert()"
+  [attr.inert]="ouvert() ? null : ''"
+  (pointerenter)="surEntree($event)"
+  (pointerleave)="surSortie($event)"
+>
+  <div class="ngs-container ngs-mega__grille">
+    <div>
+      <p class="ngs-mega__titre">{{ textes.familles }}</p>
+      <ul class="ngs-mega__liste">
+        @for (lien of menu.familles; track lien.libelle) {
+          <li><app-ligne-compte [lien]="lien" (navigue)="fermer()" /></li>
+        }
+      </ul>
+      <a
+        class="ngs-link ngs-link--rest mt-4 inline-flex"
+        routerLink="/catalogue"
+        (click)="fermer()"
+        >{{ textes.tout }}</a
+      >
+    </div>
+    @for (colonne of colonnesTypes; track colonne.titre) {
+      <div>
+        <p class="ngs-mega__titre">{{ colonne.titre }}</p>
+        <ul class="ngs-mega__liste ngs-mega__liste--2">
+          @for (lien of colonne.liens; track lien.libelle) {
+            <li><app-ligne-compte [lien]="lien" (navigue)="fermer()" /></li>
+          }
+        </ul>
+      </div>
+    }
+    <div>
+      <p class="ngs-mega__titre">{{ textes.secteurs }}</p>
+      <ul class="ngs-mega__liste">
+        @for (lien of menu.secteurs; track lien.libelle) {
+          <li><app-ligne-compte [lien]="lien" (navigue)="fermer()" /></li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>

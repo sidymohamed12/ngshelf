@@ -33,14 +33,8 @@ const DESIGNS: LienNavigation = {
 };
 const A_PROPOS: LienNavigation = { chemin: '/a-propos', libelle: TEXTES.nav.apropos };
 
-/** Navigation principale du header (grands écrans). */
-export const LIENS_HEADER: readonly LienNavigation[] = [
-  CATALOGUE,
-  COMPOSANTS,
-  BLOCS,
-  DESIGNS,
-  A_PROPOS,
-];
+/** Liens du header (grands écrans), après le bouton du méga-menu « Catalogue ». */
+export const LIENS_HEADER: readonly LienNavigation[] = [COMPOSANTS, BLOCS, DESIGNS, A_PROPOS];
 
 /** Navigation du menu mobile : les quatre familles y sont toutes. */
 export const LIENS_MENU_MOBILE: readonly LienNavigation[] = [

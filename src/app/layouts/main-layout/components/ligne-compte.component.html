@@ -1,0 +1,23 @@
+<ng-template #contenu>
+  @if (lien().classe) {
+    <span class="ngs-nav-link__dot" aria-hidden="true"></span>
+  }
+  @if (lien().icone; as icone) {
+    <svg [appIcone]="icone" taille="sm"></svg>
+  }
+  <span>{{ lien().libelle }}</span>
+  <span class="ngs-mega__compte" [class.is-vide]="lien().compte === 0">
+    <span aria-hidden="true">{{ lien().compte }}</span>
+    <span class="sr-only">{{ lien().compteTexte }}</span>
+  </span>
+</ng-template>
+
+@if (lien().chemin; as chemin) {
+  <a class="ngs-mega__lien" [class]="lien().classe" [routerLink]="chemin" (click)="navigue.emit()">
+    <ng-container [ngTemplateOutlet]="contenu" />
+  </a>
+} @else {
+  <span class="ngs-mega__lien text-(--color-text-muted)">
+    <ng-container [ngTemplateOutlet]="contenu" />
+  </span>
+}

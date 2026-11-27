@@ -4,6 +4,7 @@
       <app-marque />
     </a>
     <nav class="ngs-nav" [attr.aria-label]="textes.commun.navigationPrincipale">
+      <app-mega-menu />
       @for (lien of liens; track lien.libelle) {
         <a
           class="ngs-nav-link"

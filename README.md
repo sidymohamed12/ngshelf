@@ -74,6 +74,7 @@ Les imports passent par les alias `@core/*`, `@shared/*`, `@features/*`, `@layou
 - **Icônes** : sprite Phosphor `public/icons/sprite.svg`, utilisé par `<svg appIcone="nom">` ; les noms valides sont typés dans `shared/components/icone/icones.ts`.
 - **Thème** : clair, sombre ou système, mémorisé dans le cookie `ngs_theme` (jamais `localStorage`). `public/theme-init.js` pose `data-theme` avant le premier rendu ; `ThemeService` reprend ensuite côté navigateur.
 - **Textes** : tous dans `core/i18n/textes.fr.ts`, marqués `$localize` avec l'identifiant `@@clé` (`@angular/localize`, langue source `fr`). Nom du site et liens de Sidy : `core/config/site.config.ts`.
+- **Recherche et menus** : dialogue ⌘K / Ctrl+K (`<dialog>` natif, recherche locale sur les index chargés à la première ouverture), méga-menu « Catalogue » du header et liste des secteurs du menu mobile, tous alimentés par `compteurs.json`.
 - **Routes** : toutes lazy. Prérendues depuis le registre (`getPrerenderParams`) : `/<categorie>` (composants, blocs, templates, designs), `/<categorie>/<type>` et `/secteurs/<secteur>` seulement si au moins une ressource, `/<categorie>/<type>/<slug>` pour chaque fiche. Un type ou un secteur sans ressource n'a pas de page : il n'est pas un lien dans la navigation.
 
 ## Déploiement : Cloudflare Pages

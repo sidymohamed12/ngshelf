@@ -34,8 +34,18 @@ describe('MainLayoutComponent', () => {
   it('propose la navigation principale vers le catalogue et la page à propos', async () => {
     const { racine } = await monter();
     const nav = racine.querySelector('nav[aria-label="Navigation principale"]') as HTMLElement;
-    const liens = [...nav.querySelectorAll('a')].map((a) => a.textContent?.trim());
+    const liens = [...nav.querySelectorAll('.ngs-nav-link')].map((a) => a.textContent?.trim());
     expect(liens).toEqual(['Catalogue', 'Composants', 'Blocs', 'Designs', 'À propos']);
+  });
+
+  it('liste les secteurs avec leurs compteurs dans le menu mobile, sans lien pour un secteur vide', async () => {
+    const { racine } = await monter();
+    const menu = racine.querySelector('#menu-mobile') as HTMLElement;
+    expect(menu.querySelector('details summary')?.textContent).toContain('Par secteur');
+    expect(menu.querySelector('a[href="/secteurs/restaurant"]')?.textContent).toContain(
+      'Restaurant',
+    );
+    expect(menu.querySelector('a[href="/secteurs/finance"]')).toBeNull();
   });
 
   it('ne montre pas le lien GitHub tant que le dépôt n’existe pas', async () => {
