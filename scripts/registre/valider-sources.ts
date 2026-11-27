@@ -1,4 +1,5 @@
 import type { DonneesFiche, ParametreApi } from '../../src/app/shared/models/fiche.model.ts';
+import { FICHIER_SCENE } from './apercus.ts';
 import type { FichiersRessource } from './sources.ts';
 import { MARQUEUR_STYLE, nomComposant, structureGabarit } from './sources.ts';
 
@@ -49,6 +50,7 @@ function fichiersRequis(composant: string): readonly string[] {
     `css/${composant}.component.html`,
     `css/${composant}.component.css`,
     'fiche.json',
+    FICHIER_SCENE,
   ];
 }
 

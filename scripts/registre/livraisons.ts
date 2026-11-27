@@ -36,6 +36,8 @@ export interface ParametresLivraison {
 }
 
 export interface Livraisons {
+  /** Les designs du registre, tels que la fiche et les aperçus les lisent. */
+  readonly designs: readonly (DesignContrat & { readonly slug: string })[];
   /** `<slug>` vers la fiche. */
   readonly fiches: ReadonlyMap<string, FicheRessource>;
   /** `<slug>` vers le fragment de la variante CSS. */
@@ -155,5 +157,5 @@ export function construireLivraisons(parametres: ParametresLivraison): Livraison
       );
     }
   }
-  return { fiches, fragments, zips };
+  return { designs, fiches, fragments, zips };
 }

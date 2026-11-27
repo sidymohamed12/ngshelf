@@ -5,6 +5,8 @@ const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 
 module.exports = defineConfig([
+  // Sources assemblées depuis registry/ (code livré aux visiteurs, sélecteurs ngs-*) : jamais linté ici.
+  { ignores: ['projects/apercus/src/generated/**'] },
   {
     files: ['**/*.ts'],
     extends: [

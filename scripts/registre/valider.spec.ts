@@ -18,6 +18,7 @@ export class BarreComponent {
   'css/barre.component.html': GABARIT_CSS,
   'css/barre.component.css': '.barre__action { color: var(--ngs-color-text, #0b0b0c); }',
   'fiche.json': JSON.stringify({ usage: '<ngs-barre />', api: [] }),
+  'demo/demo.component.ts': 'export class DemoComponent {}',
 };
 
 const UN_SECTEUR = ['restaurant'];
@@ -295,6 +296,9 @@ describe('validerRegistre', () => {
       ]);
       expect(erreursDe(avec({}, ['fiche.json']))).toEqual([
         expect.stringContaining('fichier manquant « fiche.json »'),
+      ]);
+      expect(erreursDe(avec({}, ['demo/demo.component.ts']))).toEqual([
+        expect.stringContaining('fichier manquant « demo/demo.component.ts »'),
       ]);
       expect(erreursDe(avec({ 'autre.component.ts': 'x' }))).toEqual([
         expect.stringContaining('exactement un « <nom>.component.ts »'),

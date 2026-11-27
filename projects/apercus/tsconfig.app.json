@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "paths": {
+      "@core/*": ["../../src/app/core/*"],
+      "@shared/*": ["../../src/app/shared/*"],
+      "@generated-apercus/*": ["./src/generated/*"],
+      "@apercus/*": ["./src/app/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts"]
+}

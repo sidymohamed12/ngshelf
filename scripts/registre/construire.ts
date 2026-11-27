@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { SITE } from '../../src/app/core/config/site.config.ts';
 import type { MetaDesign, MetaRessource } from '../../src/app/shared/models/ressource.model.ts';
 import { CATEGORIES } from '../../src/app/shared/models/taxonomie.model.ts';
+import { construireApercus } from './apercus.ts';
 import { construireLivraisons } from './livraisons.ts';
 import { lireRegistre } from './lire.ts';
 import { NOM_FICHIER_COMPTEURS, construireSorties, enJson, nomFichierIndex } from './sorties.ts';
@@ -18,6 +19,8 @@ const SORTIE = join(RACINE, 'src/generated/registre');
 /** Fichiers publics produits (zips, fragments de code) : copiés tels quels à la racine du site par angular.json. */
 const SORTIE_PUBLIQUE = join(RACINE, 'src/generated/public');
 const PONT = join(RACINE, 'src/styles/contrat/ngshelf-theme.css');
+/** Sources assemblées de l'application d'aperçus (projects/apercus). */
+const SORTIE_APERCUS = join(RACINE, 'projects/apercus/src/generated');
 
 function echouer(titre: string, erreurs: readonly string[]): never {
   process.stderr.write(`${titre}\n${erreurs.map((e) => `  - ${e}`).join('\n')}\n`);
@@ -44,6 +47,20 @@ function ecrireLivraisons(
     pont: readFileSync(PONT, 'utf8'),
     nomSite: SITE.nom,
   });
+  const planche = livraisons.designs.find((d) => d.slug === 'planche') ?? livraisons.designs[0];
+  if (planche === undefined) throw new Error('aucun design dans le registre');
+  const apercus = construireApercus(
+    ressources.map((r) => ({
+      slug: r.meta.slug,
+      avecMotion: r.meta.motion !== null,
+      fichiers: r.fichiers,
+    })),
+    planche,
+    readFileSync(PONT, 'utf8'),
+    SITE.nom,
+  );
+  rmSync(SORTIE_APERCUS, { recursive: true, force: true });
+  for (const [chemin, contenu] of apercus) ecrireFichier(join(SORTIE_APERCUS, chemin), contenu);
   for (const [slug, fiche] of livraisons.fiches) {
     ecrireFichier(join(SORTIE, 'fiche', `${slug}.json`), enJson(fiche));
   }

@@ -102,7 +102,10 @@
               "buildTarget": "ngshelf:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test",
@@ -119,6 +122,69 @@
       },
       "i18n": {
         "sourceLocale": "fr"
+      }
+    },
+    "apercus": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/apercus",
+      "sourceRoot": "projects/apercus/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/apercus/src/main.ts",
+            "tsConfig": "projects/apercus/tsconfig.app.json",
+            "outputPath": "dist/apercus",
+            "baseHref": "/apercu/",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/apercus/public"
+              }
+            ],
+            "styles": ["projects/apercus/src/styles.css"],
+            "server": "projects/apercus/src/main.server.ts",
+            "outputMode": "static"
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "350kB",
+                  "maximumError": "500kB"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              }
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/apercus/tsconfig.spec.json",
+            "include": ["projects/apercus/src/**/*.spec.ts"]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/apercus/src/**/*.ts"]
+          }
+        }
       }
     }
   }
