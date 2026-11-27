@@ -474,7 +474,7 @@ Image de l'accueil (LCP) : la photo de la vitrine est en `fetchpriority="high"`,
 | # | Point | Source |
 | --- | --- | --- |
 | 1 | **Validation finale de la maquette** : aucune validation écrite de Sidy sur l'ensemble ; `DESIGN.md` v0.10 est « à valider par Sidy ». Le tableau de motion n'a pas été validé séparément | `DESIGN.md:3` |
-| 2 | **Mentions légales** : deux rédactions proposées à valider (nom et logo, durée de conservation des e-mails) ; textes à faire relire par un juriste (droit sénégalais, RGPD) | section 5.5 |
+| 2 | **Mentions légales** : contenu validé par Sidy le 27 novembre 2026 (nom et logo, durée de conservation des e-mails compris) ; textes à faire relire par un juriste avant la mise en ligne (droit sénégalais, RGPD) | section 5.5 |
 | 3 | **Champ `motion`** : forme retenue par l'arbitrage (`motion: Motion \| null` obligatoire dans `meta.json`, `animee` dérivé, schéma 1) ; à porter dans `ressource.model.ts`, `valider.ts` et les 3 `meta.json` animés | arbitrage, point 13 |
 | 4 | **Densité en `rem`** (accessibilité de la taille du texte) : piste non tranchée ; à tester à 200 % de taille de texte avant de décider | arbitrage, point 5 |
 | 5 | **Pages sans maquette** : « Démarrer », « Contribuer » ; états `hors-ligne` et `serveur injoignable` | section 5.5 |
