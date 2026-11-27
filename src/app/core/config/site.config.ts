@@ -14,6 +14,29 @@ export interface AuteurConfig {
   readonly email: string;
 }
 
+/** Hébergeur du site (mentions légales, politique de confidentialité). Même valeur que la maquette. */
+export type Hebergeur = 'cloudflare' | 'netlify';
+
+export interface CoordonneesHebergeur {
+  readonly nom: string;
+  readonly adresse: string;
+  readonly site: string;
+}
+
+/** Coordonnées lues sur les politiques de confidentialité officielles (27 novembre 2026). */
+export const HEBERGEURS: Readonly<Record<Hebergeur, CoordonneesHebergeur>> = {
+  cloudflare: {
+    nom: 'Cloudflare, Inc.',
+    adresse: '101 Townsend Street, San Francisco, CA 94107, États-Unis',
+    site: 'https://www.cloudflare.com/',
+  },
+  netlify: {
+    nom: 'Netlify, Inc.',
+    adresse: '101 2nd Street, San Francisco, CA 94105, États-Unis',
+    site: 'https://www.netlify.com/',
+  },
+};
+
 export interface SiteConfig {
   readonly nom: string;
   /** Adresse publique du site, sans barre finale ; null tant que le domaine n'est pas choisi. */
@@ -25,6 +48,8 @@ export interface SiteConfig {
   /** Dépôt GitHub du projet ; null tant qu'il n'est pas créé (les liens « code source » sont alors masqués). */
   readonly depot: string | null;
   readonly licence: string;
+  /** ADR 0013 : Cloudflare (Pages ou Workers Static Assets, choix au lot 5). */
+  readonly hebergeur: Hebergeur;
   readonly angular: string;
   readonly langue: string;
   readonly auteur: AuteurConfig;
@@ -37,6 +62,7 @@ export const SITE: SiteConfig = {
   prefixe: 'ngs',
   depot: null,
   licence: 'MIT',
+  hebergeur: 'cloudflare',
   angular: '22',
   langue: 'fr',
   auteur: {

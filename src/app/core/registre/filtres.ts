@@ -3,6 +3,7 @@ import {
   CATEGORIES,
   CATEGORIES_TYPEES,
   Categorie,
+  CategorieTypee,
   SECTEURS,
   SEGMENT_CATEGORIE,
   Secteur,
@@ -76,7 +77,7 @@ const SEPARATEUR = ',';
 /** Axe qu'un compteur de facette laisse de côté : un compteur ignore son propre filtre. */
 export type AxeFiltre = 'categorie' | 'type' | 'secteur' | 'reglables' | 'animees';
 
-export function categorieDuType(type: TypeRessource): Categorie | undefined {
+export function categorieDuType(type: TypeRessource): CategorieTypee | undefined {
   return CATEGORIES_TYPEES.find((c) =>
     (TYPES_PAR_CATEGORIE[c] as readonly string[]).includes(type),
   );
