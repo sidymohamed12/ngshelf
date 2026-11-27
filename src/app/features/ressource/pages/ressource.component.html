@@ -1,0 +1,13 @@
+<section class="ngs-container grid content-start gap-6 py-16" aria-labelledby="titre">
+  @if (ressource(); as r) {
+    <p class="ngs-label ngs-muted m-0">{{ etiquette() }}</p>
+    <h1 class="ngs-h2 m-0" id="titre">{{ r.titre.fr }}</h1>
+    <p class="ngs-lead m-0 max-w-prose">{{ r.description.fr }}</p>
+  } @else {
+    <h1 class="ngs-h2 m-0" id="titre">{{ textes.introuvableTitre }}</h1>
+    <p class="ngs-lead m-0 max-w-prose">{{ textes.introuvableTexte }}</p>
+    <div>
+      <a class="ngs-btn" routerLink="/catalogue">{{ textes.introuvableCta }}</a>
+    </div>
+  }
+</section>

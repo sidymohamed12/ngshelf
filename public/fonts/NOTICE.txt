@@ -1,0 +1,7 @@
+Polices auto-hébergées de NgShelf, toutes deux sous SIL Open Font License 1.1 (texte : OFL-chivo.txt).
+
+- chivo-latin-var.woff2       Chivo, Copyright 2019 The Chivo Project Authors (https://github.com/Omnibus-Type/Chivo)
+- chivo-mono-latin-var.woff2  Chivo Mono, Copyright 2018 The Chivo Project Authors (https://github.com/Omnibus-Type/Chivo)
+
+Les deux fichiers sont des sous-ensembles latins (WOFF2) des polices variables d'origine.
+Si l'un des fichiers change, le renommer (le cache est immuable, voir public/_headers).

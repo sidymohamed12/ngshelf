@@ -1,0 +1,51 @@
+<div
+  class="ngs-menu"
+  id="menu-mobile"
+  role="dialog"
+  aria-modal="true"
+  tabindex="-1"
+  [attr.aria-label]="textes.commun.navigationPrincipale"
+  [class.is-open]="ouvert()"
+  [attr.inert]="ouvert() ? null : ''"
+>
+  <div class="flex min-h-[3.25rem] items-center justify-between">
+    <span class="ngs-brand" role="img" [attr.aria-label]="textes.commun.marque">
+      <app-marque />
+    </span>
+    <button
+      #boutonFermer
+      class="ngs-btn ngs-btn--ghost ngs-btn--icon"
+      type="button"
+      [attr.aria-label]="textes.nav.menuFermer"
+      (click)="fermer()"
+    >
+      <svg appIcone="x"></svg>
+    </button>
+  </div>
+  <div class="grid content-start gap-6 overflow-auto">
+    <ul class="ngs-menu__list">
+      @for (lien of liens; track lien.libelle) {
+        <li>
+          <a
+            class="ngs-menu__link"
+            [class]="lien.classeFamille"
+            [routerLink]="lien.chemin"
+            [queryParams]="lien.queryParams"
+            (click)="fermer()"
+          >
+            @if (lien.classeFamille) {
+              <span class="ngs-nav-link__dot" aria-hidden="true"></span>
+            }
+            <span>{{ lien.libelle }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+  @if (depot) {
+    <a class="ngs-btn ngs-btn--secondary mt-auto" [href]="depot" rel="noopener">
+      <svg appIcone="github-logo"></svg>
+      <span>{{ textes.nav.github }}</span>
+    </a>
+  }
+</div>

@@ -41,17 +41,28 @@ Le site est servi sur `http://localhost:4200/` et se recharge à chaque modifica
 ```
 src/
 ├── app/
-│   ├── core/       services singleton (SEO, cookies, configuration)
-│   ├── shared/     éléments réutilisés par au moins deux features
-│   ├── features/   une feature par dossier, routes lazy
-│   └── layouts/    gabarits de page
+│   ├── core/       services singleton : config du site, textes fr, registre, cookies, thème
+│   ├── shared/     éléments réutilisés par au moins deux features : modèles, icône, marque
+│   ├── features/   une feature par dossier (accueil, catalogue, ressource, à propos, 404)
+│   └── layouts/    gabarit de page : header, menu mobile, menu du thème, pied de page
+├── styles/         tokens.css, components.css (copies du design system) et contrat/ (tokens --ngs-*)
 ├── index.html
 ├── main.ts / main.server.ts
-└── styles.css      Tailwind et tokens
-public/             favicon, icônes, robots.txt, _headers
+└── styles.css      Tailwind, tokens et composants
+public/             favicon, icônes, fonts/, icons/sprite.svg, theme-init.js, robots.txt, _headers
 ```
 
 Les imports passent par les alias `@core/*`, `@shared/*`, `@features/*` et `@layouts/*`, jamais par des chemins relatifs remontants.
+
+## Design, thème et textes
+
+- **Tokens** : `src/styles/tokens.css` (thème Tailwind `@theme`) et `components.css` (classes `.ngs-*`) sont des copies de `design/design-system/` ; ne modifier une valeur que là-bas. Aucune couleur, police ni durée en dur dans un composant.
+- **Contrat des ressources** : `src/styles/contrat/` (12 tokens `--ngs-*`, pont Tailwind `ngshelf-theme.css`). Ces fichiers ne sont pas chargés par le site lui-même.
+- **Polices** : Chivo et Chivo Mono, auto-hébergées dans `public/fonts/` (SIL OFL 1.1, notice jointe). Si un fichier change, le renommer : le cache est immuable.
+- **Icônes** : sprite Phosphor `public/icons/sprite.svg`, utilisé par `<svg appIcone="nom">` ; les noms valides sont typés dans `shared/components/icone/icones.ts`.
+- **Thème** : clair, sombre ou système, mémorisé dans le cookie `ngs_theme` (jamais `localStorage`). `public/theme-init.js` pose `data-theme` avant le premier rendu ; `ThemeService` reprend ensuite côté navigateur.
+- **Textes** : tous dans `core/i18n/textes.fr.ts`, marqués `$localize` avec l'identifiant `@@clé` (`@angular/localize`, langue source `fr`). Nom du site et liens de Sidy : `core/config/site.config.ts`.
+- **Routes** : toutes lazy ; `/:categorie/:type/:slug` est prérendue pour chaque ressource du registre (`getPrerenderParams`).
 
 ## Déploiement : Cloudflare Pages
 

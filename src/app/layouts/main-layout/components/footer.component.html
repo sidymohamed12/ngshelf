@@ -1,0 +1,70 @@
+<footer class="ngs-footer">
+  <div class="ngs-container grid gap-10 lg:grid-cols-12">
+    <div class="grid content-start gap-5 lg:col-span-5">
+      <span class="ngs-brand" role="img" [attr.aria-label]="textes.commun.marque">
+        <app-marque />
+      </span>
+      <p class="ngs-muted ngs-small m-0 max-w-[28rem]">{{ textes.pied.texte }}</p>
+      <div class="grid gap-3">
+        <h2 class="ngs-label ngs-muted m-0" id="pied-suivre">{{ textes.pied.suivre }}</h2>
+        <ul class="ngs-reseaux" aria-labelledby="pied-suivre">
+          @for (reseau of reseaux; track reseau.icone) {
+            <li>
+              <a
+                class="ngs-reseau"
+                [href]="reseau.href"
+                [attr.target]="reseau.externe ? '_blank' : null"
+                [attr.rel]="reseau.externe ? 'me noopener' : null"
+                [attr.aria-label]="reseau.libelle"
+              >
+                <svg [appIcone]="reseau.icone"></svg>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+    <nav class="grid content-start gap-3 lg:col-span-3" aria-labelledby="pied-catalogue">
+      <h2 class="ngs-label ngs-muted m-0" id="pied-catalogue">{{ textes.pied.catalogue }}</h2>
+      @for (lien of familles; track lien.libelle) {
+        <a
+          class="ngs-link justify-self-start"
+          [routerLink]="lien.chemin"
+          [queryParams]="lien.queryParams"
+          >{{ lien.libelle }}</a
+        >
+      }
+    </nav>
+    <nav class="grid content-start gap-3 lg:col-span-4" aria-labelledby="pied-projet">
+      <h2 class="ngs-label ngs-muted m-0" id="pied-projet">{{ textes.pied.projet }}</h2>
+      <a class="ngs-link justify-self-start" routerLink="/a-propos">{{ textes.nav.apropos }}</a>
+    </nav>
+    <div
+      class="flex flex-wrap items-end justify-between gap-6 border-t border-(--color-border) pt-6 lg:col-span-12"
+    >
+      <div class="grid gap-1">
+        <p class="ngs-small ngs-muted m-0">{{ textes.pied.marque }}</p>
+        <p class="ngs-small ngs-muted m-0">{{ textes.pied.provisoire }}</p>
+      </div>
+      <a
+        class="ngs-signature"
+        rel="me noopener"
+        target="_blank"
+        [href]="portfolio"
+        [attr.aria-label]="textes.pied.signatureAria"
+      >
+        <span class="ngs-signature__mono" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <path
+              d="M22 9.5c-1.6-2.4-4.2-3.5-7-3.2-3.4.4-5.6 2.8-5 5.6.5 2.6 3.4 3.6 6.4 4.4 3.2.9 6.3 2 6.6 5 .3 3.2-2.6 5.6-6.4 5.6-3 0-5.4-1.2-6.8-3.4"
+            />
+          </svg>
+        </span>
+        <span class="ngs-signature__texte" aria-hidden="true">
+          <small>{{ textes.pied.signature }}</small>
+          <strong>{{ nomAuteur }}</strong>
+        </span>
+      </a>
+    </div>
+  </div>
+</footer>
