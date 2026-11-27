@@ -23,10 +23,17 @@ body {
   margin: 0;
   min-height: 100vh;
   display: grid;
+  /* Colonne à la largeur de la fenêtre : sans cela, un contenu sans largeur propre (@container) tombe à 0. */
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
   padding: 32px 20px;
   box-sizing: border-box;
   font-family: var(--ngs-font-family);
+}
+
+.compo,
+app-root {
+  width: 100%;
 }
 
 .compo {
@@ -41,6 +48,13 @@ body {
   (container-type: inline-size, sans largeur intrinsèque) dans un élément ajusté à son contenu retombe
   à 0 px de large : l'aperçu de la carte de séjour était vide (HANDOFF 7.5).
 */
+.compo > * {
+  /* La scène routée est un élément personnalisé (inline par défaut) : sans largeur, .piece retombe à 0. */
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
 .piece {
   /* Largeur selon la famille : un composant reste étroit (44rem), un bloc prend la page (--largeur-scene). */
   width: min(100%, var(--largeur-scene, 44rem));

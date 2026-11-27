@@ -123,7 +123,10 @@ function construireZip(
 }
 
 export function construireLivraisons(parametres: ParametresLivraison): Livraisons {
-  const designs = parametres.designs.map(enDesign);
+  // Design par défaut en premier : c'est l'ordre des segments de la fiche.
+  const designs = parametres.designs
+    .map(enDesign)
+    .sort((a, b) => Number(b.slug === DESIGN_PAR_DEFAUT) - Number(a.slug === DESIGN_PAR_DEFAUT));
   const fiches = new Map<string, FicheRessource>();
   const fragments = new Map<string, FragmentCode>();
   const zips = new Map<string, Uint8Array>();

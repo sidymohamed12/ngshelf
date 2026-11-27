@@ -18,6 +18,8 @@ const SELECTEUR_HOTES = '[data-hote]';
 const DELAI_DETECTION_SORTIE_MS = 80;
 /** Garde-fou : la sortie est terminée au plus tard après ce délai. */
 const DELAI_MAX_SORTIE_MS = 1200;
+/** Marge verticale du corps de l'aperçu (styles.css : padding de 32 px). */
+const MARGE_VERTICALE_PX = 32;
 
 /** Mode et animations demandés par l'URL : l'état initial seulement, les messages prennent ensuite le relais. */
 export function etatInitial(recherche: string): { mode: ModeApercu; animations: boolean } {
@@ -108,16 +110,18 @@ export class ApercuService {
   }
 
   #suivreHauteur(fenetre: Window): void {
+    // On mesure le contenu (la scène), pas le corps : celui-ci a min-height 100vh et ne rétrécirait jamais.
     const corps = this.#document.body;
+    const scene = this.#document.querySelector('main') ?? corps;
     let derniere = -1;
     const annoncer = (): void => {
-      const hauteur = Math.ceil(corps.scrollHeight);
+      const hauteur = Math.ceil(scene.getBoundingClientRect().height + 2 * MARGE_VERTICALE_PX);
       if (hauteur === derniere) return;
       derniere = hauteur;
       this.#envoyer(fenetre, messageHauteur(hauteur));
     };
     const observateur = new ResizeObserver(annoncer);
-    observateur.observe(corps);
+    observateur.observe(scene);
     this.#destroyRef.onDestroy(() => observateur.disconnect());
   }
 }
