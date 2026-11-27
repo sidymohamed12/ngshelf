@@ -1,4 +1,4 @@
-import { colorer } from './colorer.ts';
+import { colorer } from './colorer';
 
 function texte(html: string): string {
   return html

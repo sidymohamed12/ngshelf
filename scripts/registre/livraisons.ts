@@ -11,7 +11,7 @@ import {
 } from '../../src/app/shared/livraison/livraison.ts';
 import { creerZip } from '../../src/app/shared/livraison/zip.ts';
 import type { MetaDesign, MetaRessource } from '../../src/app/shared/models/ressource.model.ts';
-import { colorer } from './colorer.ts';
+import { colorer } from '../../src/app/shared/livraison/colorer.ts';
 import type { FichierCode, FichiersRessource } from './sources.ts';
 import { fichiersVariante } from './sources.ts';
 import { lireDonneesFiche } from './valider-sources.ts';

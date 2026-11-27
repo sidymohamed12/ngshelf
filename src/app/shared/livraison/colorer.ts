@@ -1,8 +1,9 @@
-import type { LangageCode } from './sources.ts';
+export type LangageCode = 'ts' | 'html' | 'css';
 
 /**
- * Coloration syntaxique du code affiché sur la fiche (classes `.tok-*` de components.css), faite au build :
- * le visiteur reçoit du HTML déjà coloré, aucun script de coloration n'est livré. Coloriseur léger (TS,
+ * Coloration syntaxique du code affiché sur la fiche (classes `.tok-*` de components.css). Faite au build pour
+ * le code des ressources (le visiteur reçoit du HTML déjà coloré) ; faite dans le navigateur seulement pour
+ * le tokens.css qui suit les réglages. Coloriseur léger (TS,
  * gabarits Angular, CSS) repris de la maquette ; ADR 0002 prévoit Shiki, à adopter si Sidy accepte la
  * dépendance (grammaires `angular-ts` et `angular-html`).
  */
