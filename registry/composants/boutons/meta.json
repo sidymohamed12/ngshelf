@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "slug": "boutons",
+  "categorie": "composant",
+  "type": "bouton",
+  "titre": {
+    "fr": "Boutons"
+  },
+  "description": {
+    "fr": "Trois variantes (principale, secondaire, discrète), un état de chargement annoncé et une cible tactile de 44 px."
+  },
+  "secteurs": [],
+  "tags": ["bouton", "action", "cta", "chargement"],
+  "contratTokens": 1,
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

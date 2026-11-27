@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "slug": "calendrier",
+  "categorie": "composant",
+  "type": "calendrier",
+  "titre": {
+    "fr": "Calendrier"
+  },
+  "description": {
+    "fr": "Choisir une date dans le mois, à la souris ou au clavier (flèches, début, fin), libellés en français."
+  },
+  "secteurs": [],
+  "tags": ["date", "formulaire", "agenda", "datepicker", "réservation"],
+  "contratTokens": 1,
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

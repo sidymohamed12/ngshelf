@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "slug": "carte-sejour",
+  "categorie": "composant",
+  "type": "carte",
+  "titre": {
+    "fr": "Carte de séjour"
+  },
+  "description": {
+    "fr": "Une carte cliquable en entier : photo, lieu, titre, prix. Le lien porte sur le titre, la zone de clic couvre la carte."
+  },
+  "secteurs": ["voyage"],
+  "tags": ["card", "carte", "voyage", "hôtel", "photo"],
+  "contratTokens": 1,
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

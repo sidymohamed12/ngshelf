@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "slug": "planche",
+  "categorie": "design",
+  "titre": {
+    "fr": "Design Planche"
+  },
+  "description": {
+    "fr": "Le design par défaut : encre noire, rayons moyens, police du système. Sobre, il laisse le contenu parler."
+  },
+  "secteurs": [],
+  "tags": ["design", "tokens", "couleurs", "mode-sombre", "thème-visuel"],
+  "contratTokens": 1,
+  "valeurs": {
+    "clair": {
+      "--ngs-color-action": "#0b0b0c",
+      "--ngs-color-on-action": "#ffffff",
+      "--ngs-color-surface": "#ffffff",
+      "--ngs-color-surface-alt": "#f4f4f5",
+      "--ngs-color-text": "#0b0b0c",
+      "--ngs-color-text-muted": "#5f5f66",
+      "--ngs-color-border": "#8a8a93",
+      "--ngs-color-danger": "#b42318",
+      "--ngs-radius": "10px",
+      "--ngs-density": "1",
+      "--ngs-font-family": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+      "--ngs-duration": "160ms"
+    },
+    "sombre": {
+      "--ngs-color-action": "#f4f4f5",
+      "--ngs-color-on-action": "#0b0b0c",
+      "--ngs-color-surface": "#161618",
+      "--ngs-color-surface-alt": "#232327",
+      "--ngs-color-text": "#f4f4f5",
+      "--ngs-color-text-muted": "#a6a6af",
+      "--ngs-color-border": "#6e6e78",
+      "--ngs-color-danger": "#ff8a7a"
+    }
+  },
+  "licence": "MIT",
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-26"
+}

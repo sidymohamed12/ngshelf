@@ -10,6 +10,7 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "resolveJsonModule": true,
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
@@ -18,7 +19,8 @@
       "@core/*": ["./src/app/core/*"],
       "@shared/*": ["./src/app/shared/*"],
       "@features/*": ["./src/app/features/*"],
-      "@layouts/*": ["./src/app/layouts/*"]
+      "@layouts/*": ["./src/app/layouts/*"],
+      "@generated/*": ["./src/generated/*"]
     }
   },
   "angularCompilerOptions": {

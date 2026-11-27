@@ -10,7 +10,14 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "build:dev": "ng build --configuration development",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "registre:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/registre/construire.ts",
+    "prestart": "npm run registre:build",
+    "prebuild": "npm run registre:build",
+    "prebuild:dev": "npm run registre:build",
+    "prewatch": "npm run registre:build",
+    "pretest": "npm run registre:build",
+    "prelint": "npm run registre:build"
   },
   "private": true,
   "packageManager": "npm@11.20.0",

@@ -25,16 +25,25 @@ Le site est servi sur `http://localhost:4200/` et se recharge à chaque modifica
 
 ## Scripts
 
-| Commande               | Rôle                                                                  |
-| ---------------------- | --------------------------------------------------------------------- |
-| `npm start`            | serveur de développement                                              |
-| `npm run build`        | build de production avec prérendu, sortie dans `dist/ngshelf/browser` |
-| `npm run build:dev`    | build de développement (sans optimisation, avec sourcemaps)           |
-| `npm run watch`        | build de développement en continu                                     |
-| `npm run lint`         | analyse ESLint (angular-eslint, règles angular-sidy)                  |
-| `npm test`             | tests unitaires (Vitest)                                              |
-| `npm run format`       | formate le dépôt avec Prettier                                        |
-| `npm run format:check` | vérifie le formatage sans modifier les fichiers                       |
+| Commande                 | Rôle                                                                  |
+| ------------------------ | --------------------------------------------------------------------- |
+| `npm start`              | serveur de développement                                              |
+| `npm run build`          | build de production avec prérendu, sortie dans `dist/ngshelf/browser` |
+| `npm run build:dev`      | build de développement (sans optimisation, avec sourcemaps)           |
+| `npm run watch`          | build de développement en continu                                     |
+| `npm run registre:build` | lit `registry/`, le valide et écrit `src/generated/registre/`         |
+| `npm run lint`           | analyse ESLint (angular-eslint, règles angular-sidy)                  |
+| `npm test`               | tests unitaires (Vitest)                                              |
+| `npm run format`         | formate le dépôt avec Prettier                                        |
+| `npm run format:check`   | vérifie le formatage sans modifier les fichiers                       |
+
+`registre:build` est lancé automatiquement avant `start`, `build`, `build:dev`, `watch`, `test` et `lint` (scripts `pre…` de npm) : passez par `npm run …`, pas par `ng` directement, sinon les sorties peuvent manquer ou être périmées.
+
+## Registre
+
+`registry/<categorie>/<slug>/meta.json` est la source unique des ressources (ADR 0002 et 0004) : `composants/`, `blocs/`, `templates/`, `designs/`. Pour ajouter une ressource, créer son dossier et son `meta.json` (modèle : `shared/models/ressource.model.ts`, textes au format `{ "fr": "…" }`), puis lancer `npm run registre:build`. Le script (`scripts/registre/`) refuse le build si un type ou un secteur est hors de la taxonomie (`shared/models/taxonomie.model.ts`), un slug en double, plus de 3 secteurs ou 8 tags, une dépendance non vide, un texte français absent, un champ inconnu.
+
+Sorties, dans `src/generated/registre/` (non versionnées) : un index par catégorie (`index-<categorie>.json`, chargé à la demande, jamais dans le bundle initial) et `compteurs.json` (ressources publiées par catégorie, type et secteur, dans le bundle initial pour le méga-menu).
 
 ## Structure
 
@@ -45,14 +54,17 @@ src/
 │   ├── shared/     éléments réutilisés par au moins deux features : modèles, icône, marque
 │   ├── features/   une feature par dossier (accueil, catalogue, ressource, à propos, 404)
 │   └── layouts/    gabarit de page : header, menu mobile, menu du thème, pied de page
+├── generated/      sorties du registre (non versionnées, voir « Registre »)
 ├── styles/         tokens.css, components.css (copies du design system) et contrat/ (tokens --ngs-*)
 ├── index.html
 ├── main.ts / main.server.ts
 └── styles.css      Tailwind, tokens et composants
+registry/           ressources du catalogue : un meta.json par ressource
+scripts/registre/   script Node de build du registre (TypeScript, exécuté tel quel par Node 26) et ses tests
 public/             favicon, icônes, fonts/, icons/sprite.svg, theme-init.js, robots.txt, _headers
 ```
 
-Les imports passent par les alias `@core/*`, `@shared/*`, `@features/*` et `@layouts/*`, jamais par des chemins relatifs remontants.
+Les imports passent par les alias `@core/*`, `@shared/*`, `@features/*`, `@layouts/*` et `@generated/*`, jamais par des chemins relatifs remontants.
 
 ## Design, thème et textes
 
