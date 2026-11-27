@@ -1,0 +1,57 @@
+/*
+  NgShelf — pont Tailwind v4 des ressources publiées (ADR 0002 décision 2, nommage ADR 0006).
+
+  Fichier livré avec chaque ressource en variante Tailwind (zip, code copié) : à importer une fois dans
+  styles.css, juste après @import "tailwindcss";. Il n'est PAS importé par le site lui-même, dont les
+  tokens sont dans tokens.css ; les aperçus des ressources l'utiliseront.
+
+  1. Valeurs par défaut du contrat : design « Planche », clair (identiques à contrat-tokens.css).
+  2. @theme inline : les utilitaires bg-ngs-action, rounded-ngs, font-ngs, p-ngs-4 lisent les variables
+     --ngs-* au moment de l'usage ; un changement de design ou de mode sombre est donc suivi sans recompiler.
+     Les noms sont préfixés ngs : aucun conflit avec --spacing ni --color-primary de l'utilisateur.
+*/
+
+:root {
+  --ngs-color-action: #0b0b0c;
+  --ngs-color-on-action: #ffffff;
+  --ngs-color-surface: #ffffff;
+  --ngs-color-surface-alt: #f4f4f5;
+  --ngs-color-text: #0b0b0c;
+  --ngs-color-text-muted: #5f5f66;
+  --ngs-color-border: #8a8a93;
+  --ngs-color-danger: #b42318;
+  --ngs-radius: 10px;
+  --ngs-density: 1;
+  --ngs-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ngs-duration: 160ms;
+}
+
+@theme inline {
+  --color-ngs-action: var(--ngs-color-action);
+  --color-ngs-on-action: var(--ngs-color-on-action);
+  --color-ngs-surface: var(--ngs-color-surface);
+  --color-ngs-surface-alt: var(--ngs-color-surface-alt);
+  --color-ngs-text: var(--ngs-color-text);
+  --color-ngs-text-muted: var(--ngs-color-text-muted);
+  --color-ngs-border: var(--ngs-color-border);
+  --color-ngs-danger: var(--ngs-color-danger);
+  --radius-ngs: var(--ngs-radius);
+  --radius-ngs-lg: calc(var(--ngs-radius) * 1.4);
+  --font-ngs: var(--ngs-font-family);
+  --spacing-ngs-1: calc(var(--ngs-density) * 4px);
+  --spacing-ngs-2: calc(var(--ngs-density) * 8px);
+  --spacing-ngs-3: calc(var(--ngs-density) * 12px);
+  --spacing-ngs-4: calc(var(--ngs-density) * 16px);
+  --spacing-ngs-5: calc(var(--ngs-density) * 20px);
+  --spacing-ngs-6: calc(var(--ngs-density) * 24px);
+  --spacing-ngs-7: calc(var(--ngs-density) * 28px);
+  --spacing-ngs-8: calc(var(--ngs-density) * 32px);
+  --spacing-ngs-9: calc(var(--ngs-density) * 36px);
+  --spacing-ngs-10: calc(var(--ngs-density) * 40px);
+  --spacing-ngs-11: calc(var(--ngs-density) * 44px);
+  --spacing-ngs-12: calc(var(--ngs-density) * 48px);
+  --spacing-ngs-13: calc(var(--ngs-density) * 52px);
+  --spacing-ngs-14: calc(var(--ngs-density) * 56px);
+  --spacing-ngs-15: calc(var(--ngs-density) * 60px);
+  --spacing-ngs-16: calc(var(--ngs-density) * 64px);
+}

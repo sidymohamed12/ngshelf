@@ -1,0 +1,269 @@
+/*
+  NgShelf — tokens du SITE.
+  Copie de design/design-system/tokens.css (seule source des valeurs) ; seul changement : les @font-face
+  pointent vers /fonts/ (public/fonts/), servi tel quel par l'hébergeur. Ne pas modifier ici une valeur
+  sans la modifier d'abord dans le design system.
+  Seule source des valeurs : la page de design system, la maquette puis le front Angular
+  (styles.css, @theme) reprennent ce fichier tel quel.
+
+  `@theme static` : toutes les variables sont émises, même non utilisées par une classe
+  (nécessaire car les composants du design system les lisent en var()).
+
+  Le contrat de tokens des RESSOURCES publiées (--ngs-*) est séparé : contrat-tokens.css.
+  Contrastes calculés (WCAG 2.x) : voir la page index.html, section Couleurs (calcul en direct).
+*/
+
+/* Police principale : Chivo (Omnibus-Type, SIL OFL 1.1), variable graisse 400–800 (pas d'axe de largeur).
+   Code : Chivo Mono (même fonderie, SIL OFL 1.1), variable 400–600, zéro barré disponible.
+   Pour changer de police : ces blocs @font-face + la seule variable --font-famille (et --font-mono) plus bas. */
+@font-face {
+  font-family: "Chivo";
+  src: url("/fonts/chivo-latin-var.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Chivo Mono";
+  src: url("/fonts/chivo-mono-latin-var.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+/* Repli aux métriques proches (calculées depuis Chivo 400 et Arial) pour limiter le CLS pendant le swap */
+@font-face {
+  font-family: "Chivo Fallback";
+  src: local("Arial");
+  size-adjust: 105.6%;
+  ascent-override: 89%;
+  descent-override: 23.7%;
+  line-gap-override: 0%;
+}
+
+@theme static {
+  /* ---------- Primitives : encre (neutres froids, chroma quasi nulle) ---------- */
+  --color-ink-0: #ffffff;
+  --color-ink-50: #f4f4f5;
+  --color-ink-100: #ebebed;
+  --color-ink-200: #e4e4e7;
+  --color-ink-300: #c9c9ce;
+  --color-ink-400: #7c7c85;
+  --color-ink-500: #5f5f66;
+  --color-ink-700: #2a2a2e;
+  --color-ink-800: #1c1c1f;
+  --color-ink-900: #141416;
+  --color-ink-950: #0b0b0c;
+
+  /* ---------- Primitives : couleurs de catégorie (repérage uniquement) ---------- */
+  --color-vert-600: #0b6e4f;
+  --color-vert-50: #e8f3ef;
+  --color-bleu-600: #1f4fd1;
+  --color-bleu-50: #ebf0fc;
+  --color-rouille-600: #b4361c;
+  --color-rouille-50: #f8ece9;
+  --color-framboise-600: #b0005e;
+  --color-framboise-50: #f8e6ef;
+
+  /* ---------- Marque (ADR 0006) ----------
+     Bleu nuit et orange : UNIQUEMENT logo, splash, favicon, image sociale. Jamais action, état, famille ni texte. */
+  --logo-tuile-clair: #191f42;   /* valeurs fixes : servent aussi à forcer une zone (page de design system) */
+  --logo-tuile-sombre: #ededf0;
+  --logo-tuile: var(--logo-tuile-clair);
+  --logo-etagere: #fd6437;
+
+  /* ---------- Sémantique ---------- */
+  --color-canvas: var(--color-ink-0);
+  --color-surface: var(--color-ink-50);
+  --color-surface-hover: var(--color-ink-100);
+  --color-text: var(--color-ink-950);
+  --color-text-muted: var(--color-ink-500);
+  --color-primary: var(--color-ink-950);
+  --color-primary-hover: var(--color-ink-700);
+  --color-on-primary: var(--color-ink-0);
+  --color-border: var(--color-ink-200);
+  --color-border-strong: var(--color-ink-400);
+  --color-focus: var(--color-ink-950);
+  --color-border-hover: var(--color-ink-300);   /* bordure de case au survol, contour pointillé des états */
+  --color-text-faint: #8a8a93;                  /* compteur nul, information grisée (3,42:1, jamais seule) */
+  --color-control-off: var(--color-ink-400);     /* piste d'interrupteur coupé (4,13:1, seuil 3:1) */
+  --color-ring: var(--color-ink-200);            /* anneau doux autour d'un champ focalisé */
+  --color-backdrop: rgb(11 11 12 / 0.4);         /* voile sous un dialogue ou un tiroir */
+  --color-selection-bg: var(--color-ink-950);
+  --color-selection-text: var(--color-ink-0);
+  --color-scrollbar: var(--color-ink-300);
+  --color-toast-bg: var(--color-ink-950);
+  --color-toast-text: var(--color-ink-0);
+  --color-shimmer: rgb(255 255 255 / 0.65);
+  --color-contour: rgb(11 11 12 / 0.12);         /* liseré des pastilles de couleur */
+  --color-on-cat: var(--color-ink-0);            /* texte posé sur une couleur de famille (puce active) */
+  --color-danger-soft: var(--color-rouille-50);
+
+  --color-cat-composants: var(--color-vert-600);
+  --color-cat-composants-soft: var(--color-vert-50);
+  --color-cat-blocs: var(--color-bleu-600);
+  --color-cat-blocs-soft: var(--color-bleu-50);
+  --color-cat-templates: var(--color-rouille-600);
+  --color-cat-templates-soft: var(--color-rouille-50);
+  --color-cat-designs: var(--color-framboise-600);
+  --color-cat-designs-soft: var(--color-framboise-50);
+
+  --color-success: #11703f;
+  --color-warning: #8a5300;
+  --color-danger: #b42318;
+  --color-info: var(--color-ink-950);
+
+  /* Blocs de code : toujours sombres */
+  --color-code-bg: var(--color-ink-900);
+  --color-code-surface: var(--color-ink-800);
+  --color-code-border: #2e2e33;
+  --color-code-text: #e7e7ea;
+  --color-code-comment: #9a9aa3;
+  --color-code-keyword: #f5a3c0;
+  --color-code-string: #8fd6b4;
+  --color-code-tag: #9db8ff;
+  --color-code-attr: #ffb59e;
+  --color-code-number: #f0c674;
+  --color-code-punct: #c4c4cc;
+
+  /* ---------- Typographie ---------- */
+  /* Une seule variable à changer pour remplacer la police du site (avec son @font-face en tête). */
+  --font-famille: "Chivo", "Chivo Fallback", system-ui, sans-serif;
+  --font-display: var(--font-famille);
+  --font-sans: var(--font-famille);
+  --font-mono: "Chivo Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --text-display: clamp(3rem, 1.6rem + 6vw, 6rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.025em;
+  --text-h2: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+  --text-h2--line-height: 1.02;
+  --text-h2--letter-spacing: -0.03em;
+  --text-h3: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+  --text-h3--line-height: 1.15;
+  --text-h3--letter-spacing: -0.015em;
+  --text-lead: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --text-lead--line-height: 1.5;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.6;
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.5;
+  --text-label: 0.875rem;
+  --text-label--line-height: 1.3;
+  --text-code: 0.875rem;
+  --text-code--line-height: 1.65;
+
+  /* Graisses (Chivo variable 400–800). L'effet signature des noms de famille passe par la graisse
+     et l'approche : --wght-signature-de → --wght-signature-a (v0.4, remplace l'axe de largeur). */
+  --wght-display: 760;
+  --wght-titre: 720;
+  --wght-logo: 800;
+  --wght-signature-de: 460;
+  --wght-signature-a: 800;
+
+  /* ---------- Espacements (multiples de 4 px) ---------- */
+  --spacing: 0.25rem;
+  --space-section: clamp(5rem, 3rem + 8vw, 10rem);
+  --space-gutter: clamp(0.75rem, 0.5rem + 0.8vw, 1.25rem);
+  --space-inline: clamp(1rem, 0.5rem + 3vw, 3rem);
+
+  /* ---------- Conteneur et grille ---------- */
+  --container-site: 90rem;
+  --container-wide: 112rem; /* ≥ 1920 px : la planche s'élargit (4 colonnes plus larges) */
+  --container-prose: 42rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 90rem;
+  --breakpoint-2xl: 120rem;
+
+  /* ---------- Rayons (une logique : 8 / 12 / 20 / plein) ---------- */
+  --radius-chip: 8px;
+  --radius-button: 12px;
+  --radius-input: 12px;
+  --radius-case: 20px;
+  --radius-panel: 20px;
+  --radius-full: 999px;
+
+  /* ---------- Ombres (2 niveaux, décalées et douces) ---------- */
+  --shadow-raise: 0 1px 2px rgb(11 11 12 / 0.06), 0 6px 16px -6px rgb(11 11 12 / 0.1);
+  --shadow-overlay: 0 2px 6px rgb(11 11 12 / 0.08), 0 24px 48px -16px rgb(11 11 12 / 0.24);
+  --shadow-flottant: drop-shadow(0 18px 28px rgb(11 11 12 / 0.18)); /* filtre des pièces posées sur la vitrine */
+
+  /* ---------- z-index ---------- */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 20;
+  --z-header: 40;
+  --z-overlay: 100;
+  --z-toast: 1000;
+
+  /* ---------- Motion (design-sidy §12) ---------- */
+  --duration-in: 150ms;
+  --duration-out: 120ms;
+  --duration-press: 90ms;
+  --duration-panel-in: 200ms;
+  --duration-panel-out: 120ms;
+  --duration-image-in: 600ms;
+  --duration-image-out: 400ms;
+  --duration-theme: 420ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/*
+  ---------- Mode sombre du site ----------
+  Choix du visiteur : clair, sombre ou système (cookie fonctionnel ngs_theme), appliqué avant le premier rendu
+  par le script en ligne du <head> (attribut data-theme="sombre" sur <html>).
+  Le sélecteur n'est pas limité à :root : une zone peut être forcée en sombre (page de design system).
+  Composé à part (pas une inversion) : surfaces élevées de plus en plus claires, familles désaturées et éclaircies.
+  Toute variable sémantique qui change est redéfinie ici (une var() se résout là où elle est déclarée).
+  Contrastes calculés : voir DESIGN.md (Colors) et la page de design system.
+*/
+[data-theme="sombre"] {
+  color-scheme: dark;
+  --color-canvas: #111113;
+  --color-surface: #1a1a1e;
+  --color-surface-hover: #242429;
+  --color-text: #ededf0;
+  --color-text-muted: #a4a4ae;
+  --logo-tuile: var(--logo-tuile-sombre); /* tuiles claires sur fond sombre ; la planche reste orange */
+  --color-primary: #ededf0;
+  --color-primary-hover: #cfcfd6;
+  --color-on-primary: #111113;
+  --color-border: #2c2c32;
+  --color-border-strong: #75757f;
+  --color-focus: #ededf0;
+  --color-border-hover: #44444c;
+  --color-text-faint: #6a6a74;
+  --color-control-off: #75757f;
+  --color-ring: #3a3a42;
+  --color-backdrop: rgb(0 0 0 / 0.6);
+  --color-selection-bg: #ededf0;
+  --color-selection-text: #111113;
+  --color-scrollbar: #3a3a42;
+  --color-toast-bg: #2a2a30;
+  --color-toast-text: #ededf0;
+  --color-shimmer: rgb(255 255 255 / 0.07);
+  --color-contour: rgb(255 255 255 / 0.18);
+  --color-on-cat: #111113;
+  --color-danger-soft: #2b1813;
+
+  --color-cat-composants: #4fca9d;
+  --color-cat-composants-soft: #12271f;
+  --color-cat-blocs: #93abff;
+  --color-cat-blocs-soft: #171e35;
+  --color-cat-templates: #ff9b80;
+  --color-cat-templates-soft: #2b1813;
+  --color-cat-designs: #ff8dc5;
+  --color-cat-designs-soft: #2c1522;
+
+  --color-success: #5fd394;
+  --color-warning: #eab05c;
+  --color-danger: #ff8b7d;
+  --color-info: #ededf0;
+
+  --shadow-raise: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 16px -6px rgb(0 0 0 / 0.5);
+  --shadow-overlay: 0 2px 6px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.7);
+  --shadow-flottant: drop-shadow(0 18px 28px rgb(0 0 0 / 0.5));
+}
