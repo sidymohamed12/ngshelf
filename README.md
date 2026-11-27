@@ -71,3 +71,7 @@ Le build produit uniquement des fichiers statiques, sans serveur Node.
 
 - Node 26
 - npm 11
+
+## Intégration continue
+
+Le workflow `.github/workflows/ci.yml` s'exécute sur chaque pull request et sur chaque push vers `dev`, `preprod` et `main`. Il lance trois jobs indépendants aux noms stables : `lint` (`npm run lint`), `build` (`npm run build`) et `test` (`npm test -- --no-watch`). Rien n'est déployé : la CI ne fait que vérifier le code, sans secret.
