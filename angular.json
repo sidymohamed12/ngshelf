@@ -56,7 +56,8 @@
             ],
             "styles": ["src/styles.css"],
             "server": "src/main.server.ts",
-            "outputMode": "static"
+            "outputMode": "static",
+            "polyfills": ["@angular/localize/init"]
           },
           "configurations": {
             "production": {
@@ -108,6 +109,9 @@
             "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
+      },
+      "i18n": {
+        "sourceLocale": "fr"
       }
     }
   }
