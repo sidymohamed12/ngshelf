@@ -1,0 +1,23 @@
+{
+  "usage": "<ngs-calendrier [(selection)]=\"dateDeLivraison\" />",
+  "api": [
+    {
+      "nom": "selection",
+      "type": "model<Date | null>()",
+      "defaut": "null",
+      "role": "Date choisie, liable en [(selection)]."
+    },
+    {
+      "nom": "locale",
+      "type": "input<string>()",
+      "defaut": "'fr-FR'",
+      "role": "Langue des libellés (Intl)."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : le mois change sans glisser (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

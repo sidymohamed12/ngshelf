@@ -1,0 +1,13 @@
+<button
+  class="relative inline-flex min-h-[max(44px,var(--spacing-ngs-12))] cursor-pointer items-center justify-center gap-ngs-2 rounded-ngs border-[1.5px] border-ngs-action bg-ngs-action px-ngs-5 font-semibold text-ngs-on-action transition duration-(--ngs-duration) not-disabled:hover:-translate-y-px not-disabled:hover:brightness-110 not-disabled:active:translate-y-px not-disabled:active:scale-[.985] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ngs-action disabled:cursor-not-allowed disabled:opacity-45 data-[variante=secondaire]:border-ngs-text data-[variante=secondaire]:bg-ngs-surface data-[variante=secondaire]:text-ngs-text data-[variante=discrete]:border-transparent data-[variante=discrete]:bg-transparent data-[variante=discrete]:text-ngs-text data-[variante=discrete]:hover:bg-ngs-surface-alt data-[variante=discrete]:hover:brightness-100 aria-busy:pointer-events-none aria-busy:text-transparent motion-reduce:transition-none"
+  [type]="type()"
+  [attr.data-variante]="variante()"
+  [attr.aria-busy]="chargement() || null"
+  [disabled]="desactive() || chargement()"
+>
+  <ng-content />
+  <span
+    class="hidden in-aria-busy:absolute in-aria-busy:inset-0 in-aria-busy:m-auto in-aria-busy:block in-aria-busy:size-[18px] in-aria-busy:animate-spin in-aria-busy:rounded-full in-aria-busy:border-2 in-aria-busy:border-ngs-on-action in-aria-busy:border-r-transparent"
+    aria-hidden="true"
+  ></span>
+</button>

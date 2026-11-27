@@ -1,0 +1,57 @@
+<section
+  class="relative grid overflow-hidden rounded-[calc(var(--radius-ngs)*1.6)] bg-ngs-surface shadow-[inset_0_0_0_1px_var(--color-ngs-border)] @[38rem]:grid-cols-[1.15fr_1fr] @[38rem]:items-stretch [&_a]:focus-visible:outline-2 [&_a]:focus-visible:outline-offset-2 [&_a]:focus-visible:outline-ngs-action"
+  [attr.aria-labelledby]="id"
+>
+  <div
+    class="aspect-[16/10] overflow-hidden @[38rem]:order-2 @[38rem]:aspect-auto @[38rem]:min-h-[22rem]"
+  >
+    <img
+      class="block size-full object-cover motion-safe:animate-[ngs-hero-photo_calc(var(--ngs-duration)*6)_cubic-bezier(.22,1,.36,1)_both] in-[.ngs-sans-animation]:animate-none!"
+      [ngSrc]="image()"
+      [alt]="alt()"
+      fill
+      priority
+      sizes="(min-width: 1024px) 40vw, 90vw"
+    />
+  </div>
+  <div class="grid gap-ngs-3 p-ngs-5 @[38rem]:content-center @[38rem]:p-ngs-8">
+    @if (niveauTitre() === 1) {
+      <h1
+        class="m-0 text-[clamp(1.5rem,1rem+4cqi,2.5rem)] leading-[1.08] tracking-tight text-balance motion-safe:animate-[ngs-hero-texte_calc(var(--ngs-duration)*4)_cubic-bezier(.22,1,.36,1)_both] motion-safe:[animation-delay:var(--ngs-duration)] in-[.ngs-sans-animation]:animate-none!"
+        [id]="id"
+      >
+        {{ titre() }}
+      </h1>
+    } @else {
+      <h2
+        class="m-0 text-[clamp(1.5rem,1rem+4cqi,2.5rem)] leading-[1.08] tracking-tight text-balance motion-safe:animate-[ngs-hero-texte_calc(var(--ngs-duration)*4)_cubic-bezier(.22,1,.36,1)_both] motion-safe:[animation-delay:var(--ngs-duration)] in-[.ngs-sans-animation]:animate-none!"
+        [id]="id"
+      >
+        {{ titre() }}
+      </h2>
+    }
+    <p
+      class="m-0 text-base leading-normal text-ngs-text-muted motion-safe:animate-[ngs-hero-texte_calc(var(--ngs-duration)*4)_cubic-bezier(.22,1,.36,1)_both] motion-safe:[animation-delay:calc(var(--ngs-duration)*1.6)] in-[.ngs-sans-animation]:animate-none!"
+    >
+      {{ texte() }}
+    </p>
+    <div
+      class="flex flex-wrap gap-ngs-2 motion-safe:animate-[ngs-hero-texte_calc(var(--ngs-duration)*4)_cubic-bezier(.22,1,.36,1)_both] motion-safe:[animation-delay:calc(var(--ngs-duration)*2.2)] in-[.ngs-sans-animation]:animate-none!"
+    >
+      @if (action()) {
+        <a
+          class="inline-flex min-h-11 items-center rounded-ngs bg-ngs-action px-ngs-4 font-semibold text-ngs-on-action no-underline"
+          [routerLink]="routeAction()"
+          >{{ action() }}</a
+        >
+      }
+      @if (lien()) {
+        <a
+          class="inline-flex min-h-11 items-center rounded-ngs px-ngs-4 font-semibold text-ngs-text no-underline shadow-[inset_0_0_0_1.5px_var(--color-ngs-text)]"
+          [routerLink]="routeLien()"
+          >{{ lien() }}</a
+        >
+      }
+    </div>
+  </div>
+</section>

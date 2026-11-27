@@ -1,0 +1,41 @@
+{
+  "usage": "<!-- animate.leave (facultatif) : le hero s'efface quand il est retiré de la page -->\n<ngs-hero-restaurant\n  animate.leave=\"hero-sortie\"\n  titre=\"Le yassa du vendredi, comme à la maison\"\n  texte=\"Cuisine sénégalaise de saison, servie midi et soir à Dakar.\"\n  image=\"/images/yassa.webp\"\n  alt=\"Poulet yassa aux oignons et riz blanc servis en poêlons.\"\n  action=\"Réserver une table\"\n  routeAction=\"/reserver\"\n  lien=\"Voir la carte\"\n  routeLien=\"/carte\"\n/>",
+  "api": [
+    {
+      "nom": "titre / texte",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Titre (h2 par défaut) et phrase."
+    },
+    {
+      "nom": "niveauTitre",
+      "type": "input<1 | 2>()",
+      "defaut": "2",
+      "role": "h1 si le hero ouvre la page."
+    },
+    {
+      "nom": "image / alt",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Photo (NgOptimizedImage, priority)."
+    },
+    {
+      "nom": "action / routeAction / lien / routeLien",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Action principale et lien secondaire."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : ni entrée ni sortie (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    },
+    {
+      "nom": "animate.leave=\"hero-sortie\"",
+      "type": "dans le template parent",
+      "defaut": "—",
+      "role": "Sortie quand le hero est retiré (@if, changement de vue) : il s’efface en montant de 12 px."
+    }
+  ]
+}

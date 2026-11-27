@@ -1,0 +1,27 @@
+<section class="w-full max-w-[44rem]" [attr.aria-labelledby]="id">
+  <h2 class="mt-0 mb-ngs-4 text-2xl leading-tight tracking-tight" [id]="id">{{ titre() }}</h2>
+  <div class="grid gap-ngs-2">
+    @for (q of questions(); track q.question; let i = $index) {
+      <details
+        class="group rounded-ngs bg-ngs-surface shadow-[inset_0_0_0_1px_var(--color-ngs-border)] [interpolate-size:allow-keywords] details-content:h-0 details-content:overflow-clip open:details-content:h-auto motion-safe:details-content:transition-[height,content-visibility] motion-safe:details-content:transition-discrete motion-safe:details-content:duration-(--ngs-duration) in-[.ngs-sans-animation]:details-content:transition-none!"
+        [open]="i === ouverte()"
+      >
+        <summary
+          class="flex min-h-ngs-14 cursor-pointer list-none items-center justify-between gap-4 px-ngs-4 font-semibold focus-visible:rounded-ngs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ngs-action [&::-webkit-details-marker]:hidden [&_svg]:size-[18px] [&_svg]:flex-none motion-safe:[&_svg]:transition-transform motion-safe:[&_svg]:duration-(--ngs-duration) group-open:[&_svg]:rotate-180 in-[.ngs-sans-animation]:[&_svg]:transition-none!"
+        >
+          {{ q.question }}
+          <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+            <path
+              d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+            />
+          </svg>
+        </summary>
+        <p
+          class="m-0 px-ngs-4 pb-ngs-4 leading-relaxed text-ngs-text-muted motion-safe:group-open:animate-[ngs-faq-reponse_calc(var(--ngs-duration)*1.5)_cubic-bezier(.22,1,.36,1)_both] in-[.ngs-sans-animation]:animate-none!"
+        >
+          {{ q.reponse }}
+        </p>
+      </details>
+    }
+  </div>
+</section>

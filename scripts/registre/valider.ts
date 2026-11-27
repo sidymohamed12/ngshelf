@@ -1,4 +1,6 @@
 import type { MetaDesign, MetaRessource } from '../../src/app/shared/models/ressource.model.ts';
+import type { FichiersRessource } from './sources.ts';
+import { validerSources } from './valider-sources.ts';
 import { MOMENTS } from '../../src/app/shared/models/motion.model.ts';
 import {
   CATEGORIES,
@@ -19,6 +21,8 @@ export type MetaRegistre = MetaRessource | MetaDesign;
 export interface EntreeBrute {
   readonly chemin: string;
   readonly meta: unknown;
+  /** Autres fichiers du dossier (code, gabarits, fiche.json), chemins relatifs ; absents pour un design. */
+  readonly fichiers?: FichiersRessource;
 }
 
 export interface ResultatValidation {
@@ -350,6 +354,11 @@ function validerEntree(entree: EntreeBrute): readonly string[] {
   if (meta['categorie'] === 'design') validerDesign(meta, rapport);
   else validerRessource(meta, rapport);
   validerEmplacement(meta, entree.chemin, rapport);
+  if (meta['categorie'] !== 'design') {
+    for (const erreur of validerSources(entree.fichiers, estObjet(meta['motion']))) {
+      rapport.signaler(erreur);
+    }
+  }
   return rapport.erreurs;
 }
 

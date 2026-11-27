@@ -1,0 +1,12 @@
+@keyframes ngs-navbar-entree {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes ngs-navbar-lien {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}

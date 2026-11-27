@@ -1,0 +1,29 @@
+{
+  "usage": "<ngs-interrupteur\n  label=\"Notifications par e-mail\"\n  aide=\"Un message quand une commande part.\"\n  [(coche)]=\"notifications\"\n/>",
+  "api": [
+    {
+      "nom": "label",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Texte visible du réglage."
+    },
+    {
+      "nom": "aide",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Phrase d’aide sous le label."
+    },
+    {
+      "nom": "desactive",
+      "type": "input<boolean>()",
+      "defaut": "false",
+      "role": "Empêche la bascule."
+    },
+    {
+      "nom": "coche",
+      "type": "model<boolean>()",
+      "defaut": "false",
+      "role": "État, liable en [(coche)]."
+    }
+  ]
+}

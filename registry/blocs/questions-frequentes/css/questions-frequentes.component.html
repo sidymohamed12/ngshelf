@@ -1,0 +1,18 @@
+<section class="faq" [attr.aria-labelledby]="id">
+  <h2 class="faq__titre" [id]="id">{{ titre() }}</h2>
+  <div class="faq__liste">
+    @for (q of questions(); track q.question; let i = $index) {
+      <details class="faq__item" [open]="i === ouverte()">
+        <summary class="faq__question">
+          {{ q.question }}
+          <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+            <path
+              d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+            />
+          </svg>
+        </summary>
+        <p class="faq__reponse">{{ q.reponse }}</p>
+      </details>
+    }
+  </div>
+</section>

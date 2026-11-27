@@ -1,0 +1,33 @@
+<ul class="m-0 grid w-full list-none gap-ngs-2 p-0" aria-live="polite" aria-label="Notifications">
+  @for (n of service.liste(); track n.id) {
+    <li
+      class="flex items-center gap-ngs-3 rounded-ngs bg-ngs-surface py-ngs-3 pr-ngs-2 pl-ngs-4 shadow-[inset_0_0_0_1px_var(--color-ngs-border),0_8px_24px_-12px_rgb(0_0_0/.35)] in-[.ngs-sans-animation]:animate-none!"
+      animate.enter="motion-safe:animate-[ngs-notif-entree_calc(var(--ngs-duration)*1.75)_cubic-bezier(.22,1,.36,1)_both]"
+      animate.leave="motion-safe:animate-[ngs-notif-sortie_var(--ngs-duration)_cubic-bezier(.65,0,.35,1)_both]"
+    >
+      <svg
+        class="size-5 flex-none text-ngs-action"
+        viewBox="0 0 256 256"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
+        />
+      </svg>
+      <span class="flex-1 text-[15px]">{{ n.texte }}</span>
+      <button
+        class="inline-grid size-11 flex-none cursor-pointer place-items-center rounded-ngs border-0 bg-transparent text-ngs-text-muted hover:bg-ngs-surface-alt hover:text-ngs-text [&_svg]:size-[18px]"
+        type="button"
+        aria-label="Fermer la notification"
+        (click)="service.retirer(n.id)"
+      >
+        <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+          <path
+            d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"
+          />
+        </svg>
+      </button>
+    </li>
+  }
+</ul>

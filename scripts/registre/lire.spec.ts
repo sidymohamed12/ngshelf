@@ -30,6 +30,18 @@ describe('lireRegistre', () => {
     expect(entrees.map((e) => e.chemin)).toEqual(['blocs/c', 'composants/a', 'composants/b']);
   });
 
+  it('lit aussi les autres fichiers du dossier, sous-dossiers compris, sans le meta.json', () => {
+    ecrire('composants/a', '{"slug":"a"}');
+    mkdirSync(join(racine, 'composants/a/tailwind'), { recursive: true });
+    writeFileSync(join(racine, 'composants/a/a.component.ts'), 'export class A {}');
+    writeFileSync(join(racine, 'composants/a/tailwind/a.component.html'), '<p></p>');
+    const { entrees } = lireRegistre(racine);
+    expect(entrees[0]?.fichiers).toEqual({
+      'a.component.ts': 'export class A {}',
+      'tailwind/a.component.html': '<p></p>',
+    });
+  });
+
   it('signale un JSON illisible, un meta.json absent et un dossier inconnu', () => {
     ecrire('composants/casse', '{ pas du json');
     mkdirSync(join(racine, 'composants/vide'), { recursive: true });

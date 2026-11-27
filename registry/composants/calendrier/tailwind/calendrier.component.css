@@ -1,0 +1,12 @@
+@keyframes ngs-mois-suivant {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+@keyframes ngs-mois-precedent {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+}

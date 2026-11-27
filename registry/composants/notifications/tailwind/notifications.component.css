@@ -1,0 +1,12 @@
+@keyframes ngs-notif-entree {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+@keyframes ngs-notif-sortie {
+  to {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}

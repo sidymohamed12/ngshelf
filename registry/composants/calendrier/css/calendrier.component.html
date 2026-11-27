@@ -1,0 +1,67 @@
+<div class="calendrier">
+  <div class="calendrier__tete">
+    <p class="calendrier__mois" aria-live="polite">{{ libelleMois() }}</p>
+    <button
+      class="calendrier__nav"
+      type="button"
+      aria-label="Mois précédent"
+      (click)="changerDeMois(-1)"
+    >
+      <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+        <path
+          d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"
+        />
+      </svg>
+    </button>
+    <button
+      class="calendrier__nav"
+      type="button"
+      aria-label="Mois suivant"
+      (click)="changerDeMois(1)"
+    >
+      <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+        <path
+          d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <div class="calendrier__semaine" aria-hidden="true">
+    <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span
+    ><span>D</span>
+  </div>
+
+  <!-- Une grille par mois (clé = date du 1er) : [animate.enter] rejoue l'entrée dans le sens de navigation. -->
+  @for (cle of [vue().getTime()]; track cle) {
+    <div
+      class="calendrier__jours"
+      #grille
+      [animate.enter]="
+        sens() > 0 ? 'calendrier__jours--suivant' : sens() < 0 ? 'calendrier__jours--precedent' : ''
+      "
+      (keydown)="clavier($event)"
+    >
+      @for (vide of decalage(); track $index) {
+        <span></span>
+      }
+      @for (jour of jours(); track jour.numero) {
+        <button
+          class="calendrier__jour"
+          type="button"
+          [attr.aria-label]="libelle(jour.date)"
+          [attr.aria-pressed]="estChoisi(jour.date)"
+          [attr.aria-current]="estAujourdhui(jour.date) ? 'date' : null"
+          [tabindex]="estFocus(jour.date) ? 0 : -1"
+          (click)="choisir(jour)"
+        >
+          {{ jour.numero }}
+        </button>
+      }
+    </div>
+  }
+
+  <p class="calendrier__choix">
+    Date choisie : <strong>{{ libelleChoix() }}</strong>
+  </p>
+</div>

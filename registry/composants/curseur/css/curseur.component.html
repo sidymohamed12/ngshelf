@@ -1,0 +1,21 @@
+<div class="curseur">
+  <div class="curseur__tete">
+    <label class="curseur__label" [for]="id">{{ label() }}</label>
+    <output class="curseur__valeur" [for]="id">{{ texte() }}</output>
+  </div>
+  <input
+    class="curseur__piste"
+    type="range"
+    [id]="id"
+    [min]="min()"
+    [max]="max()"
+    [step]="pas()"
+    [value]="valeur()"
+    [attr.aria-valuetext]="texte()"
+    (input)="changer($event)"
+  />
+  <div class="curseur__bornes" aria-hidden="true">
+    <span>{{ min() }} {{ unite() }}</span>
+    <span>{{ max() }} {{ unite() }}</span>
+  </div>
+</div>

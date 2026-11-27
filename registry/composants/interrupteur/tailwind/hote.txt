@@ -1,0 +1,1 @@
+inline-block font-ngs text-ngs-text

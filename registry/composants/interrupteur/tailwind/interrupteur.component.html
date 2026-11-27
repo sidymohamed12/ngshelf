@@ -1,0 +1,23 @@
+<button
+  class="group inline-flex min-h-11 cursor-pointer items-center gap-ngs-3 border-0 bg-transparent p-0 text-left text-base text-inherit focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ngs-action disabled:cursor-not-allowed disabled:opacity-50"
+  type="button"
+  role="switch"
+  [attr.aria-checked]="coche()"
+  [disabled]="desactive()"
+  (click)="basculer()"
+>
+  <span
+    class="relative h-ngs-7 w-ngs-12 flex-none rounded-[calc(var(--radius-ngs)*1.4)] bg-ngs-surface-alt shadow-[inset_0_0_0_1.5px_var(--color-ngs-border)] transition-colors duration-(--ngs-duration) group-aria-checked:bg-ngs-action group-aria-checked:shadow-[inset_0_0_0_1.5px_var(--color-ngs-action)] motion-reduce:transition-none"
+    aria-hidden="true"
+  >
+    <span
+      class="absolute top-1 left-1 aspect-square w-[calc(var(--spacing-ngs-7)-8px)] rounded-ngs bg-ngs-border transition duration-(--ngs-duration) group-aria-checked:translate-x-ngs-5 group-aria-checked:bg-ngs-on-action motion-reduce:transition-none"
+    ></span>
+  </span>
+  <span class="grid gap-0.5">
+    <span class="font-semibold">{{ label() }}</span>
+    @if (aide()) {
+      <span class="text-sm text-ngs-text-muted">{{ aide() }}</span>
+    }
+  </span>
+</button>

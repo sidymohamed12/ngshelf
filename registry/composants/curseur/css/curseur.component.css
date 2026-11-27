@@ -1,0 +1,50 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+  font-family: var(--ngs-font-family, system-ui, sans-serif);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+.curseur {
+  display: grid;
+  gap: calc(var(--ngs-density, 1) * 10px);
+  width: 100%;
+  min-width: min(14rem, 100%);
+}
+.curseur__tete {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.curseur__label {
+  font-weight: 600;
+}
+.curseur__valeur {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  font-size: 1.25rem;
+}
+.curseur__piste {
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  background: transparent;
+  accent-color: var(--ngs-color-action, #0b0b0c);
+  cursor: pointer;
+}
+.curseur__piste:focus-visible {
+  outline: 2px solid var(--ngs-color-action, #0b0b0c);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.curseur__bornes {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-variant-numeric: tabular-nums;
+}

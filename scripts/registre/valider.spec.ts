@@ -1,4 +1,24 @@
+import type { FichiersRessource } from './sources.ts';
 import { EntreeBrute, validerRegistre } from './valider.ts';
+
+const GABARIT_TAILWIND = '<button class="rounded-ngs px-4" type="button"><ng-content /></button>';
+const GABARIT_CSS = '<button class="barre__action" type="button"><ng-content /></button>';
+
+/** Fichiers minimaux et valides d'une ressource nommée « barre » (bloc de test). */
+const FICHIERS: FichiersRessource = {
+  'barre.component.ts': `@Component({
+  templateUrl: './barre.component.html',
+  /*STYLE*/
+})
+export class BarreComponent {
+  readonly animations = input(true);
+}`,
+  'tailwind/barre.component.html': GABARIT_TAILWIND,
+  'tailwind/hote.txt': 'block',
+  'css/barre.component.html': GABARIT_CSS,
+  'css/barre.component.css': '.barre__action { color: var(--ngs-color-text, #0b0b0c); }',
+  'fiche.json': JSON.stringify({ usage: '<ngs-barre />', api: [] }),
+};
 
 const UN_SECTEUR = ['restaurant'];
 
@@ -66,13 +86,13 @@ function design(surcharge: Record<string, unknown> = {}): Record<string, unknown
 }
 
 function valider(meta: unknown, chemin = 'blocs/navbar-test'): readonly string[] {
-  return validerRegistre([{ chemin, meta }]).erreurs;
+  return validerRegistre([{ chemin, meta, fichiers: FICHIERS }]).erreurs;
 }
 
 describe('validerRegistre', () => {
   it('accepte une ressource et un design valides', () => {
     const entrees: EntreeBrute[] = [
-      { chemin: 'blocs/navbar-test', meta: ressource() },
+      { chemin: 'blocs/navbar-test', meta: ressource(), fichiers: FICHIERS },
       { chemin: 'designs/fleuve', meta: design() },
     ];
     const resultat = validerRegistre(entrees);
@@ -222,10 +242,11 @@ describe('validerRegistre', () => {
 
   it('refuse un slug utilisé deux fois dans tout le registre', () => {
     const resultat = validerRegistre([
-      { chemin: 'blocs/navbar-test', meta: ressource() },
+      { chemin: 'blocs/navbar-test', meta: ressource(), fichiers: FICHIERS },
       {
         chemin: 'composants/navbar-test',
         meta: ressource({ categorie: 'composant', type: 'carte' }),
+        fichiers: FICHIERS,
       },
     ]);
     expect(resultat.erreurs).toEqual([
@@ -253,5 +274,72 @@ describe('validerRegistre', () => {
     expect(valider(ressource({ categorie: 'widget' }))).toEqual([
       expect.stringContaining('« categorie »'),
     ]);
+  });
+
+  describe('fichiers de la ressource', () => {
+    function avec(surcharge: Record<string, string>, retirer: string[] = []): EntreeBrute {
+      const fichiers: Record<string, string> = { ...FICHIERS, ...surcharge };
+      for (const chemin of retirer) delete fichiers[chemin];
+      return { chemin: 'blocs/navbar-test', meta: ressource(), fichiers };
+    }
+    const erreursDe = (entree: EntreeBrute): readonly string[] => validerRegistre([entree]).erreurs;
+
+    it('refuse une ressource dont le dossier ne contient aucun fichier lu', () => {
+      const sans = { chemin: 'blocs/navbar-test', meta: ressource() };
+      expect(erreursDe(sans)).toEqual([expect.stringContaining('fichiers de la ressource')]);
+    });
+
+    it('refuse un gabarit manquant, une fiche absente ou un composant en double', () => {
+      expect(erreursDe(avec({}, ['css/barre.component.html']))).toEqual([
+        expect.stringContaining('fichier manquant « css/barre.component.html »'),
+      ]);
+      expect(erreursDe(avec({}, ['fiche.json']))).toEqual([
+        expect.stringContaining('fichier manquant « fiche.json »'),
+      ]);
+      expect(erreursDe(avec({ 'autre.component.ts': 'x' }))).toEqual([
+        expect.stringContaining('exactement un « <nom>.component.ts »'),
+      ]);
+    });
+
+    it('refuse un composant sans la ligne de style ni templateUrl', () => {
+      const erreurs = erreursDe(avec({ 'barre.component.ts': 'export class A {}' }));
+      expect(erreurs).toEqual([
+        expect.stringContaining('doit contenir une fois la ligne /*STYLE*/'),
+        expect.stringContaining('doit déclarer templateUrl'),
+      ]);
+    });
+
+    it('refuse deux gabarits dont la structure diffère, pas seulement les classes', () => {
+      const differe = avec({ 'css/barre.component.html': '<a class="x"><ng-content /></a>' });
+      expect(erreursDe(differe)).toEqual([
+        expect.stringContaining('ne sont pas équivalents (hors classes)'),
+      ]);
+    });
+
+    it('exige l’input animations quand la ressource déclare un motion', () => {
+      const sansInput = {
+        chemin: 'blocs/navbar-test',
+        meta: ressource({ motion: MOTION }),
+        fichiers: {
+          ...FICHIERS,
+          'barre.component.ts': FICHIERS['barre.component.ts'].replace(
+            'animations = input',
+            'x = input',
+          ),
+        },
+      };
+      expect(erreursDe(sansInput)).toEqual([
+        expect.stringContaining('exige l’input « animations »'),
+      ]);
+    });
+
+    it('refuse une fiche.json mal formée', () => {
+      expect(erreursDe(avec({ 'fiche.json': '{ pas du json' }))).toEqual([
+        expect.stringContaining('n’est pas du JSON'),
+      ]);
+      expect(erreursDe(avec({ 'fiche.json': '{"usage":"x","api":[{"nom":"a"}]}' }))).toEqual([
+        expect.stringContaining('« api » doit lister'),
+      ]);
+    });
   });
 });

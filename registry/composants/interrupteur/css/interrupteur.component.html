@@ -1,0 +1,18 @@
+<button
+  class="interrupteur"
+  type="button"
+  role="switch"
+  [attr.aria-checked]="coche()"
+  [disabled]="desactive()"
+  (click)="basculer()"
+>
+  <span class="interrupteur__piste" aria-hidden="true">
+    <span class="interrupteur__pouce"></span>
+  </span>
+  <span class="interrupteur__texte">
+    <span class="interrupteur__label">{{ label() }}</span>
+    @if (aide()) {
+      <span class="interrupteur__aide">{{ aide() }}</span>
+    }
+  </span>
+</button>

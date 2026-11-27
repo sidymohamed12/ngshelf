@@ -1,0 +1,10 @@
+<button
+  class="bouton"
+  [type]="type()"
+  [attr.data-variante]="variante()"
+  [attr.aria-busy]="chargement() || null"
+  [disabled]="desactive() || chargement()"
+>
+  <ng-content />
+  <span class="bouton__roue" aria-hidden="true"></span>
+</button>

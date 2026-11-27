@@ -1,0 +1,29 @@
+{
+  "usage": "<ngs-champ-email\n  #champ\n  label=\"Adresse e-mail\"\n  aide=\"Pour recevoir le reçu de commande.\"\n  [(valeur)]=\"email\"\n/>\n<button [disabled]=\"!champ.valide()\">Envoyer le reçu</button>",
+  "api": [
+    {
+      "nom": "label",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Libellé visible."
+    },
+    {
+      "nom": "aide",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Phrase d’aide."
+    },
+    {
+      "nom": "valeur",
+      "type": "model<string>()",
+      "defaut": "''",
+      "role": "Adresse saisie, liable en [(valeur)]."
+    },
+    {
+      "nom": "valide",
+      "type": "Signal<boolean>",
+      "defaut": "—",
+      "role": "Lecture seule : l’adresse est complète."
+    }
+  ]
+}

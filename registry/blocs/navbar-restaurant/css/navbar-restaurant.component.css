@@ -1,0 +1,159 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+  width: 100%;
+  container-type: inline-size;
+  font-family: var(--ngs-font-family, system-ui, sans-serif);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--ngs-density, 1) * 8px) calc(var(--ngs-density, 1) * 24px);
+  padding: calc(var(--ngs-density, 1) * 10px) calc(var(--ngs-density, 1) * 16px);
+  border-radius: calc(var(--ngs-radius, 10px) * 1.4);
+  background: var(--ngs-color-surface, #ffffff);
+  box-shadow: inset 0 0 0 1px var(--ngs-color-border, #8a8a93);
+}
+.navbar__marque {
+  font-weight: 750;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  color: inherit;
+  text-decoration: none;
+}
+.navbar__liens {
+  display: flex;
+  gap: calc(var(--ngs-density, 1) * 4px);
+  margin-right: auto;
+}
+.navbar__lien {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 calc(var(--ngs-density, 1) * 10px);
+  border-radius: var(--ngs-radius, 10px);
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-weight: 550;
+  text-decoration: none;
+  transition:
+    color var(--ngs-duration, 160ms) ease-out,
+    background-color var(--ngs-duration, 160ms) ease-out;
+}
+.navbar__lien:hover {
+  color: var(--ngs-color-text, #0b0b0c);
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+}
+.navbar__lien[aria-current='page'] {
+  color: var(--ngs-color-text, #0b0b0c);
+  box-shadow: inset 0 -2px 0 var(--ngs-color-action, #0b0b0c);
+  border-radius: 0;
+}
+.navbar__action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 calc(var(--ngs-density, 1) * 16px);
+  border-radius: var(--ngs-radius, 10px);
+  background: var(--ngs-color-action, #0b0b0c);
+  color: var(--ngs-color-on-action, #ffffff);
+  font-weight: 600;
+  text-decoration: none;
+}
+.navbar__menu {
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  border: 0;
+  border-radius: var(--ngs-radius, 10px);
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+  color: inherit;
+  cursor: pointer;
+}
+.navbar__menu svg {
+  width: 22px;
+  height: 22px;
+}
+.navbar__mobile {
+  display: none;
+  flex-basis: 100%;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: calc(var(--ngs-density, 1) * 8px);
+}
+.navbar :is(a, button):focus-visible {
+  outline: 2px solid var(--ngs-color-action, #0b0b0c);
+  outline-offset: 2px;
+}
+/* Entrée : la barre descend de 8 px, puis les liens et l'action arrivent en cascade (45 ms d'écart). */
+@media (prefers-reduced-motion: no-preference) {
+  .navbar {
+    animation: ngs-navbar-entree calc(var(--ngs-duration, 160ms) * 3) cubic-bezier(0.22, 1, 0.36, 1)
+      both;
+  }
+  .navbar__liens > .navbar__lien,
+  .navbar__action {
+    animation: ngs-navbar-lien calc(var(--ngs-duration, 160ms) * 3) cubic-bezier(0.22, 1, 0.36, 1)
+      both;
+  }
+  .navbar__liens > .navbar__lien:nth-child(1) {
+    animation-delay: 120ms;
+  }
+  .navbar__liens > .navbar__lien:nth-child(2) {
+    animation-delay: 165ms;
+  }
+  .navbar__liens > .navbar__lien:nth-child(3) {
+    animation-delay: 210ms;
+  }
+  .navbar__liens > .navbar__lien:nth-child(n + 4) {
+    animation-delay: 255ms;
+  }
+  .navbar__action {
+    animation-delay: 300ms;
+  }
+  /* Menu replié : les liens glissent à l'ouverture. */
+  .navbar__mobile:not([hidden]) > * {
+    animation: ngs-navbar-lien calc(var(--ngs-duration, 160ms) * 2) cubic-bezier(0.22, 1, 0.36, 1)
+      both;
+  }
+}
+@keyframes ngs-navbar-entree {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes ngs-navbar-lien {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+/* Désactivables : input animations (classe sur l'hôte) ou classe .ngs-sans-animation sur un parent. */
+:host(.ngs-sans-animation) .navbar,
+:host(.ngs-sans-animation) .navbar * {
+  animation: none;
+}
+:host-context(.ngs-sans-animation) .navbar,
+:host-context(.ngs-sans-animation) .navbar * {
+  animation: none;
+}
+@container (max-width: 40rem) {
+  .navbar__liens,
+  .navbar__action {
+    display: none;
+  }
+  .navbar__menu {
+    display: inline-grid;
+  }
+  .navbar__mobile:not([hidden]) {
+    display: flex;
+  }
+}
