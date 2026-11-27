@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../logo/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../logo/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="../logo/apple-touch-icon.png">
+  <title>Design system — NgShelf</title>
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preload" href="./assets/fonts/chivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    // Même script en ligne que la maquette : thème appliqué avant le premier rendu (cookie ngs_theme).
+    (function () {
+      var h = document.documentElement;
+      var m = document.cookie.match(/(?:^|; )ngs_theme=(clair|sombre|systeme)/);
+      var choix = m ? m[1] : 'systeme';
+      var sombre = choix === 'sombre' || (choix === 'systeme' && matchMedia('(prefers-color-scheme: dark)').matches);
+      h.setAttribute('data-theme-choix', choix);
+      if (sombre) h.setAttribute('data-theme', 'sombre');
+    })();
+  </script>
+  <style>
+    html[data-theme="sombre"] { background: #111113; color-scheme: dark; }
+    html.ngs-js:not(.ngs-styled) body { opacity: 0; animation: ngs-filet 0s 2.5s forwards; }
+    @keyframes ngs-filet { to { opacity: 1; } }
+    /* Mise en page de la documentation uniquement */
+    .ds-zone { background: var(--color-canvas); color: var(--color-text); border: 1px solid var(--color-border); border-radius: 14px; padding: 1.25rem; display: grid; gap: 1rem; }
+    .ds-zone__rang { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1.25rem 2rem; }
+    .ds-logo { flex: none; }
+    /* Zone forcée en thème clair, quel que soit le thème de la page (sinon, en sombre, les tuiles y deviennent claires sur fond sombre). */
+    .ds-zone--clair { --logo-tuile: var(--logo-tuile-clair); --color-text: var(--color-ink-950); --color-text-muted: var(--color-ink-500); background: var(--color-ink-0); border-color: var(--color-ink-200); color: var(--color-ink-950); }
+    .ds-section { padding-block: 4rem; border-top: 1px solid var(--color-border); scroll-margin-top: 1rem; }
+    .ds-h { font-family: var(--font-display); font-size: var(--text-h2); line-height: 1.05; letter-spacing: -0.03em; font-weight: 720; margin: 0 0 0.75rem; }
+    .ds-sous { font-size: 1.125rem; font-weight: 640; margin: 2.5rem 0 1rem; }
+    .ds-token { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-text-muted); overflow-wrap: anywhere; }
+    .ds-grille { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+    .ds-nuance { border: 1px solid var(--color-border); border-radius: 14px; overflow: hidden; background: var(--color-canvas); }
+    .ds-nuance__couleur { height: 5.5rem; }
+    .ds-nuance__info { padding: 0.75rem 0.875rem; display: grid; gap: 0.3rem; font-size: var(--text-label); }
+    .ds-ok { color: var(--color-success); font-weight: 600; }
+    .ds-ko { color: var(--color-danger); font-weight: 600; }
+    .ds-etats { display: flex; flex-wrap: wrap; gap: 1rem 1.25rem; align-items: end; }
+    .ds-etat { display: grid; gap: 0.5rem; justify-items: start; }
+    .ds-etat > small { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted); }
+    .ds-tableau { width: 100%; border-collapse: collapse; font-size: var(--text-small); }
+    .ds-tableau th, .ds-tableau td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
+    .ds-tableau th { color: var(--color-text-muted); font-weight: 560; }
+    .ds-pastille { display: inline-block; width: 1.25rem; height: 1.25rem; border-radius: 6px; vertical-align: middle; box-shadow: inset 0 0 0 1px rgb(11 11 12 / .12); margin-right: 0.4rem; }
+    .ds-sommaire { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .ds-boite { padding: 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-panel); }
+    .ds-piste { position: relative; height: 3rem; border-radius: 12px; background: var(--color-surface); overflow: hidden; }
+    main table.ngs-table { display: block; overflow-x: auto; max-width: 100%; }
+    .ngs-header__row { flex-wrap: wrap; row-gap: 0; }
+    .ds-bille { position: absolute; top: 0.5rem; left: 0.5rem; width: 2rem; height: 2rem; border-radius: 8px; background: var(--color-primary); }
+  </style>
+  <script src="./load.js"></script>
+</head>
+<body>
+  <a class="ngs-skip" href="#contenu">Aller au contenu</a>
+  <header class="ngs-header">
+    <div class="ngs-container ngs-header__row">
+      <a class="ngs-brand" href="../maquette/index.html"><svg class="ngs-brand__logo" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><span>Shelf</span></a>
+      <span class="ngs-badge ngs-badge--neutre">Design system v0.8</span>
+      <span class="ngs-badge ngs-badge--provisoire">À valider</span>
+      <a class="ngs-link ml-auto" href="../maquette/index.html">Ouvrir la maquette</a>
+      <div class="ngs-theme" data-theme-ctl>
+        <button class="ngs-btn ngs-btn--ghost ngs-btn--icon" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-theme" aria-label="Thème du site : système" data-theme-btn><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#desktop" data-theme-icone></use></svg></button>
+        <div class="ngs-theme__menu" id="menu-theme" role="menu" aria-label="Thème du site" data-theme-menu>
+          <p class="ngs-theme__titre" aria-hidden="true">Thème du site</p>
+          <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="false" data-theme-valeur="clair"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#sun"></use></svg><span>Clair</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true"><use href="assets/icons/sprite.svg#check"></use></svg></button>
+          <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="false" data-theme-valeur="sombre"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#moon"></use></svg><span>Sombre</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true"><use href="assets/icons/sprite.svg#check"></use></svg></button>
+          <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="true" data-theme-valeur="systeme"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#desktop"></use></svg><span>Système</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true"><use href="assets/icons/sprite.svg#check"></use></svg></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenu" tabindex="-1" class="ngs-container pb-24">
+    <div class="py-12 grid gap-5 max-w-[52rem]">
+      <h1 class="ngs-display m-0">Design system</h1>
+      <p class="ngs-lead m-0">Concept B « Planche spécimen » : la planche blanche expose des pièces vivantes, l’identité tient dans la typographie, la couleur de chaque famille et la motion. Chaque valeur vient de <code class="ds-token">tokens.css</code> ; le contrat des ressources est dans <code class="ds-token">contrat-tokens.css</code>.</p>
+      <p class="m-0 ngs-small ngs-muted">Les contrastes de cette page sont <strong>calculés en direct</strong> (formule WCAG 2.x) à partir des variables CSS, pas recopiés.</p>
+      <nav class="ds-sommaire" aria-label="Sommaire">
+        <a class="ngs-chip" href="#marque">Marque</a><a class="ngs-chip" href="#couleurs">Couleurs</a><a class="ngs-chip" href="#typo">Typographie</a><a class="ngs-chip" href="#espaces">Espaces et formes</a>
+        <a class="ngs-chip" href="#icones">Icônes</a><a class="ngs-chip" href="#composants">Composants</a><a class="ngs-chip" href="#etats">États</a>
+        <a class="ngs-chip" href="#contrat">Contrat des ressources</a><a class="ngs-chip" href="#motion">Motion</a>
+      </nav>
+    </div>
+
+    <!-- ======================= Marque ======================= -->
+    <section class="ds-section" id="marque" aria-labelledby="t-marque">
+      <h2 class="ds-h" id="t-marque">Marque : logo, favicon, splash</h2>
+      <p class="ngs-muted m-0 max-w-[65ch]">Le logo garde ses pieds (équerres en contour) : deux tuiles « n » et « g » sur une planche orange. Il contient déjà « ng » : à côté, le texte ne porte que « Shelf », ce qui se lit « ng Shelf ». Symbole du sprite : <code class="ds-token">ngshelf-logo</code>. Sources : <code class="ds-token">design/logo/</code> (<code class="ds-token">ngshelf.svg</code>, <code class="ds-token">ngshelf-clair.svg</code>, <code class="ds-token">ngshelf-sombre.svg</code>, <code class="ds-token">favicon.svg</code>, icônes PNG). Décision : ADR 0006.</p>
+      <div class="ds-grille mt-6" style="grid-template-columns:repeat(auto-fit,minmax(20rem,1fr))">
+        <div class="ds-zone ds-zone--clair"><p class="ngs-small ngs-muted m-0">Thème clair : tuiles --logo-tuile #191f42, planche --logo-etagere #fd6437</p><div class="ds-zone__rang"><svg class="ds-logo" style="height:120px;width:219.0px" role="img" aria-label="Logo NgShelf"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><svg class="ds-logo" style="height:56px;width:102.2px" role="img" aria-label="Logo NgShelf"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><svg class="ds-logo" style="height:28px;width:51.1px" role="img" aria-label="Logo NgShelf"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><span class="ngs-brand" style="min-height:0"><svg class="ds-logo" style="height:28px;width:51.1px" role="img" aria-label="Logo NgShelf"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><span>Shelf</span></span></div></div>
+        <div class="ds-zone" data-theme="sombre"><p class="ngs-small ngs-muted m-0">Thème sombre : tuiles claires --logo-tuile #ededf0, planche orange inchangée</p><div class="ds-zone__rang"><svg class="ds-logo" style="height:120px;width:219.0px" role="img" aria-label="Logo NgShelf"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><svg class="ds-logo" style="height:56px;width:102.2px" role="img" aria-label="Logo NgShelf"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><svg class="ds-logo" style="height:28px;width:51.1px" role="img" aria-label="Logo NgShelf"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><span class="ngs-brand" style="min-height:0"><svg class="ds-logo" style="height:28px;width:51.1px" role="img" aria-label="Logo NgShelf"><use href="assets/icons/sprite.svg#ngshelf-logo"></use></svg><span>Shelf</span></span></div></div>
+      </div>
+      <h3 class="ds-sous">Favicon et icônes</h3>
+      <div class="ds-etats">
+        <div class="ds-etat"><img src="../logo/favicon.svg" width="64" height="64" alt="Favicon, 64 px"><span class="ngs-small ngs-muted">favicon.svg</span></div>
+        <div class="ds-etat"><img src="../logo/favicon.svg" width="32" height="32" alt="Favicon, 32 px"><span class="ngs-small ngs-muted">32 px (équerres pleines)</span></div>
+        <div class="ds-etat"><img src="../logo/apple-touch-icon.png" width="90" height="90" alt="Icône Apple, 180 px" style="border:1px solid var(--color-border)"><span class="ngs-small ngs-muted">apple-touch-icon 180</span></div>
+        <div class="ds-etat"><img src="../logo/icon-192.png" width="96" height="96" alt="Icône 192 px" style="border:1px solid var(--color-border)"><span class="ngs-small ngs-muted">icon-192 / icon-512</span></div>
+      </div>
+      <h3 class="ds-sous">Règle d'usage des couleurs de marque</h3>
+      <p class="ngs-muted m-0 max-w-[65ch]">Le bleu nuit <code class="ds-token">#191f42</code> et l'orange <code class="ds-token">#fd6437</code> servent <strong>uniquement</strong> au logo, au splash, au favicon et à l'image sociale. Jamais comme couleur d'action, d'état, de famille ni de texte. Le logo est exempté du seuil de contraste (WCAG 1.4.3) ; les paires utiles sont mesurées ci-dessous.</p>
+      <div class="ds-grille mt-4" data-contrastes-marque></div>
+      <h3 class="ds-sous">Splash</h3>
+      <p class="ngs-muted m-0 max-w-[65ch]">Fond blanc en thème clair, bleu nuit <code class="ds-token">#191f42</code> en thème sombre (tuiles claires, planche orange). La planche se pose (220 ms), la tuile « n » tombe avec impact et rebond (dès 100 ms), puis la tuile « g » (120 ms plus tard). Affiché au moins 600 ms, au plus 1,2 s, sorties par <code class="ds-token">clip-path</code> en 320 ms. SVG en ligne et <code class="ds-token">@keyframes</code> CSS, sans GSAP. Masqué en mouvement réduit. À rejouer en rechargeant une page de la maquette (premier chargement d'un document seulement).</p>
+    </section>
+
+    <!-- ======================= Couleurs ======================= -->
+    <section class="ds-section" id="couleurs" aria-labelledby="t-couleurs">
+      <h2 class="ds-h" id="t-couleurs">Couleurs</h2>
+      <p class="ngs-muted m-0 max-w-[60ch]">Fond blanc partout. Le noir d’impression porte l’action et le focus. Les quatre couleurs de famille ne servent qu’à repérer une catégorie, toujours écrite à côté.</p>
+      <h3 class="ds-sous">Sémantique</h3>
+      <div class="ds-grille" data-couleurs="canvas surface surface-hover text text-muted primary primary-hover border border-strong success warning danger"></div>
+      <h3 class="ds-sous">Rôles ajoutés en v0.3 (aucune primitive dans les composants)</h3>
+      <div class="ds-grille" data-couleurs="border-hover text-faint control-off ring on-cat toast-bg toast-text danger-soft"></div>
+      <h3 class="ds-sous">Familles (repérage)</h3>
+      <div class="ds-grille" data-couleurs="cat-composants cat-composants-soft cat-blocs cat-blocs-soft cat-templates cat-templates-soft cat-designs cat-designs-soft"></div>
+      <h3 class="ds-sous">Blocs de code (toujours sombres)</h3>
+      <div class="ds-grille" data-couleurs="code-bg code-text code-comment code-keyword code-string code-tag code-attr code-number code-punct" data-fond="code-bg"></div>
+
+      <h3 class="ds-sous" id="sombre">Mode sombre du site</h3>
+      <p class="ngs-muted m-0 max-w-[68ch]">Bloc <code class="ds-token">[data-theme="sombre"]</code> de <code class="ds-token">tokens.css</code>, composé à part : gris très foncé (#111113, jamais le noir pur), surfaces qui s’éclaircissent en s’élevant, couleurs de famille éclaircies et désaturées, texte posé sur une couleur de famille en encre (<code class="ds-token">--color-on-cat</code>). Choix clair / sombre / système dans le header, gardé dans le cookie fonctionnel <code class="ds-token">ngs_theme</code> et appliqué par un script en ligne avant le premier rendu. Contrastes ci-dessous calculés dans cette zone forcée en sombre, quel que soit le thème de la page.</p>
+      <div class="ds-boite mt-6 grid gap-6" data-theme="sombre" style="background: var(--color-canvas); color: var(--color-text); border-color: var(--color-border)">
+        <div class="ds-grille" data-couleurs="canvas surface surface-hover text text-muted text-faint primary on-primary border border-strong control-off success warning danger"></div>
+        <div class="ds-grille" data-couleurs="cat-composants cat-composants-soft cat-blocs cat-blocs-soft cat-templates cat-templates-soft cat-designs cat-designs-soft on-cat toast-text"></div>
+        <div class="flex flex-wrap gap-3 items-center">
+          <button class="ngs-btn" type="button">Parcourir le catalogue</button>
+          <button class="ngs-btn ngs-btn--secondary" type="button">Lire comment démarrer</button>
+          <span class="ngs-badge ngs-cat-composants">Composant</span><span class="ngs-badge ngs-cat-designs">Design</span>
+          <a class="ngs-chip ngs-cat-blocs" aria-current="page" href="#sombre"><span class="ngs-chip__dot" aria-hidden="true"></span>Blocs <span class="ngs-chip__count">3</span></a>
+          <span class="ngs-badge ngs-badge--anime"><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#wave-sine"></use></svg>Animée</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= Typo ======================= -->
+    <section class="ds-section" id="typo" aria-labelledby="t-typo">
+      <h2 class="ds-h" id="t-typo">Typographie</h2>
+      <p class="ngs-muted m-0 max-w-[60ch]">Deux familles de la même fonderie (Omnibus-Type), auto-hébergées, licence SIL OFL 1.1 : <strong>Chivo</strong> (variable, graisse 400–800, 27 Ko) pour tout le texte, <strong>Chivo Mono</strong> (variable 400–600, 19 Ko, zéro barré disponible) uniquement pour le code, les noms de tokens et les fichiers. Choisies par Sidy en v0.4 (paire C). Chivo n’a pas d’axe de largeur : la signature passe par la graisse. Changer de police : les blocs <code class="ds-token">@font-face</code> et les variables <code class="ds-token">--font-famille</code> / <code class="ds-token">--font-mono</code>. Comparaison des trois paires : <a class="ngs-link ngs-link--rest" href="../demos-concepts/polices.html">polices.html</a>.</p>
+      <div class="grid gap-8 mt-8">
+        <div class="grid gap-1"><span class="ds-token">--font-famille : "Chivo", "Chivo Fallback" (Arial ajusté : size-adjust 105,6 %, ascent 89 %, descent 23,7 %)</span></div>
+        <div class="grid gap-1"><span class="ds-token">--text-display · --wght-display 760 · interligne 0,95</span><p class="ngs-display m-0">Des composants Angular à prendre tels quels.</p></div>
+        <div class="grid gap-1"><span class="ds-token">--text-h2 · --wght-titre 720</span><p class="ngs-h2 m-0">Quatre familles de pièces</p></div>
+        <div class="grid gap-1"><span class="ds-token">--text-h3 · 620</span><p class="ngs-h3 m-0">Télécharger le composant</p></div>
+        <div class="grid gap-1"><span class="ds-token">--text-lead · 400 · 1,5</span><p class="ngs-lead m-0 max-w-[60ch]">Composants, blocs et thèmes en code ouvert, sous licence MIT. Essayez-les ici, copiez le code ou téléchargez-les.</p></div>
+        <div class="grid gap-1"><span class="ds-token">--text-body · 17 px · 400 · 1,6</span><p class="m-0 max-w-[65ch]">Chaque ressource lit ses valeurs dans des variables CSS avec une valeur de repli. Copiée seule, elle fonctionne ; posez les variables, elle prend votre style. Accents : é è ê à ç œ « guillemets » ’apostrophe’.</p></div>
+        <div class="grid gap-1"><span class="ds-token">--text-label · 14 px · 560</span><p class="ngs-label m-0">Réglables seulement</p></div>
+        <div class="grid gap-1"><span class="ds-token">--font-mono (Chivo Mono) · --text-code · 14 px · 1,65</span><code class="text-sm">readonly coche = model(false); // 0 O o 1 l I 8 B 5 S — 12 345,67 F CFA</code></div>
+        <div class="grid gap-1"><span class="ds-token">Graisse variable — signature des noms de famille (460 → 800, approche qui se resserre)</span>
+          <p class="m-0 flex flex-wrap gap-6 text-[3rem] leading-none tracking-[-0.04em]" style="color:var(--color-cat-composants)">
+            <span style="font-weight:460;letter-spacing:-0.02em">Composants</span><span style="font-weight:630;letter-spacing:-0.033em">Composants</span><span style="font-weight:800;letter-spacing:-0.047em">Composants</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= Espaces, formes ======================= -->
+    <section class="ds-section" id="espaces" aria-labelledby="t-espaces">
+      <h2 class="ds-h" id="t-espaces">Espaces, grille, formes, profondeur</h2>
+      <h3 class="ds-sous">Échelle d’espacement (multiples de 4 px)</h3>
+      <div class="grid gap-2" data-espaces></div>
+      <h3 class="ds-sous">Conteneur et planche</h3>
+      <p class="m-0 ngs-muted max-w-[65ch]"><code class="ds-token">--container-site: 90rem</code>, marges latérales <code class="ds-token">--space-inline</code> (16 → 48 px), gouttière <code class="ds-token">--space-gutter</code> (12 → 20 px). Planche : 1 colonne, 2 dès 640 px, 3 dès 1024 px, 4 dès 1280 px ; dès 1920 px le conteneur passe à <code class="ds-token">--container-wide: 112rem</code> ; cases 1×1, 2×1 (<code class="ds-token">.ngs-case--wide</code>) ou 2×2 (<code class="ds-token">--tall</code>).</p>
+      <h3 class="ds-sous">Rayons</h3>
+      <div class="flex flex-wrap gap-4">
+        <div class="ds-etat"><div class="w-24 h-16 bg-[var(--color-surface)] border border-[var(--color-border-strong)]" style="border-radius:var(--radius-chip)"></div><small>--radius-chip 8</small></div>
+        <div class="ds-etat"><div class="w-24 h-16 bg-[var(--color-surface)] border border-[var(--color-border-strong)]" style="border-radius:var(--radius-button)"></div><small>--radius-button / input 12</small></div>
+        <div class="ds-etat"><div class="w-24 h-16 bg-[var(--color-surface)] border border-[var(--color-border-strong)]" style="border-radius:var(--radius-case)"></div><small>--radius-case / panel 20</small></div>
+        <div class="ds-etat"><div class="w-24 h-16 bg-[var(--color-surface)] border border-[var(--color-border-strong)]" style="border-radius:var(--radius-full)"></div><small>--radius-full</small></div>
+      </div>
+      <h3 class="ds-sous">Ombres (deux niveaux) et z-index</h3>
+      <div class="flex flex-wrap gap-6 items-start">
+        <div class="ds-etat"><div class="w-40 h-24 rounded-[20px] bg-white border border-[var(--color-border)]" style="box-shadow:var(--shadow-raise)"></div><small>--shadow-raise : survol de case, segment actif</small></div>
+        <div class="ds-etat"><div class="w-40 h-24 rounded-[20px] bg-white" style="box-shadow:var(--shadow-overlay)"></div><small>--shadow-overlay : dialogue, toast</small></div>
+        <table class="ds-tableau max-w-[22rem]"><tbody>
+          <tr><td class="ds-token">--z-base</td><td>0</td></tr><tr><td class="ds-token">--z-raised</td><td>10</td></tr><tr><td class="ds-token">--z-sticky</td><td>20 · barre de filtres</td></tr>
+          <tr><td class="ds-token">--z-header</td><td>40</td></tr><tr><td class="ds-token">--z-overlay</td><td>100 · menu, transition</td></tr><tr><td class="ds-token">--z-toast</td><td>1000</td></tr>
+        </tbody></table>
+      </div>
+    </section>
+
+    <!-- ======================= Icônes ======================= -->
+    <section class="ds-section" id="icones" aria-labelledby="t-icones">
+      <h2 class="ds-h" id="t-icones">Icônes</h2>
+      <p class="ngs-muted m-0 max-w-[65ch]">Phosphor Icons v2.1.1, licence MIT, style <strong>regular</strong> partout (une seule exception : <code class="ds-token">check-circle-fill</code> dans le toast de succès). Sprite SVG : <code class="ds-token">assets/icons/sprite.svg</code>. En Angular : <code class="ds-token">@ng-icons/phosphor-icons</code>. Les ressources publiées n’en dépendent pas (SVG en ligne).</p>
+      <div class="grid gap-2 mt-6" style="grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr))" data-icones></div>
+    </section>
+
+    <!-- ======================= Composants ======================= -->
+    <section class="ds-section" id="composants" aria-labelledby="t-composants">
+      <h2 class="ds-h" id="t-composants">Composants</h2>
+
+      <h3 class="ds-sous">Boutons : une paire (plein / contour) + fantôme pour les outils</h3>
+      <div class="grid gap-6">
+        <div class="ds-etats">
+          <div class="ds-etat"><button class="ngs-btn" type="button">Parcourir le catalogue</button><small>repos</small></div>
+          <div class="ds-etat"><button class="ngs-btn is-hover" type="button">Parcourir le catalogue</button><small>survol (−1 px)</small></div>
+          <div class="ds-etat"><button class="ngs-btn is-focus" type="button">Parcourir le catalogue</button><small>focus</small></div>
+          <div class="ds-etat"><button class="ngs-btn is-active" type="button">Parcourir le catalogue</button><small>actif (.985)</small></div>
+          <div class="ds-etat"><button class="ngs-btn" type="button" disabled>Parcourir le catalogue</button><small>désactivé</small></div>
+          <div class="ds-etat"><button class="ngs-btn is-loading" type="button" aria-busy="true">Télécharger</button><small>chargement</small></div>
+        </div>
+        <div class="ds-etats">
+          <div class="ds-etat"><button class="ngs-btn ngs-btn--secondary" type="button">Lire comment démarrer</button><small>contour</small></div>
+          <div class="ds-etat"><button class="ngs-btn ngs-btn--secondary is-hover" type="button">Lire comment démarrer</button><small>survol</small></div>
+          <div class="ds-etat"><button class="ngs-btn ngs-btn--secondary" type="button" disabled>Lire comment démarrer</button><small>désactivé</small></div>
+          <div class="ds-etat"><button class="ngs-btn ngs-btn--ghost" type="button"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#arrow-counter-clockwise"></use></svg>Réinitialiser les réglages</button><small>fantôme</small></div>
+          <div class="ds-etat"><button class="ngs-btn ngs-btn--ghost ngs-btn--icon" type="button" aria-label="Ouvrir le menu"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#list"></use></svg></button><small>icône 44 px</small></div>
+          <div class="ds-etat"><button class="ngs-btn ngs-btn--danger" type="button">Supprimer</button><small>danger (réservé)</small></div>
+          <div class="ds-etat"><button class="ngs-btn ngs-btn--secondary is-done" type="button" data-demo-done><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#copy"></use></svg><span class="ngs-btn__label-idle">Copier le code</span><span class="ngs-btn__label-done">Code copié</span></button><small>terminé (cliquez)</small></div>
+        </div>
+        <div class="ds-etats"><div class="ds-etat"><button class="ngs-btn ngs-btn--sm" type="button">Petit 40</button><small>--sm</small></div><div class="ds-etat"><button class="ngs-btn" type="button">Normal 48</button><small>défaut</small></div><div class="ds-etat"><button class="ngs-btn ngs-btn--lg" type="button">Grand 56</button><small>--lg (hero, fiche)</small></div></div>
+      </div>
+
+      <h3 class="ds-sous">Liens</h3>
+      <div class="ds-etats">
+        <div class="ds-etat"><a class="ngs-link" href="#composants">Voir les composants</a><small>repos (trait au survol)</small></div>
+        <div class="ds-etat"><a class="ngs-link is-hover" href="#composants">Voir les composants</a><small>survol</small></div>
+        <div class="ds-etat"><a class="ngs-link ngs-link--rest" href="#composants">Voir les composants <svg class="ngs-icon ngs-icon--sm ngs-icon--move" aria-hidden="true"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a><small>souligné au repos, flèche +3 px</small></div>
+        <div class="ds-etat"><a class="ngs-link is-focus" href="#composants">Voir les composants</a><small>focus</small></div>
+      </div>
+
+      <h3 class="ds-sous">Champs</h3>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-[64rem]">
+        <div class="ngs-field"><label class="ngs-field__label" for="c1">Nom du composant</label><input class="ngs-input" id="c1" placeholder="Calendrier"><span class="ngs-field__help">Tel qu’il apparaîtra dans le catalogue.</span></div>
+        <div class="ngs-field"><label class="ngs-field__label" for="c2">Survol</label><input class="ngs-input is-hover" id="c2" value="Calendrier"></div>
+        <div class="ngs-field"><label class="ngs-field__label" for="c3">Focus</label><input class="ngs-input is-focus" id="c3" value="Calendrier"></div>
+        <div class="ngs-field"><label class="ngs-field__label" for="c4">Adresse e-mail</label><input class="ngs-input" id="c4" value="awa@exemple" aria-invalid="true" aria-describedby="c4e"><span class="ngs-field__error" id="c4e"><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#warning-circle"></use></svg>Ajoutez la fin de l’adresse, par exemple awa@exemple.sn.</span></div>
+        <div class="ngs-field"><label class="ngs-field__label" for="c5">Désactivé</label><input class="ngs-input" id="c5" value="Angular 22" disabled></div>
+        <div class="ngs-field"><label class="ngs-field__label" for="c6">Recherche</label><div class="ngs-input-wrap"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#magnifying-glass"></use></svg><input class="ngs-input" id="c6" type="search" placeholder="Nom, usage, mot-clé…"></div></div>
+      </div>
+
+      <h3 class="ds-sous">Badges, puces de filtre, interrupteur, segments, pastilles, curseur</h3>
+      <div class="grid gap-6">
+        <div class="flex flex-wrap gap-2">
+          <span class="ngs-badge ngs-cat-composants">Composant</span><span class="ngs-badge ngs-cat-blocs">Bloc</span><span class="ngs-badge ngs-cat-templates">Template</span><span class="ngs-badge ngs-cat-designs">Design</span>
+          <span class="ngs-badge ngs-badge--secteur"><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#fork-knife"></use></svg>Restaurant</span><span class="ngs-badge ngs-badge--reglable">Réglable</span><span class="ngs-badge ngs-badge--provisoire">Démo provisoire</span><span class="ngs-badge ngs-badge--neutre">Angular 22</span>
+        </div>
+        <div class="ds-etats">
+          <div class="ds-etat"><a class="ngs-chip" href="#etats">Tout <span class="ngs-chip__count">9</span></a><small>repos</small></div>
+          <div class="ds-etat"><a class="ngs-chip is-hover ngs-cat-blocs" href="#etats"><span class="ngs-chip__dot" aria-hidden="true"></span>Blocs <span class="ngs-chip__count">1</span></a><small>survol</small></div>
+          <div class="ds-etat"><a class="ngs-chip ngs-cat-composants" aria-current="page" href="#etats"><span class="ngs-chip__dot" aria-hidden="true"></span>Composants <span class="ngs-chip__count">5</span></a><small>actif (couleur de famille)</small></div>
+          <div class="ds-etat"><a class="ngs-chip ngs-cat-designs" aria-current="page" href="#etats"><span class="ngs-chip__dot" aria-hidden="true"></span>Designs <span class="ngs-chip__count">3</span></a><small>actif</small></div>
+        </div>
+        <div class="ds-etats">
+          <div class="ds-etat"><label class="ngs-switch"><input type="checkbox"><span class="ngs-switch__track" aria-hidden="true"></span>Réglables seulement</label><small>coupé</small></div>
+          <div class="ds-etat"><label class="ngs-switch"><input type="checkbox" checked><span class="ngs-switch__track" aria-hidden="true"></span>Réglables seulement</label><small>actif</small></div>
+          <div class="ds-etat"><label class="ngs-switch"><input type="checkbox" disabled><span class="ngs-switch__track" aria-hidden="true"></span>Réglables seulement</label><small>désactivé</small></div>
+          <div class="ds-etat"><div class="ngs-seg" role="radiogroup" aria-label="Mode"><button class="ngs-seg__btn" type="button" role="radio" aria-checked="true"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#sun"></use></svg>Clair</button><button class="ngs-seg__btn" type="button" role="radio" aria-checked="false"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#moon"></use></svg>Sombre</button></div><small>segments</small></div>
+          <div class="ds-etat"><div class="ngs-swatches" role="radiogroup" aria-label="Couleur d’action"><button class="ngs-swatch" type="button" role="radio" aria-checked="true" aria-label="Encre" style="--sw:#0b0b0c"></button><button class="ngs-swatch" type="button" role="radio" aria-checked="false" aria-label="Bleu" style="--sw:#1f4fd1"></button><label class="ngs-swatch ngs-swatch--custom" role="radio" aria-checked="false"><span class="sr-only">Choisir une autre couleur</span><input type="color"></label></div><small>pastilles 44 px</small></div>
+          <div class="ds-etat w-64"><div class="ngs-range-row w-full"><input class="ngs-range" type="range" min="0" max="24" value="10" aria-label="Rayon"><output>10 px</output></div><small>curseur de réglage</small></div>
+        </div>
+      </div>
+
+      <h3 class="ds-sous">Thème du site (header) et ressources animées</h3>
+      <div class="grid gap-8 lg:grid-cols-[18rem_1fr] items-start">
+        <div class="ds-etat">
+          <div class="ngs-theme__menu is-open" style="position:static" role="menu" aria-label="Thème du site (démonstration)">
+            <p class="ngs-theme__titre" aria-hidden="true">Thème du site</p>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="false"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#sun"></use></svg><span>Clair</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true"><use href="assets/icons/sprite.svg#check"></use></svg></button>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="true"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#moon"></use></svg><span>Sombre</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true"><use href="assets/icons/sprite.svg#check"></use></svg></button>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="false"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#desktop"></use></svg><span>Système</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true"><use href="assets/icons/sprite.svg#check"></use></svg></button>
+          </div>
+          <small>.ngs-theme : bouton icône 44 px (soleil, lune, écran selon le choix) + menu de 3 menuitemradio, flèches, Échap ; s’ouvre avec 6 px de descente</small>
+        </div>
+        <div class="grid gap-5">
+          <div class="flex flex-wrap gap-2 items-center"><span class="ngs-badge ngs-badge--anime"><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#wave-sine"></use></svg>Animée</span><span class="ngs-small ngs-muted">badge des cases et de la fiche (champ <code class="ds-token">motion</code> du registre) ; filtre « Animées seulement » au catalogue</span></div>
+          <div class="ngs-panel max-w-[22rem]">
+            <details class="ngs-reglage" open><summary><span>Animations</span><span class="ngs-reglage__valeur">Activées</span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#caret-down"></use></svg></summary>
+              <div class="ngs-reglage__corps"><label class="ngs-switch"><input type="checkbox" checked data-ds-anime-switch><span class="ngs-switch__track" aria-hidden="true"></span>Animations de la ressource</label><p class="ngs-small ngs-muted m-0">Réglage de la fiche. Ici, il agit sur la case ci-dessous (ouvrez une question).</p></div>
+            </details>
+          </div>
+          <div class="max-w-[40rem]" data-ds-anime></div>
+        </div>
+      </div>
+
+      <h3 class="ds-sous">Deux notions à ne pas confondre</h3>
+      <div class="grid gap-4 md:grid-cols-2 max-w-[60rem]">
+        <div class="ds-boite grid gap-2"><span class="ngs-badge ngs-cat-designs justify-self-start">Design</span><p class="m-0">Habillage visuel (tokens) : Planche, Fleuve, Latérite. Se règle sur la fiche, ne change pas le contenu.</p></div>
+        <div class="ds-boite grid gap-2"><span class="ngs-badge ngs-badge--secteur justify-self-start"><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#airplane-tilt"></use></svg>Secteur</span><p class="m-0">Domaine d’activité (ADR 0004) : voyage, restaurant, transport… 0 à 3 par ressource, badge neutre avec icône, jamais en couleur de famille.</p></div>
+      </div>
+
+      <h3 class="ds-sous">Version du code (Tailwind par défaut)</h3>
+      <div class="ds-etats">
+        <div class="ds-etat"><div class="ngs-seg" role="radiogroup" aria-label="Version du code" data-ds-radio><button class="ngs-seg__btn" type="button" role="radio" aria-checked="true" data-valeur="tailwind">Tailwind</button><button class="ngs-seg__btn" type="button" role="radio" aria-checked="false" data-valeur="css">CSS</button></div><small>la copie et le zip suivent ce choix (cookie ngs_variante)</small></div>
+      </div>
+
+      <h3 class="ds-sous">Facettes du catalogue, filtres actifs, tri</h3>
+      <div class="grid gap-6 lg:grid-cols-[16rem_1fr] max-w-[64rem]">
+        <div class="ngs-facettes">
+          <details class="ngs-facette" open><summary><span>Type</span><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#caret-down"></use></svg></summary>
+            <div class="ngs-facette__corps">
+              <label class="ngs-option ngs-cat-blocs"><input type="checkbox" checked><span>Navbar</span><span class="ngs-option__compte">1</span></label>
+              <label class="ngs-option ngs-cat-blocs"><input type="checkbox"><span>Hero</span><span class="ngs-option__compte">1</span></label>
+              <label class="ngs-option is-vide ngs-cat-blocs"><input type="checkbox"><span>Tarifs</span><span class="ngs-option__compte">0</span></label>
+            </div></details>
+          <details class="ngs-facette" open><summary><span>Secteur</span><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#caret-down"></use></svg></summary>
+            <div class="ngs-facette__corps">
+              <label class="ngs-option"><input type="checkbox" checked><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#fork-knife"></use></svg><span>Restaurant</span><span class="ngs-option__compte">2</span></label>
+              <label class="ngs-option"><input type="checkbox"><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#airplane-tilt"></use></svg><span>Voyage</span><span class="ngs-option__compte">1</span></label>
+            </div></details>
+        </div>
+        <div class="grid gap-4 content-start">
+          <div class="flex flex-wrap gap-3 items-center"><select class="ngs-select" aria-label="Trier"><option>Les plus récentes</option><option>De A à Z</option></select></div>
+          <div class="ngs-filtres-actifs"><button class="ngs-filtre-actif" type="button" aria-label="Retirer le filtre Navbar">Navbar<svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#x"></use></svg></button><button class="ngs-filtre-actif" type="button" aria-label="Retirer le filtre Restaurant">Restaurant<svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#x"></use></svg></button></div>
+          <p class="ngs-small ngs-muted m-0">Sous 1024 px, la colonne de facettes devient un tiroir (bottom sheet) ouvert par « Filtres (n) », avec « Tout effacer » et « Voir les résultats (n) ». Types : 8 affichés, puis « Afficher les n autres types ».</p>
+        </div>
+      </div>
+
+      <h3 class="ds-sous">Réglages en groupes repliables (fiche)</h3>
+      <div class="ngs-panel max-w-[22rem]">
+        <details class="ngs-reglage" open><summary><span>Design</span><span class="ngs-reglage__valeur">Fleuve</span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#caret-down"></use></svg></summary><div class="ngs-reglage__corps"><p class="m-0 ngs-small ngs-muted">Contenu du groupe ouvert.</p></div></details>
+        <details class="ngs-reglage"><summary><span>Couleur d’action</span><span class="ngs-reglage__valeur"><i style="background:#0b6464"></i>#0b6464</span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#caret-down"></use></svg></summary><div class="ngs-reglage__corps"></div></details>
+        <details class="ngs-reglage"><summary><span>Rayon</span><span class="ngs-reglage__valeur">18 px</span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#caret-down"></use></svg></summary><div class="ngs-reglage__corps"></div></details>
+      </div>
+
+      <h3 class="ds-sous">Étiquette de pièce (vitrine du hero)</h3>
+      <div class="flex flex-wrap gap-3 relative py-4"><a class="ngs-etiquette ngs-cat-blocs" style="position:static" href="#composants">Navbar</a><a class="ngs-etiquette ngs-cat-composants" style="position:static" href="#composants">Calendrier</a></div>
+
+      <h3 class="ds-sous">Pied de page : réseaux de Sidy et signature</h3>
+      <div class="ds-boite flex flex-wrap items-center justify-between gap-6">
+        <ul class="ngs-reseaux" aria-label="Suivre Sidy">
+          <li><a class="ngs-reseau" href="#composants" aria-label="Instagram de Sidy"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#instagram-logo"></use></svg></a></li>
+          <li><a class="ngs-reseau" href="#composants" aria-label="TikTok de Sidy"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#tiktok-logo"></use></svg></a></li>
+          <li><a class="ngs-reseau" href="#composants" aria-label="LinkedIn de Sidy"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#linkedin-logo"></use></svg></a></li>
+          <li><a class="ngs-reseau" href="#composants" aria-label="GitHub de Sidy"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#github-logo"></use></svg></a></li>
+          <li><a class="ngs-reseau" href="#composants" aria-label="Écrire un e-mail à Sidy"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#envelope-simple"></use></svg></a></li>
+        </ul>
+        <a class="ngs-signature" href="#composants" aria-label="Développé par Sidy"><span class="ngs-signature__mono" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M22 9.5c-1.6-2.4-4.2-3.5-7-3.2-3.4.4-5.6 2.8-5 5.6.5 2.6 3.4 3.6 6.4 4.4 3.2.9 6.3 2 6.6 5 .3 3.2-2.6 5.6-6.4 5.6-3 0-5.4-1.2-6.8-3.4"/></svg></span><span class="ngs-signature__texte" aria-hidden="true"><small>Développé par</small><strong>Sidy</strong></span></a>
+      </div>
+      <p class="ngs-small ngs-muted mt-3 mb-0">Le monogramme « S » se dessine (tracé SVG, 0,9 s) quand le pied entre dans l’écran, puis à chaque survol ; immobile en reduced-motion. Il mène au portfolio de Sidy.</p>
+
+      <h3 class="ds-sous">Case de planche (la seule carte du site)</h3>
+      <div class="grid gap-5 md:grid-cols-3 max-w-[72rem]" data-cases></div>
+
+      <h3 class="ds-sous">Onglets, bloc de code, copie</h3>
+      <div class="ngs-code max-w-[48rem]">
+        <div class="ngs-code__bar">
+          <div class="ngs-tabs ngs-tabs--dark" role="tablist" aria-label="Fichiers" data-ds-onglets>
+            <button class="ngs-tabs__tab" type="button" role="tab" id="o1" aria-controls="p1" aria-selected="true">interrupteur.component.ts</button>
+            <button class="ngs-tabs__tab" type="button" role="tab" id="o2" aria-controls="p2" aria-selected="false">ngshelf-theme.css</button>
+            <span class="ngs-tabs__indicator" aria-hidden="true"></span>
+          </div>
+          <button class="ngs-copy" type="button" data-ds-copier><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#copy"></use></svg><span class="ngs-btn__label-idle">Copier</span><span class="ngs-btn__label-done">Copié</span></button>
+        </div>
+        <div role="tabpanel" id="p1" aria-labelledby="o1"><pre tabindex="0"><code data-ds-code="ts"></code></pre></div>
+        <div role="tabpanel" id="p2" aria-labelledby="o2" hidden><pre tabindex="0"><code data-ds-code="css"></code></pre></div>
+      </div>
+
+      <h3 class="ds-sous">Navigation</h3>
+      <div class="ds-boite grid gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <a class="ngs-nav-link ngs-cat-composants" href="#composants"><span class="ngs-nav-link__dot" aria-hidden="true"></span>Composants</a>
+          <a class="ngs-nav-link ngs-cat-blocs is-hover" href="#composants"><span class="ngs-nav-link__dot" aria-hidden="true"></span>Blocs (survol)</a>
+          <a class="ngs-nav-link ngs-cat-designs" aria-current="page" href="#composants"><span class="ngs-nav-link__dot" aria-hidden="true"></span>Designs (page courante)</a>
+          <button class="ngs-search-trigger ml-auto" type="button" data-recherche-ds><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#magnifying-glass"></use></svg><span class="ngs-search-trigger__text">Rechercher une ressource</span><kbd class="ngs-kbd"><svg class="ngs-icon ngs-icon--sm" aria-hidden="true"><use href="assets/icons/sprite.svg#command"></use></svg>K</kbd></button>
+        </div>
+        <p class="m-0 ngs-small ngs-muted">Header collant (bordure dès 8 px de défilement) avec méga-menu « Catalogue » (familles, types de composants et de blocs, secteurs, avec compteurs), menu plein écran sous 1024 px, lien « Aller au contenu » en premier au clavier, recherche en dialogue (⌘ K, Ctrl K ou /). Fil d’Ariane sur la fiche ressource. Voir la maquette pour le comportement réel.</p>
+      </div>
+
+      <h3 class="ds-sous">Toasts et dialogue</h3>
+      <div class="grid gap-6 md:grid-cols-2 max-w-[56rem]">
+        <div class="ngs-toast ngs-toast--success" style="position:static"><span class="ngs-toast__icon"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#check-circle-fill"></use></svg></span><span>Code copié dans le presse-papiers.</span></div>
+        <div class="ngs-toast ngs-toast--error" style="position:static"><span class="ngs-toast__icon"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#warning-circle"></use></svg></span><span>La copie a échoué. Sélectionnez le code puis copiez-le avec Ctrl + C (⌘ + C sur Mac).</span></div>
+      </div>
+      <div class="flex flex-wrap gap-3 mt-5">
+        <button class="ngs-btn ngs-btn--secondary" type="button" data-toast-ok>Afficher un toast de succès</button>
+        <button class="ngs-btn ngs-btn--secondary" type="button" data-toast-ko>Afficher un toast d’erreur</button>
+        <button class="ngs-btn ngs-btn--secondary" type="button" data-dialogue>Ouvrir le dialogue de recherche</button>
+      </div>
+      <dialog class="ngs-dialog" aria-labelledby="d-titre" data-dialogue-el>
+        <div class="ngs-dialog__head"><svg class="ngs-icon ngs-icon--lg" aria-hidden="true"><use href="assets/icons/sprite.svg#magnifying-glass"></use></svg><label class="sr-only" for="d-champ" id="d-titre">Rechercher dans le catalogue</label><input class="ngs-input" id="d-champ" type="search" value="cal"><button class="ngs-btn ngs-btn--ghost ngs-btn--icon" type="button" aria-label="Fermer la recherche" data-fermer><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#x"></use></svg></button></div>
+        <div class="ngs-dialog__body"><ul class="ngs-results" role="listbox" aria-label="Résultats">
+          <li role="presentation"><a class="ngs-result ngs-cat-composants" role="option" aria-selected="true" href="../maquette/ressource.html?r=calendrier"><span class="ngs-chip__dot" aria-hidden="true"></span><span class="grid gap-0.5"><span class="ngs-result__title"><mark>Cal</mark>endrier</span><span class="ngs-result__desc">Composant</span></span></a></li>
+          <li role="presentation"><a class="ngs-result ngs-cat-composants" role="option" aria-selected="false" href="../maquette/ressource.html?r=curseur"><span class="ngs-chip__dot" aria-hidden="true"></span><span class="grid gap-0.5"><span class="ngs-result__title">Curseur de valeur</span><span class="ngs-result__desc">Composant</span></span></a></li>
+        </ul></div>
+      </dialog>
+
+      <h3 class="ds-sous">Tableau et liste de métadonnées</h3>
+      <div class="grid gap-8 lg:grid-cols-2">
+        <table class="ngs-table"><thead><tr><th scope="col">Nom</th><th scope="col">Type</th><th scope="col">Rôle</th></tr></thead><tbody>
+          <tr><td><code>label</code></td><td><code>input.required&lt;string&gt;()</code></td><td>Texte visible du réglage.</td></tr>
+          <tr><td><code>coche</code></td><td><code>model&lt;boolean&gt;()</code></td><td>État, liable en [(coche)].</td></tr>
+        </tbody></table>
+        <dl class="ngs-meta"><dt>Angular</dt><dd>22 et plus</dd><dt>Dépendances</dt><dd>Aucune</dd><dt>Licence</dt><dd>MIT</dd></dl>
+      </div>
+    </section>
+
+    <!-- ======================= États ======================= -->
+    <section class="ds-section" id="lecture" aria-labelledby="t-lecture">
+      <h2 class="ds-h" id="t-lecture">Lecture : pages légales (mode Lire)</h2>
+      <p class="ngs-muted m-0 max-w-prose">Gabarit unique <code>.ngs-lecture</code> : en-tête (titre, date, pages sœurs en puces), sommaire collant sur ordinateur et repliable sur mobile, texte à largeur <code>--container-prose</code> (42 rem). Pas d’animation d’entrée. Démonstration complète : <code>design/maquette/mentions-legales.html</code>.</p>
+      <h3 class="ds-sous">Champ à compléter (<code>.ngs-acompleter</code>) et fiche (<code>.ngs-lecture__fiche</code>)</h3>
+      <div class="ngs-lecture__section" style="max-width: var(--container-prose)">
+        <p class="m-0">Adresse de l’éditeur : <span class="ngs-acompleter">[à compléter par Sidy : adresse postale]</span></p>
+        <div class="ngs-lecture__fiche"><h3><code>ngs_theme</code></h3><dl class="ngs-meta"><dt>Durée</dt><dd>12 mois.</dd><dt>Émetteur</dt><dd>NgShelf</dd></dl></div>
+      </div>
+    </section>
+
+    <section class="ds-section" id="etats" aria-labelledby="t-etats">
+      <h2 class="ds-h" id="t-etats">États de données</h2>
+      <div class="grid gap-6 lg:grid-cols-3">
+        <div class="grid gap-3"><p class="ngs-label m-0">Chargement (squelette à la forme de la case)</p>
+          <div class="ngs-case" aria-hidden="true"><div class="ngs-case__stage"><div class="ngs-skeleton w-3/4 h-24"></div></div><div class="ngs-case__foot"><div class="grid gap-2 w-full"><div class="ngs-skeleton h-4 w-1/2"></div><div class="ngs-skeleton h-5 w-1/3"></div></div></div></div>
+        </div>
+        <div class="grid gap-3"><p class="ngs-label m-0">Vide (invitation à agir)</p>
+          <div class="ngs-state"><span class="ngs-state__icon"><svg class="ngs-icon ngs-icon--lg" aria-hidden="true"><use href="assets/icons/sprite.svg#browser"></use></svg></span><p class="ngs-state__title">Pas encore de template</p><p class="m-0 ngs-muted">Un template est une page complète : connexion, tableau de bord, page d’accueil. Le premier peut venir de vous.</p><a class="ngs-btn" href="#etats">Proposer un template</a></div>
+        </div>
+        <div class="grid gap-3"><p class="ngs-label m-0">Erreur (+ Réessayer)</p>
+          <div class="ngs-state ngs-state--error"><span class="ngs-state__icon"><svg class="ngs-icon ngs-icon--lg" aria-hidden="true"><use href="assets/icons/sprite.svg#warning-circle"></use></svg></span><p class="ngs-state__title">Le catalogue n’a pas pu se charger</p><p class="m-0 ngs-muted">Vérifiez votre connexion, puis réessayez.</p><button class="ngs-btn" type="button"><svg class="ngs-icon" aria-hidden="true"><use href="assets/icons/sprite.svg#arrow-clockwise"></use></svg>Réessayer</button></div>
+        </div>
+      </div>
+      <p class="ngs-small ngs-muted mt-5 mb-0">Aucun résultat filtré : même ngshelf que « Vide », avec « Effacer la recherche ». Dans la maquette : <a class="ngs-link ngs-link--rest" href="../maquette/catalogue.html?etat=chargement">chargement</a>, <a class="ngs-link ngs-link--rest" href="../maquette/catalogue.html?etat=erreur">erreur</a>, <a class="ngs-link ngs-link--rest" href="../maquette/catalogue.html?c=templates">vide</a>, <a class="ngs-link ngs-link--rest" href="../maquette/ressource.html?r=inconnue">ressource introuvable</a>.</p>
+    </section>
+
+    <!-- ======================= Contrat ======================= -->
+    <section class="ds-section" id="contrat" aria-labelledby="t-contrat">
+      <h2 class="ds-h" id="t-contrat">Contrat de tokens des ressources</h2>
+      <p class="ngs-muted m-0 max-w-[68ch]">Douze tokens sémantiques, lus par chaque ressource en <code class="ds-token">var(--ngs-…, repli)</code>. Un « design » du catalogue est un jeu de ces douze valeurs, en clair et en sombre. Les ressources n’utilisent ni Tailwind, ni GSAP, ni bibliothèque d’icônes. Contrastes calculés ci-dessous sur la surface de chaque thème.</p>
+      <div class="overflow-x-auto mt-6"><table class="ds-tableau" data-contrat></table></div>
+      <h3 class="ds-sous">Annexe : correspondance token ↔ utilitaire Tailwind (ngshelf-theme.css)</h3>
+      <div class="overflow-x-auto"><table class="ds-tableau" data-correspondance></table></div>
+      <h3 class="ds-sous">Contrastes vérifiés par thème</h3>
+      <div class="overflow-x-auto"><table class="ds-tableau" data-contrat-contrastes></table></div>
+    </section>
+
+    <!-- ======================= Motion ======================= -->
+    <section class="ds-section" id="motion" aria-labelledby="t-motion">
+      <h2 class="ds-h" id="t-motion">Motion</h2>
+      <p class="ngs-muted m-0 max-w-[68ch]">Tokens de durée et d’easing (design-sidy §12). Sortie plus rapide que l’entrée, jamais de rebond sur l’interface, uniquement <code class="ds-token">transform</code>, <code class="ds-token">opacity</code>, couleurs et <code class="ds-token">clip-path</code>. Sous <code class="ds-token">prefers-reduced-motion</code>, tout se pose à l’état final.</p>
+      <div class="grid gap-3 mt-6" data-motion></div>
+      <button class="ngs-btn mt-5" type="button" data-rejouer>Rejouer les démonstrations</button>
+      <h3 class="ds-sous">Animations des ressources (v0.3)</h3>
+      <ul class="m-0 grid gap-2 max-w-[68ch] ngs-small">
+        <li>Sobres et utiles : entrée, sortie, ouverture, survol ou changement de vue ; uniquement <code class="ds-token">transform</code> et <code class="ds-token">opacity</code> (et la hauteur de <code class="ds-token">::details-content</code> avec <code class="ds-token">interpolate-size</code>), durées tirées de <code class="ds-token">--ngs-duration</code>.</li>
+        <li>En CSS (<code class="ds-token">@keyframes</code>, transitions) ou Angular 22 (<code class="ds-token">animate.enter</code> / <code class="ds-token">animate.leave</code>, qui posent une classe et attendent la fin de l’animation). Jamais GSAP dans une ressource.</li>
+        <li>Toujours désactivables : input <code class="ds-token">animations</code> (classe <code class="ds-token">.ngs-sans-animation</code> sur l’hôte), la même classe sur un parent (<code class="ds-token">:host-context</code> en CSS, variante <code class="ds-token">in-[.ngs-sans-animation]</code> en Tailwind), et <code class="ds-token">prefers-reduced-motion</code> (animations écrites dans <code class="ds-token">no-preference</code> / <code class="ds-token">motion-safe:</code>).</li>
+        <li>Démonstration : notifications (entrée et sortie qui glissent), questions fréquentes (ouverture), carte de séjour (photo qui se pose, survol, sortie), calendrier (mois qui glisse) ; v0.4 : hero avec photo (entrée en cascade, sortie), barre de navigation (entrée en cascade).</li>
+        <li>Sortie d’un composant retiré par son parent : <code class="ds-token">animate.leave="hero-sortie"</code> sur la balise du composant, règle <code class="ds-token">:host(.hero-sortie)</code> dans son CSS. Dans la fiche, « Rejouer l’entrée » et « Rejouer la sortie » (boutons fantômes à côté de l’aperçu, désactivés quand les animations sont coupées).</li>
+      </ul>
+      <h3 class="ds-sous">Splash et transitions de page</h3>
+      <ul class="m-0 grid gap-2 max-w-[68ch] ngs-small">
+        <li><strong>Splash</strong> (premier chargement d’un document seulement) : les 4 carrés de famille apparaissent en cascade (380 ms, 60 ms d’écart), le nom se dévoile par <code class="ds-token">clip-path</code> (420 ms), puis l’écran remonte (<code class="ds-token">clip-path</code>, 320 ms) dès que l’app est prête, au moins 420 ms après le début. Minuteur CSS de sécurité à 1,2 s, <code class="ds-token">noscript</code>, absent en reduced-motion. L’intro de l’accueil démarre pendant la sortie.</li>
+        <li><strong>Sortie / entrée de page</strong> : ancienne vue qui s’efface en montant de 8 px (180 ms, <code class="ds-token">--ease-in-out</code>), nouvelle vue qui arrive de 8 px plus bas (300 ms, <code class="ds-token">--ease-enter</code>, 60 ms de décalage). En-tête fixe (nommé <code class="ds-token">entete</code>), il ne bouge pas.</li>
+        <li><strong>Élément partagé</strong> : la scène de la case cliquée devient le cadre d’aperçu de la fiche (<code class="ds-token">apercu-ressource</code>, 480 ms), et inversement au retour vers la liste. Un seul nom à la fois.</li>
+        <li>Sans View Transitions : la maquette joue un repli GSAP (voile depuis la case, ou fondu de <code class="ds-token">main</code> en 180 ms). En Angular, le router navigue sans animation (ADR 0005). Rien en reduced-motion.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="../maquette/js/config.js"></script>
+  <script>NGS.site.chemins = { sprite: 'assets/icons/sprite.svg', contrat: 'contrat-tokens.css' };</script>
+  <script src="../maquette/js/textes.fr.js"></script>
+  <script src="../maquette/js/registre.js"></script>
+  <script src="../maquette/js/contrat.js"></script>
+  <script src="../maquette/js/variantes.js"></script>
+  <script src="../maquette/js/apercu.js"></script>
+  <script src="../maquette/js/code.js"></script>
+  <script src="../maquette/js/zip.js"></script>
+  <script src="../maquette/js/livraison.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
+  <script src="../maquette/js/app.js"></script>
+  <script src="./ds.js"></script>
+</body>
+</html>

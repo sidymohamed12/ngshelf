@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comparaison des polices — NgShelf (v0.4)</title>
+  <style>
+    /* Page de comparaison autonome : trois paires, mêmes textes, mêmes tailles. Polices auto-hébergées, licence SIL OFL 1.1. */
+    @font-face { font-family: "Archivo"; src: url("./assets/fonts/archivo-latin-var.woff2") format("woff2"); font-weight: 400 800; font-stretch: 62% 100%; font-display: swap; }
+    @font-face { font-family: "Encode Sans"; src: url("./assets/fonts/encode-sans-var.woff2") format("woff2"); font-weight: 100 900; font-stretch: 75% 125%; font-display: swap; }
+    @font-face { font-family: "Chivo"; src: url("./assets/fonts/chivo-latin-var.woff2") format("woff2"); font-weight: 400 800; font-display: swap; }
+    @font-face { font-family: "Chivo Mono"; src: url("./assets/fonts/chivo-mono-latin-var.woff2") format("woff2"); font-weight: 400 600; font-display: swap; }
+    @font-face { font-family: "IBM Plex Mono"; src: url("./assets/fonts/ibm-plex-mono-latin-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+    :root { --encre: #0b0b0c; --gris: #5f5f66; --bord: #e4e4e7; --surface: #f4f4f5; --vert: #0b6e4f; --vert-doux: #e8f3ef; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #fff; color: var(--encre); font: 16px/1.5 system-ui, sans-serif; }
+    main { max-width: 90rem; margin-inline: auto; padding: clamp(1.5rem, 4vw, 3rem); display: grid; gap: 3rem; }
+    .intro { max-width: 52rem; display: grid; gap: 0.75rem; }
+    .intro h1 { margin: 0; font-size: 2rem; letter-spacing: -0.02em; }
+    .intro p { margin: 0; color: var(--gris); }
+    .paire { display: grid; gap: 1.5rem; padding-top: 2.5rem; border-top: 1px solid var(--bord); font-family: var(--f); }
+    .paire__tete { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 2rem; font: 15px/1.5 system-ui, sans-serif; }
+    .paire__tete strong { font-size: 1.125rem; }
+    .paire__tete ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; color: var(--gris); }
+    .paire__tete a { color: var(--encre); }
+    .badge-reco { display: inline-block; margin-left: 0.5rem; padding: 0.15rem 0.55rem; border-radius: 8px; background: var(--encre); color: #fff; font-size: 0.8125rem; font-weight: 600; }
+    .titre { margin: 0; max-width: 13ch; font-size: clamp(2.6rem, 1.4rem + 3.6vw, 4.75rem); line-height: 0.95; letter-spacing: -0.025em; font-weight: 720; font-variation-settings: "wdth" var(--wdth, 100); text-wrap: balance; }
+    .grille { display: grid; gap: 1.5rem; }
+    @media (min-width: 64rem) { .grille { grid-template-columns: 22rem 1fr; } }
+    .case { border: 1px solid var(--bord); border-radius: 20px; background: var(--surface); overflow: hidden; }
+    .case__scene { min-height: 9rem; display: grid; place-items: center; padding: 1.5rem; }
+    .case__scene code { font-family: var(--m); font-size: 14px; background: #141416; color: #e7e7ea; padding: 0.75rem 1rem; border-radius: 12px; }
+    .case__pied { background: #fff; border-top: 1px solid var(--bord); padding: 0.75rem 1rem; display: grid; gap: 0.4rem; }
+    .case__pied h3 { margin: 0; font-size: 1rem; font-weight: 620; }
+    .badge { justify-self: start; display: inline-flex; align-items: center; gap: 0.4rem; min-height: 1.75rem; padding: 0 0.6rem; border-radius: 8px; background: var(--vert-doux); color: var(--vert); font-size: 0.8125rem; font-weight: 580; }
+    .badge::before { content: ""; width: 0.45rem; height: 0.45rem; border-radius: 2px; background: currentColor; }
+    .texte { display: grid; gap: 0.75rem; max-width: 62ch; }
+    .texte .lead { margin: 0; font-size: 1.25rem; line-height: 1.5; color: var(--gris); }
+    .texte p { margin: 0; font-size: 1.0625rem; line-height: 1.6; text-wrap: pretty; }
+    .famille { margin: 0; font-size: clamp(2.5rem, 2rem + 3vw, 4.5rem); line-height: 0.9; letter-spacing: -0.04em; font-weight: 740; color: var(--vert); display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
+    .note { font: 14px/1.5 system-ui, sans-serif; color: var(--gris); margin: 0; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="intro">
+    <h1>Police principale : trois paires à comparer</h1>
+    <p>Bricolage Grotesque est retirée de la maquette. Chaque paire montre le titre de l’accueil, une case du catalogue et un extrait de texte, aux tailles réelles du design system. Toutes sont gratuites pour un usage commercial et web (SIL Open Font License 1.1, lue dans le fichier de licence), auto-hébergées en WOFF2, et couvrent les accents français (vérifié avec fontTools : é è ê ë à â ç œ Œ î ï ô û ù ü ÿ « » ’ … € ; l’espace fine U+202F manque partout, l’insécable U+00A0 la remplace).</p>
+    <p>v0.4 : Sidy a choisi la <strong>paire C</strong>, appliquée dans toute la maquette (texte et code). Archivo et IBM Plex Mono ne restent que sur cette page. Pour changer de police : les blocs <code>@font-face</code> et les variables <code>--font-famille</code> / <code>--font-mono</code> de <code>design-system/tokens.css</code>.</p>
+  </div>
+
+  <!-- ============ Paire A ============ -->
+  <section class="paire" style="--f: 'Archivo', system-ui, sans-serif; --m: 'IBM Plex Mono', monospace; --wdth: 86" aria-labelledby="pa">
+    <div class="paire__tete">
+      <strong id="pa">A. Archivo + IBM Plex Mono</strong>
+      <ul>
+        <li>Archivo (Omnibus-Type, Héctor Gatti) : <a href="https://www.fontsquirrel.com/fonts/archivo">Font Squirrel</a>, <a href="https://www.1001fonts.com/archivo-font.html">1001 Fonts</a> (« Free for commercial use », OFL), licence : <a href="https://github.com/google/fonts/blob/main/ofl/archivo/OFL.txt">OFL.txt</a>. Variable graisse 400–800, largeur 62–100 (fichier réduit), 55 Ko.</li>
+        <li>IBM Plex Mono : licence <a href="https://github.com/google/fonts/blob/main/ofl/ibmplexmono/OFL.txt">OFL.txt</a>.</li>
+      </ul>
+    </div>
+    <h2 class="titre">Des composants Angular à prendre tels quels.</h2>
+    <div class="grille">
+      <article class="case"><div class="case__scene"><code>readonly coche = model(false);</code></div><div class="case__pied"><h3>Interrupteur</h3><span class="badge">Interrupteur</span></div></article>
+      <div class="texte">
+        <p class="lead">Composants, blocs et thèmes en code ouvert, sous licence MIT. Essayez-les ici, copiez le code ou téléchargez-les. Aucun compte, aucun paiement.</p>
+        <p>Chaque ressource lit ses valeurs dans des variables CSS avec une valeur de repli. Copiée seule, elle fonctionne ; posez les variables, elle prend votre style. « Ça marche », dit Awa à 12 h 30, après 85 000 F CFA d’économies.</p>
+        <p class="famille"><span style="font-variation-settings:'wdth' 75">Composants</span><span style="font-variation-settings:'wdth' 100">Composants</span></p>
+      </div>
+    </div>
+    <p class="note">Proposée en v0.3 : un grotesque inspiré des caractères américains de la fin du XIXᵉ siècle, ceux des planches de fonderie, donc le concept « planche spécimen ». Son axe de largeur garde la signature des noms de famille qui s’élargissent au scroll. Il est moins vu que Bricolage et n’a pas ses formes « dessinées à la main » repérées comme un tic de sites générés.</p>
+  </section>
+
+  <!-- ============ Paire B ============ -->
+  <section class="paire" style="--f: 'Encode Sans', system-ui, sans-serif; --m: 'IBM Plex Mono', monospace; --wdth: 88" aria-labelledby="pb">
+    <div class="paire__tete">
+      <strong id="pb">B. Encode Sans + IBM Plex Mono</strong>
+      <ul>
+        <li>Encode Sans (Impallari Type, Andres Torresi, Jacques Le Bailly) : <a href="https://www.1001fonts.com/encode-sans-font.html">1001 Fonts</a> (« Free for commercial use », OFL), licence : <a href="https://github.com/google/fonts/blob/main/ofl/encodesans/OFL.txt">OFL.txt</a>. Variable graisse 100–900, largeur 75–125, 100 Ko.</li>
+        <li>Nom réservé « Encode Sans » dans la licence : le fichier est seulement converti en WOFF2, sans réduction de jeu de caractères (une version réduite devrait être renommée).</li>
+      </ul>
+    </div>
+    <h2 class="titre">Des composants Angular à prendre tels quels.</h2>
+    <div class="grille">
+      <article class="case"><div class="case__scene"><code>readonly coche = model(false);</code></div><div class="case__pied"><h3>Interrupteur</h3><span class="badge">Interrupteur</span></div></article>
+      <div class="texte">
+        <p class="lead">Composants, blocs et thèmes en code ouvert, sous licence MIT. Essayez-les ici, copiez le code ou téléchargez-les. Aucun compte, aucun paiement.</p>
+        <p>Chaque ressource lit ses valeurs dans des variables CSS avec une valeur de repli. Copiée seule, elle fonctionne ; posez les variables, elle prend votre style. « Ça marche », dit Awa à 12 h 30, après 85 000 F CFA d’économies.</p>
+        <p class="famille"><span style="font-variation-settings:'wdth' 75">Composants</span><span style="font-variation-settings:'wdth' 100">Composants</span></p>
+      </div>
+    </div>
+    <p class="note">Plus géométrique et plus technique, très lisible en petit. Garde aussi l’axe de largeur. Moins de caractère dans les grands titres, et deux fois plus lourde (fichier non réduit).</p>
+  </section>
+
+  <!-- ============ Paire C ============ -->
+  <section class="paire" style="--f: 'Chivo', system-ui, sans-serif; --m: 'Chivo Mono', monospace" aria-labelledby="pc">
+    <div class="paire__tete">
+      <strong id="pc">C. Chivo + Chivo Mono <span class="badge-reco">Appliquée</span></strong>
+      <ul>
+        <li>Chivo (Omnibus-Type) : <a href="https://www.1001fonts.com/chivo-font.html">1001 Fonts</a> (« Free for commercial use », OFL), licence : <a href="https://github.com/google/fonts/blob/main/ofl/chivo/OFL.txt">OFL.txt</a>. Variable graisse 400–800, 27 Ko.</li>
+        <li>Chivo Mono (Omnibus-Type, même famille, pour le code) : trouvée sur Google Fonts, licence : <a href="https://github.com/google/fonts/blob/main/ofl/chivomono/OFL.txt">OFL.txt</a>, variable 400–600, 19 Ko.</li>
+      </ul>
+    </div>
+    <h2 class="titre" style="font-weight: 760">Des composants Angular à prendre tels quels.</h2>
+    <div class="grille">
+      <article class="case"><div class="case__scene"><code>readonly coche = model(false);</code></div><div class="case__pied"><h3>Interrupteur</h3><span class="badge">Interrupteur</span></div></article>
+      <div class="texte">
+        <p class="lead">Composants, blocs et thèmes en code ouvert, sous licence MIT. Essayez-les ici, copiez le code ou téléchargez-les. Aucun compte, aucun paiement.</p>
+        <p>Chaque ressource lit ses valeurs dans des variables CSS avec une valeur de repli. Copiée seule, elle fonctionne ; posez les variables, elle prend votre style. « Ça marche », dit Awa à 12 h 30, après 85 000 F CFA d’économies.</p>
+        <p class="famille"><span style="font-weight: 460; letter-spacing: -0.02em">Composants</span><span style="font-weight: 800; letter-spacing: -0.047em">Composants</span></p>
+      </div>
+    </div>
+    <p class="note">Grotesque robuste, au dessin plus chaleureux. Pas d’axe de largeur : l’effet des noms de famille passe par la graisse (460 → 800) et l’approche qui se resserre. Paire la plus légère (46 Ko au total) et la plus cohérente : le code est dans la même voix (zéro barré disponible).</p>
+  </section>
+</main>
+</body>
+</html>
