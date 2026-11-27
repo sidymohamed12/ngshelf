@@ -1,0 +1,40 @@
+<div
+  #scene
+  class="ngs-preview__stage app-apercu-scene"
+  [style.height.px]="hauteurScene()"
+  [attr.aria-busy]="etat() === 'chargement'"
+>
+  <div
+    class="app-apercu-cadre"
+    [style.width.px]="largeurIframe() * echelle()"
+    [hidden]="etat() === 'erreur'"
+  >
+    <iframe
+      #cadre
+      sandbox="allow-scripts"
+      referrerpolicy="no-referrer"
+      allow=""
+      loading="lazy"
+      [title]="textes.iframe(titre())"
+      [style.width.px]="largeurIframe()"
+      [style.height.px]="hauteurIframe()"
+      [style.transform]="'scale(' + echelle() + ')'"
+    ></iframe>
+  </div>
+  @if (etat() === 'chargement') {
+    <div class="ngs-skeleton app-apercu-attente" role="status">
+      <span class="sr-only">{{ textes.chargement }}</span>
+    </div>
+  }
+  @if (etat() === 'erreur') {
+    <div class="ngs-state ngs-state--error" role="alert">
+      <span class="ngs-state__icon"><svg appIcone="warning-circle" taille="lg"></svg></span>
+      <h3 class="ngs-state__title">{{ textes.erreurTitre }}</h3>
+      <p class="ngs-muted m-0">{{ textes.erreurTexte }}</p>
+      <button class="ngs-btn" type="button" (click)="recharger()">
+        <svg appIcone="arrow-clockwise"></svg>
+        <span>{{ textes.recharger }}</span>
+      </button>
+    </div>
+  }
+</div>

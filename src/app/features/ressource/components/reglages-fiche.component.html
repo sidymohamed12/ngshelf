@@ -1,0 +1,200 @@
+<aside class="ngs-panel" aria-labelledby="reglages-titre">
+  <div class="ngs-panel__section">
+    <div class="flex items-center gap-2">
+      <svg appIcone="sliders-horizontal"></svg>
+      <h2 class="ngs-h3 m-0 text-[1.25rem]" id="reglages-titre">{{ textes.titre }}</h2>
+    </div>
+    <p class="ngs-small ngs-muted m-0">{{ textes.aide }}</p>
+  </div>
+
+  <details class="ngs-reglage" open>
+    <summary>
+      <span>{{ textes.design }}</span>
+      <span class="ngs-reglage__valeur">{{ nomDesign() }}</span>
+      <svg appIcone="caret-down" taille="sm"></svg>
+    </summary>
+    <div class="ngs-reglage__corps">
+      <div class="ngs-seg w-full" role="radiogroup" [attr.aria-label]="textes.design">
+        @for (design of designs(); track design.slug) {
+          <button
+            class="ngs-seg__btn flex-1"
+            type="button"
+            role="radio"
+            [attr.aria-checked]="etat.design() === design.slug"
+            (click)="etat.choisirDesign(design.slug)"
+          >
+            {{ design.nom }}
+          </button>
+        }
+      </div>
+      <p class="ngs-small ngs-muted m-0">{{ textes.designAide }}</p>
+    </div>
+  </details>
+
+  <details class="ngs-reglage" open>
+    <summary>
+      <span>{{ textes.couleur }}</span>
+      <span class="ngs-reglage__valeur"
+        ><i [style.background]="actionCourante()"></i>{{ actionCourante() }}</span
+      >
+      <svg appIcone="caret-down" taille="sm"></svg>
+    </summary>
+    <div class="ngs-reglage__corps">
+      <div class="ngs-swatches" role="radiogroup" [attr.aria-label]="textes.couleur">
+        <button
+          class="ngs-swatch"
+          type="button"
+          role="radio"
+          [attr.aria-checked]="couleurChoisie() === undefined"
+          [attr.aria-label]="textes.couleurDesign"
+          [style.--sw]="etat.designActif()?.clair['--ngs-color-action']"
+          (click)="etat.regler({ couleur: undefined })"
+        ></button>
+        @for (couleur of couleurs; track couleur.id) {
+          <button
+            class="ngs-swatch"
+            type="button"
+            role="radio"
+            [attr.aria-checked]="couleurChoisie() === couleur.couleur"
+            [attr.aria-label]="libellesCouleur[couleur.id]"
+            [style.--sw]="couleur.couleur"
+            (click)="etat.regler({ couleur: couleur.couleur })"
+          ></button>
+        }
+        <label class="ngs-swatch ngs-swatch--custom">
+          <span class="sr-only">{{ textes.couleurPerso }}</span>
+          <input
+            type="color"
+            #libre
+            [value]="actionCourante()"
+            (input)="surCouleurLibre(libre.value)"
+          />
+        </label>
+      </div>
+      <p
+        class="ngs-contrast m-0"
+        [class.ngs-contrast--ok]="etat.contraste().conforme"
+        [class.ngs-contrast--ko]="!etat.contraste().conforme"
+      >
+        <svg
+          [appIcone]="etat.contraste().conforme ? 'check-circle' : 'warning-circle'"
+          taille="sm"
+        ></svg>
+        <span
+          >{{ textes.contraste(rapport() + ':1') }},
+          {{ etat.contraste().conforme ? textes.contrasteOk : textes.contrasteKo }}</span
+        >
+      </p>
+    </div>
+  </details>
+
+  <details class="ngs-reglage">
+    <summary>
+      <span>{{ textes.rayon }}</span>
+      <span class="ngs-reglage__valeur tabular">{{ rayonCourant() }} px</span>
+      <svg appIcone="caret-down" taille="sm"></svg>
+    </summary>
+    <div class="ngs-reglage__corps">
+      <div class="ngs-range-row">
+        <input
+          class="ngs-range"
+          id="r-rayon"
+          type="range"
+          #rayon
+          min="0"
+          [max]="rayonMax"
+          step="1"
+          [value]="rayonCourant()"
+          [attr.aria-label]="textes.rayon"
+          (input)="surRayon(rayon.value)"
+        />
+        <output for="r-rayon">{{ rayonCourant() }} px</output>
+      </div>
+    </div>
+  </details>
+
+  <details class="ngs-reglage">
+    <summary>
+      <span>{{ textes.densite }}</span>
+      <span class="ngs-reglage__valeur">{{ libellesDensite['' + densiteCourante()] }}</span>
+      <svg appIcone="caret-down" taille="sm"></svg>
+    </summary>
+    <div class="ngs-reglage__corps">
+      <div class="ngs-seg w-full" role="radiogroup" [attr.aria-label]="textes.densite">
+        @for (densite of densites; track densite) {
+          <button
+            class="ngs-seg__btn flex-1"
+            type="button"
+            role="radio"
+            [attr.aria-checked]="densiteCourante() === densite"
+            (click)="etat.regler({ densite })"
+          >
+            {{ libellesDensite['' + densite] }}
+          </button>
+        }
+      </div>
+    </div>
+  </details>
+
+  <details class="ngs-reglage">
+    <summary>
+      <span>{{ textes.police }}</span>
+      <span class="ngs-reglage__valeur">{{ libellesPolice[policeCourante()] }}</span>
+      <svg appIcone="caret-down" taille="sm"></svg>
+    </summary>
+    <div class="ngs-reglage__corps">
+      <div class="ngs-seg w-full" role="radiogroup" [attr.aria-label]="textes.police">
+        @for (police of polices; track police) {
+          <button
+            class="ngs-seg__btn flex-1"
+            type="button"
+            role="radio"
+            [attr.aria-checked]="policeCourante() === police"
+            (click)="etat.regler({ police })"
+          >
+            {{ libellesPolice[police] }}
+          </button>
+        }
+      </div>
+    </div>
+  </details>
+
+  <details class="ngs-reglage">
+    <summary>
+      <span>{{ textes.animations }}</span>
+      <span class="ngs-reglage__valeur">{{ libelleAnimations() }}</span>
+      <svg appIcone="caret-down" taille="sm"></svg>
+    </summary>
+    <div class="ngs-reglage__corps">
+      <label class="ngs-switch">
+        <input
+          type="checkbox"
+          #anim
+          [checked]="etat.animations() && motion() !== null"
+          [disabled]="motion() === null"
+          (change)="surAnimations(anim.checked)"
+        />
+        <span class="ngs-switch__track" aria-hidden="true"></span>
+        <span>{{ textes.animationsLabel }}</span>
+      </label>
+      <p class="ngs-small ngs-muted m-0">
+        @if (motion(); as m) {
+          {{ m.resume.fr }} {{ textes.animationsAide }}
+        } @else {
+          {{ textes.animationsSans }}
+        }
+      </p>
+    </div>
+  </details>
+
+  <div class="ngs-panel__section">
+    <button
+      class="ngs-btn ngs-btn--ghost ngs-btn--sm justify-self-start"
+      type="button"
+      (click)="etat.reinitialiser()"
+    >
+      <svg appIcone="arrow-counter-clockwise"></svg>
+      <span>{{ textes.reinitialiser }}</span>
+    </button>
+  </div>
+</aside>

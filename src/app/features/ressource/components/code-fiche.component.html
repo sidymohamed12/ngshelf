@@ -1,0 +1,109 @@
+<section class="grid content-start gap-5 min-w-0" aria-labelledby="code-titre">
+  <div class="code-entete">
+    <h2 class="ngs-h3 m-0" id="code-titre">{{ textes.titre }}</h2>
+    <div class="flex flex-wrap items-center gap-3">
+      <span class="ngs-label" id="variante-label">{{ textes.variante }}</span>
+      <div class="ngs-seg" role="radiogroup" aria-labelledby="variante-label">
+        <button
+          class="ngs-seg__btn"
+          type="button"
+          role="radio"
+          [attr.aria-checked]="etat.variante() === 'tailwind'"
+          (click)="choisirVariante('tailwind')"
+        >
+          {{ textes.tailwind }}
+        </button>
+        <button
+          class="ngs-seg__btn"
+          type="button"
+          role="radio"
+          [attr.aria-checked]="etat.variante() === 'css'"
+          (click)="choisirVariante('css')"
+        >
+          {{ textes.css }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <p class="m-0 ngs-small ngs-muted">{{ aide() }}</p>
+
+  @if (chargement() === 'erreur') {
+    <div class="ngs-state ngs-state--error" role="alert">
+      <span class="ngs-state__icon"><svg appIcone="warning-circle" taille="lg"></svg></span>
+      <h3 class="ngs-state__title">{{ textes.erreurTitre }}</h3>
+      <p class="ngs-muted m-0">{{ textes.erreurTexte }}</p>
+      <button class="ngs-btn" type="button" (click)="charger(etat.fiche()?.meta?.slug ?? '')">
+        <svg appIcone="arrow-clockwise"></svg>
+        <span>{{ reessayer }}</span>
+      </button>
+    </div>
+  } @else if (chargement() === 'chargement') {
+    <div class="ngs-code" role="status">
+      <span class="sr-only">{{ textes.chargement }}</span>
+      <div class="ngs-skeleton h-64" aria-hidden="true"></div>
+    </div>
+  } @else {
+    <div class="ngs-code">
+      <div class="ngs-code__bar">
+        <div
+          class="ngs-tabs ngs-tabs--dark"
+          role="tablist"
+          [attr.aria-labelledby]="'code-titre'"
+          tabindex="-1"
+          (keydown)="surTouche($event)"
+        >
+          @for (nom of noms(); track nom; let i = $index) {
+            <button
+              class="ngs-tabs__tab"
+              type="button"
+              role="tab"
+              [id]="'onglet-' + i"
+              [attr.aria-controls]="'panneau-' + i"
+              [attr.aria-selected]="actif() === i"
+              [attr.tabindex]="actif() === i ? 0 : -1"
+              (click)="selectionner(i)"
+            >
+              {{ nom }}
+              @if (nom === 'tokens.css') {
+                <span
+                  class="onglet-point"
+                  [class.is-on]="tokensModifie()"
+                  aria-hidden="true"
+                ></span>
+              }
+            </button>
+          }
+        </div>
+        <button
+          class="ngs-copy"
+          type="button"
+          [class.is-done]="copie() !== null"
+          (click)="copier()"
+        >
+          <svg appIcone="copy" taille="sm"></svg>
+          <span>{{ copie() !== null ? textes.copieFichier : textes.copier }}</span>
+        </button>
+      </div>
+      @for (nom of noms(); track nom; let i = $index) {
+        <div
+          #panneau
+          role="tabpanel"
+          [id]="'panneau-' + i"
+          [attr.aria-labelledby]="'onglet-' + i"
+          [hidden]="actif() !== i"
+        >
+          <pre
+            tabindex="0"
+          ><code>@if (nom === 'tokens.css') {@for (ligne of lignesTokens(); track $index) {<span class="block" [class.ngs-code__line--new]="ligne.nouvelle" [innerHTML]="ligne.html || ' '"></span>}} @else if (nom === 'ngshelf-theme.css') {<span [innerHTML]="htmlPont()"></span>} @else {<span [innerHTML]="fichiers()[i]?.html"></span>}</code></pre>
+        </div>
+      }
+    </div>
+    <p class="ngs-small m-0" role="status" aria-live="polite">
+      @if (copieImpossible()) {
+        <span class="ngs-contrast--ko">{{ textes.copieImpossible }}</span>
+      } @else if (tokensModifie()) {
+        <span class="ngs-muted">{{ textes.modifie }}</span>
+      }
+    </p>
+  }
+</section>

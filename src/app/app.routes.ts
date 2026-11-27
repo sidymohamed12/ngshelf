@@ -2,7 +2,8 @@ import { inject } from '@angular/core';
 import { ResolveFn, Route, Routes } from '@angular/router';
 import { LIBELLES_CATEGORIE, LIBELLES_SECTEUR, LIBELLES_TYPE, TEXTES } from '@core/i18n/textes.fr';
 import { SEGMENT_SECTEURS } from '@core/registre/chemins';
-import { RegistreService } from '@core/registre/registre.service';
+import { FicheService } from '@features/ressource/services/fiche.service';
+import { ficheResolver } from '@features/ressource/services/ressource.resolver';
 import {
   CATEGORIES,
   CATEGORIES_TYPEES,
@@ -12,15 +13,14 @@ import {
 } from '@shared/models/taxonomie.model';
 
 const titreFiche: ResolveFn<string> = async (route) => {
-  try {
-    const ressource = await inject(RegistreService).trouver(route.params);
-    return ressource
-      ? TEXTES.pages.ressource.titrePage(ressource.titre.fr)
-      : TEXTES.pages.ressource.introuvableTitre;
-  } catch {
-    // Index illisible : la page affiche son propre état d'erreur, le titre reste neutre.
-    return TEXTES.pages.ressource.introuvableTitre;
-  }
+  const resultat = await inject(FicheService).charger({
+    categorie: route.paramMap.get('categorie') ?? undefined,
+    type: route.paramMap.get('type') ?? undefined,
+    slug: route.paramMap.get('slug') ?? undefined,
+  });
+  return resultat.etat === 'ok'
+    ? TEXTES.pages.ressource.titrePage(resultat.fiche.meta.titre.fr)
+    : TEXTES.pages.ressource.introuvableTitre;
 };
 
 /** Page d'une catégorie : /composants, /blocs, /templates, /designs. */
@@ -89,6 +89,7 @@ export const routes: Routes = [
       {
         path: ':categorie/:type/:slug',
         title: titreFiche,
+        resolve: { donnees: ficheResolver },
         loadComponent: () =>
           import('@features/ressource/pages/ressource.component').then((m) => m.RessourceComponent),
       },

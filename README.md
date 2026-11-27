@@ -47,6 +47,14 @@ Champs de la planche du catalogue : `motion` (obligatoire, ADR 0007 : `null` ou 
 
 Sorties, dans `src/generated/registre/` (non versionnées) : un index par catégorie (`index-<categorie>.json`, chargé à la demande, jamais dans le bundle initial) et `compteurs.json` (ressources publiées par catégorie, type et secteur, plus le nombre de ressources réglables et animées ; dans le bundle initial pour le méga-menu).
 
+## Fiche et aperçus isolés
+
+- `/<categorie>/<type>/<slug>` : fiche chargée par un `ResolveFn` avant la transition de page (morph `apercu-ressource`). Aperçu à 390, 768 et 1280 px, design, mode clair ou sombre, réglages des 12 tokens `--ngs-*`, code Tailwind ou CSS (choix mémorisé dans le cookie `ngs_variante`), copie, zip.
+- L'aperçu est une application Angular séparée (`projects/apercus`, `baseHref /apercu/`) montée dans `<iframe sandbox="allow-scripts">` sans `allow-same-origin` (jamais `srcdoc`). Protocole `postMessage` typé `{ v: 1, type }` dans `src/app/shared/apercu/protocole.ts` ; source ET origine contrôlées des deux côtés. En-têtes `/apercu/*` dans `public/_headers` (non testés sur Cloudflare).
+- `npm run registre:build` assemble les sources de l'aperçu (`projects/apercus/src/generated`, ignoré par git) depuis `registry/` : exactement les fichiers Tailwind livrés, plus `demo/` (scène non livrée), et produit fiches JSON, fragments de code CSS et zips (`src/generated/`).
+- `npm run build` construit le site, les aperçus, puis les assemble dans `dist/ngshelf/browser/apercu`. `npm run verifier:dist` refuse tout script en ligne dans `dist/`.
+- Développement : `npm run start:apercus` (port 4201) en plus de `npm start` ; `proxy.conf.json` relaie `/apercu`.
+
 ## Structure
 
 ```
