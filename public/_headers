@@ -20,3 +20,21 @@
 /theme-init.js
   ! Cache-Control
   Cache-Control: public, max-age=3600, must-revalidate
+
+# Aperçus isolés des ressources (ADR 0003 et 0010) : l'application d'aperçus est servie sous /apercu/ et
+# montée dans une iframe `sandbox="allow-scripts"` sans `allow-same-origin`, donc d'origine opaque.
+# `!` remplace la CSP du site (deux CSP donneraient leur intersection) ; `sandbox allow-scripts` s'applique
+# aussi quand la page est ouverte hors de l'iframe. Aucune connexion sortante : l'aperçu n'en a pas besoin.
+# `Access-Control-Allow-Origin: *` : une origine opaque charge scripts modules et polices en mode CORS.
+# Rien de secret n'est servi ici. NON TESTÉ sur Cloudflare : à vérifier au premier déploiement.
+/apercu/*
+  ! Content-Security-Policy
+  ! Referrer-Policy
+  Content-Security-Policy: sandbox allow-scripts; default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'none'
+  Referrer-Policy: no-referrer
+  X-Robots-Tag: noindex, nofollow
+  Access-Control-Allow-Origin: *
+
+# Polices : l'aperçu les charge en mode CORS depuis son origine opaque.
+/fonts/*
+  Access-Control-Allow-Origin: *
