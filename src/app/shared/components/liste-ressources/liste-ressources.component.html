@@ -31,7 +31,9 @@
       <li class="ngs-case" [class]="ligne.classe">
         <div class="grid content-start gap-3 p-4">
           <div class="flex flex-wrap items-center gap-2">
-            <span class="ngs-badge">{{ ligne.categorie }}</span>
+            @if (afficherCategorie()) {
+              <span class="ngs-badge">{{ ligne.categorie }}</span>
+            }
             @if (ligne.type) {
               <span class="ngs-label ngs-muted">{{ ligne.type }}</span>
             }

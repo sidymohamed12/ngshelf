@@ -40,6 +40,8 @@ export class ListeRessourcesComponent {
   readonly entrees = input<readonly EntreeIndex[] | undefined>();
   readonly chargement = input(false);
   readonly erreur = input(false);
+  /** Faux quand la page est déjà celle d'une catégorie : le badge de catégorie n'y apprend rien. */
+  readonly afficherCategorie = input(true);
   /** Texte de l'état vide propre à la page ; sinon le texte générique. */
   readonly titreVide = input<string>();
   readonly texteVide = input<string>();

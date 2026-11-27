@@ -25,6 +25,7 @@
       }
     </nav>
     <div class="ml-auto flex items-center gap-2">
+      <app-recherche-declencheur />
       <app-theme-menu />
       @if (depot) {
         <a
@@ -49,4 +50,5 @@
     </div>
   </div>
   <app-mobile-menu [(ouvert)]="menuOuvert" />
+  <app-recherche-dialog />
 </header>

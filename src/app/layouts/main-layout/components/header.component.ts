@@ -6,6 +6,8 @@ import { IconeComponent } from '@shared/components/icone/icone.component';
 import { MarqueComponent } from '@shared/components/marque/marque.component';
 import { LIENS_HEADER } from './liens-navigation';
 import { MobileMenuComponent } from './mobile-menu.component';
+import { RechercheDeclencheurComponent } from './recherche-declencheur.component';
+import { RechercheDialogComponent } from './recherche-dialog.component';
 import { ThemeMenuComponent } from './theme-menu.component';
 
 /** Distance de défilement au-delà de laquelle le header gagne sa bordure. */
@@ -19,6 +21,8 @@ const SEUIL_DEFILEMENT_PX = 8;
     IconeComponent,
     MarqueComponent,
     MobileMenuComponent,
+    RechercheDeclencheurComponent,
+    RechercheDialogComponent,
     ThemeMenuComponent,
   ],
   templateUrl: './header.component.html',

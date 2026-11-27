@@ -75,6 +75,17 @@ describe('ListeRessourcesComponent', () => {
     expect(el.textContent).toContain(TEXTES_LISTE.provisoire);
   });
 
+  it('masque le badge de catégorie quand la page est déjà celle de la catégorie', () => {
+    afficher([CARTE]);
+    fixture.componentRef.setInput('afficherCategorie', false);
+    fixture.detectChanges();
+    expect(
+      fixture.nativeElement.querySelector(
+        '.ngs-badge:not(.ngs-badge--secteur):not(.ngs-badge--provisoire)',
+      ),
+    ).toBeNull();
+  });
+
   it("n'ajoute aucun lien pour un design, qui n'a pas encore de fiche", () => {
     const el = afficher([DESIGN]);
     expect(el.querySelector('h3 a')).toBeNull();
