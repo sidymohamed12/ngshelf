@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Démo concept C — Signal (comparaison)</title>
+  <style>
+    /* Démo de comparaison : hero seul. Réglage → impulsion sur le fil → composants mis à jour. */
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/instrument-sans-latin.woff2") format("woff2"); font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; }
+    @font-face { font-family: "Martian Mono"; src: url("assets/fonts/martian-mono-latin.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+    :root { --encre: #101314; --mesure: #586064; --banc: #f6f7f7; --vert: #00775a; --orange: #f2600c; --trait: #dfe3e3; --ease: cubic-bezier(.2,.8,.2,1); }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #fff; color: var(--encre); font-family: "Instrument Sans", system-ui, sans-serif; }
+    html, body { overflow-x: clip; }
+    .bandeau { padding: 10px 24px; background: var(--banc); font-size: 14px; color: var(--mesure); display: flex; gap: 16px; flex-wrap: wrap; }
+    .bandeau a { color: var(--encre); font-weight: 600; }
+    .wrap { max-width: 90rem; margin: 0 auto; padding: 0 clamp(16px, 3vw, 48px); }
+    header { display: flex; align-items: center; gap: 28px; min-height: 68px; font-weight: 500; }
+    .marque { font-weight: 700; font-size: 22px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+    .marque i { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); box-shadow: 14px 0 0 -2px var(--vert); margin-right: 12px; }
+    .mono { font-family: "Martian Mono", ui-monospace, monospace; font-size: 12px; }
+    h1 { margin: clamp(24px, 5vw, 64px) 0 16px; font-size: clamp(2.8rem, 1.4rem + 5vw, 5.6rem); line-height: .95; letter-spacing: -0.035em; font-weight: 700; font-stretch: 82%; max-width: 15ch; }
+    .lead { margin: 0 0 24px; font-size: 1.2rem; line-height: 1.5; color: var(--mesure); max-width: 46ch; }
+    .btn { display: inline-flex; align-items: center; min-height: 52px; padding: 0 22px; border-radius: 10px; background: var(--vert); color: #fff; font-weight: 600; text-decoration: none; }
+    .banc { position: relative; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 2fr) minmax(0, 5fr); gap: 0; margin: 40px 0 64px; padding: 28px; border-radius: 20px; background: var(--banc); }
+    @media (max-width: 900px) { .banc { grid-template-columns: 1fr; gap: 24px; } .fils { display: none; } }
+    .noeuds { display: grid; gap: 14px; align-content: center; position: relative; z-index: 2; }
+    .noeud { display: grid; gap: 8px; padding: 14px 16px; border-radius: 14px; background: #fff; border: 1px solid var(--trait); }
+    .noeud__tete { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 15px; }
+    .noeud__tete output { color: var(--mesure); }
+    .noeud.is-actif { border-color: var(--orange); }
+    .pastilles { display: flex; gap: 8px; }
+    .pastilles button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--c); cursor: pointer; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .1); }
+    .pastilles button[aria-checked="true"] { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--encre); }
+    .seg { display: flex; gap: 4px; } .seg button { flex: 1; min-height: 36px; border-radius: 8px; border: 1px solid var(--trait); background: #fff; font: inherit; font-size: 14px; cursor: pointer; }
+    .seg button[aria-checked="true"] { background: var(--encre); color: #fff; border-color: var(--encre); }
+    input[type=range] { width: 100%; accent-color: var(--vert); }
+    .fils { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
+    .fils path { fill: none; stroke: #b9c2c2; stroke-width: 1.5; }
+    .fils circle { fill: var(--orange); }
+    .pieces { grid-column: 3; display: grid; gap: 22px; padding: 28px; border-radius: 16px; background: var(--ngs-color-surface, #fff); border: 1px solid var(--trait); position: relative; z-index: 2; transition: background-color 220ms var(--ease); }
+    @media (max-width: 900px) { .pieces { grid-column: auto; } }
+    .entree { position: absolute; left: -6px; top: 50%; width: 12px; height: 12px; border-radius: 50%; background: var(--vert); transform: translateY(-50%); }
+    .code { overflow-wrap: anywhere; grid-column: 1 / -1; margin-top: 18px; color: var(--mesure); }
+    .code b { color: var(--encre); font-weight: 400; }
+  </style>
+</head>
+<body>
+  <p class="bandeau">Démo de comparaison — <strong>Concept C « Signal »</strong> (non retenu comme concept porteur ; son réglage est repris dans la fiche de la maquette). <a href="a-vue-eclatee.html">Voir A</a> <a href="b-planche-specimen.html">Voir B</a></p>
+  <div class="wrap">
+    <header><span class="marque"><i aria-hidden="true"></i>NgShelf</span><span>Catalogue</span><span>Documentation</span></header>
+    <h1>Des composants Angular qui se règlent en direct.</h1>
+    <p class="lead">Changez une valeur : le signal parcourt les fils et chaque composant se met à jour. Le code que vous copiez contient vos réglages.</p>
+    <a class="btn" href="#">Parcourir les composants</a>
+
+    <section class="banc" aria-label="Banc de réglage" data-banc>
+      <svg class="fils" aria-hidden="true" data-fils></svg>
+      <div class="noeuds">
+        <div class="noeud" data-noeud="couleur"><div class="noeud__tete"><span id="l-couleur">Couleur d’action</span><output class="mono" data-sortie-couleur>#00775a</output></div>
+          <div class="pastilles" role="radiogroup" aria-labelledby="l-couleur">
+            <button type="button" role="radio" aria-checked="true" aria-label="Vert" style="--c:#00775a" data-couleur="#00775a"></button>
+            <button type="button" role="radio" aria-checked="false" aria-label="Bleu" style="--c:#1f4fd1" data-couleur="#1f4fd1"></button>
+            <button type="button" role="radio" aria-checked="false" aria-label="Framboise" style="--c:#b0005e" data-couleur="#b0005e"></button>
+            <button type="button" role="radio" aria-checked="false" aria-label="Encre" style="--c:#101314" data-couleur="#101314"></button>
+          </div></div>
+        <div class="noeud" data-noeud="rayon"><div class="noeud__tete"><label for="r">Rayon</label><output class="mono" data-sortie-rayon>10px</output></div><input id="r" type="range" min="0" max="22" value="10" data-rayon></div>
+        <div class="noeud" data-noeud="densite"><div class="noeud__tete"><span id="l-d">Densité</span></div>
+          <div class="seg" role="radiogroup" aria-labelledby="l-d"><button type="button" role="radio" aria-checked="false" data-densite="0.85">Serrée</button><button type="button" role="radio" aria-checked="true" data-densite="1">Normale</button><button type="button" role="radio" aria-checked="false" data-densite="1.2">Aérée</button></div></div>
+        <div class="noeud" data-noeud="theme"><div class="noeud__tete"><span id="l-t">Thème</span></div>
+          <div class="seg" role="radiogroup" aria-labelledby="l-t"><button type="button" role="radio" aria-checked="true" data-mode="clair">Clair</button><button type="button" role="radio" aria-checked="false" data-mode="sombre">Sombre</button></div></div>
+      </div>
+      <div></div>
+      <div class="pieces" data-pieces><span class="entree" aria-hidden="true"></span>
+        <ngs-apercu ressource="interrupteur"></ngs-apercu>
+        <ngs-apercu ressource="champ-email"></ngs-apercu>
+        <ngs-apercu ressource="notifications"></ngs-apercu>
+      </div>
+      <p class="code mono" data-code></p>
+    </section>
+  </div>
+  <script src="../maquette/js/config.js"></script>
+  <script src="../maquette/js/registre.js"></script>
+  <script src="../maquette/js/contrat.js"></script>
+  <script src="../maquette/js/apercu.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
+  <script>
+    var reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var etat = { couleur: '#00775a', rayon: 10, densite: 1, mode: 'clair' };
+    var banc = document.querySelector('[data-banc]'), svg = document.querySelector('[data-fils]'), pieces = document.querySelector('[data-pieces]');
+    var chemins = {};
+    function tracer() {
+      var b = banc.getBoundingClientRect(), p = pieces.getBoundingClientRect();
+      var ex = p.left - b.left, ey = p.top - b.top + p.height / 2;
+      svg.innerHTML = '';
+      document.querySelectorAll('[data-noeud]').forEach(function (n) {
+        var r = n.getBoundingClientRect();
+        var sx = r.right - b.left, sy = r.top - b.top + r.height / 2, mx = (sx + ex) / 2;
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', 'M' + sx + ' ' + sy + ' C ' + mx + ' ' + sy + ', ' + mx + ' ' + ey + ', ' + ex + ' ' + ey);
+        svg.appendChild(path);
+        chemins[n.dataset.noeud] = path;
+      });
+    }
+    function valeurs() {
+      var v = NGS.contrat.valeurs('planche', etat.mode, { '--ngs-color-action': etat.couleur, '--ngs-radius': etat.rayon + 'px', '--ngs-density': String(etat.densite) });
+      if (etat.mode === 'sombre' && NGS.contrat.contraste(etat.couleur, v['--ngs-color-surface']) < 3) { v['--ngs-color-action'] = '#5fd0c8'; v['--ngs-color-on-action'] = '#062020'; }
+      return v;
+    }
+    function appliquer() {
+      NGS.contrat.appliquer(pieces, valeurs());
+      document.querySelector('[data-code]').innerHTML = ':root { <b>--ngs-color-action</b>: ' + valeurs()['--ngs-color-action'] + '; <b>--ngs-radius</b>: ' + etat.rayon + 'px; <b>--ngs-density</b>: ' + etat.densite + '; }';
+    }
+    function impulsion(nom) {
+      var path = chemins[nom], noeud = document.querySelector('[data-noeud="' + nom + '"]');
+      if (reduit || !path || getComputedStyle(svg).display === 'none') { appliquer(); return; }
+      noeud.classList.add('is-actif');
+      var lg = path.getTotalLength();
+      var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); dot.setAttribute('r', 5); svg.appendChild(dot);
+      var trace = path.cloneNode(); trace.style.stroke = 'var(--orange)'; trace.style.strokeWidth = 2; trace.style.strokeDasharray = lg; trace.style.strokeDashoffset = lg; svg.insertBefore(trace, dot);
+      var o = { t: 0 };
+      gsap.to(o, { t: 1, duration: 0.55, ease: 'power2.inOut', onUpdate: function () {
+        var pt = path.getPointAtLength(o.t * lg); dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); trace.style.strokeDashoffset = lg * (1 - o.t);
+      }, onComplete: function () {
+        appliquer(); dot.remove(); noeud.classList.remove('is-actif');
+        gsap.fromTo(pieces, { scale: 0.99 }, { scale: 1, duration: 0.3, ease: 'power2.out' });
+        gsap.to(trace, { opacity: 0, duration: 0.5, onComplete: function () { trace.remove(); } });
+      } });
+    }
+    function radio(sel, cb) {
+      document.querySelectorAll(sel).forEach(function (b) { b.addEventListener('click', function () {
+        b.parentElement.querySelectorAll('[role=radio]').forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); }); cb(b);
+      }); });
+    }
+    NGS.contrat.charger('../design-system/contrat-tokens.css').then(function () {
+      appliquer(); tracer();
+      addEventListener('resize', tracer);
+      radio('[data-couleur]', function (b) { etat.couleur = b.dataset.couleur; document.querySelector('[data-sortie-couleur]').textContent = etat.couleur; impulsion('couleur'); });
+      radio('[data-densite]', function (b) { etat.densite = Number(b.dataset.densite); impulsion('densite'); });
+      radio('[data-mode]', function (b) { etat.mode = b.dataset.mode; impulsion('theme'); });
+      var rr = document.querySelector('[data-rayon]'), tmr;
+      rr.addEventListener('input', function () { etat.rayon = Number(rr.value); document.querySelector('[data-sortie-rayon]').textContent = etat.rayon + 'px'; clearTimeout(tmr); tmr = setTimeout(function () { impulsion('rayon'); }, 60); });
+      if (!reduit) {
+        gsap.from('h1, .lead, .btn', { y: 20, autoAlpha: 0, stagger: 0.08, duration: 0.8, ease: 'expo.out' });
+        gsap.from(svg.querySelectorAll('path'), { strokeDasharray: 600, strokeDashoffset: 600, duration: 1.2, stagger: 0.1, delay: 0.5, ease: 'power2.out', clearProps: 'all' });
+        setTimeout(function () { impulsion('couleur'); }, 1600);
+      }
+    });
+  </script>
+</body>
+</html>

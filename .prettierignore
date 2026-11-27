@@ -2,3 +2,8 @@ src/styles/tokens.css
 src/styles/components.css
 src/styles/contrat/*.css
 src/generated
+
+# Maquette, design system et documentation de conception (hors code de l’application)
+design/
+docs/
+DESIGN.md

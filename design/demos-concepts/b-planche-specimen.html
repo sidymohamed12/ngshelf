@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Démo concept B — Planche spécimen (comparaison)</title>
+  <style>
+    /* Démo de comparaison : hero seul, CSS simple. Le concept retenu complet est dans ../maquette/. */
+    @font-face { font-family: "Bricolage Grotesque"; src: url("./assets/fonts/bricolage-grotesque-latin-var.woff2") format("woff2"); font-weight: 200 800; font-stretch: 75% 100%; font-display: swap; }
+    :root { --encre: #0b0b0c; --muet: #5f5f66; --surface: #f4f4f5; --trait: #e4e4e7; --ease: cubic-bezier(.2,.8,.2,1);
+      --vert: #0b6e4f; --bleu: #1f4fd1; --rouille: #b4361c; --framboise: #b0005e; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #fff; color: var(--encre); font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+    .bandeau { padding: 10px 24px; background: var(--surface); font-size: 14px; color: var(--muet); display: flex; gap: 16px; flex-wrap: wrap; }
+    .bandeau a { color: var(--encre); font-weight: 600; }
+    .wrap { max-width: 90rem; margin: 0 auto; padding: 0 clamp(16px, 3vw, 48px); }
+    header { display: flex; align-items: center; gap: 28px; min-height: 68px; }
+    .marque { display: flex; align-items: center; gap: 9px; font-weight: 760; font-size: 22px; letter-spacing: -0.03em; font-variation-settings: "wdth" 76; }
+    .marque i { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 17px; height: 17px; }
+    .marque i b { border-radius: 2px; } .marque i b:nth-child(1){background:var(--vert)} .marque i b:nth-child(2){background:var(--bleu)} .marque i b:nth-child(3){background:var(--rouille)} .marque i b:nth-child(4){background:var(--framboise)}
+    nav { display: flex; gap: 22px; font-weight: 540; font-size: 15px; } nav span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 7px; background: var(--c); }
+    @media (max-width: 860px) { nav { display: none; } }
+    .hero { display: grid; gap: 32px; grid-template-columns: 7fr 5fr; align-items: end; padding: clamp(32px, 6vw, 88px) 0 40px; }
+    @media (max-width: 1023px) { .hero { grid-template-columns: 1fr; } }
+    h1 { margin: 0; font-size: clamp(3rem, 1.6rem + 6vw, 6rem); line-height: .95; letter-spacing: -0.025em; font-weight: 720; font-variation-settings: "wdth" 86, "opsz" 96; max-width: 13ch; }
+    .lead { margin: 0 0 24px; font-size: 1.25rem; line-height: 1.5; color: var(--muet); }
+    .btn { display: inline-flex; align-items: center; min-height: 56px; padding: 0 24px; border-radius: 12px; background: var(--encre); color: #fff; font: inherit; font-weight: 600; text-decoration: none; transition: transform 150ms var(--ease), background-color 150ms var(--ease); }
+    .btn:hover { transform: translateY(-1px); background: #2a2a2e; }
+    .barre { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 24px 0 18px; font-size: 14px; }
+    .seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 12px; background: var(--surface); border: 1px solid var(--trait); }
+    .seg button { min-height: 38px; padding: 0 12px; border: 0; border-radius: 9px; background: none; font: inherit; font-weight: 560; color: var(--muet); cursor: pointer; }
+    .seg button[aria-checked="true"] { background: #fff; color: var(--encre); box-shadow: 0 1px 2px rgb(11 11 12 / .08); }
+    .planche { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: dense; padding-bottom: 64px; }
+    @media (max-width: 1023px) { .planche { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 639px) { .planche { grid-template-columns: 1fr; } .case.large { grid-column: auto !important; } .case.haute { grid-row: auto !important; } }
+    .case { overflow: hidden; display: flex; flex-direction: column; border-radius: 20px; background: var(--surface); border: 1px solid var(--trait); transition: transform 120ms var(--ease), box-shadow 120ms var(--ease); min-width: 0; }
+    .case:hover { transform: translateY(-2px); box-shadow: 0 6px 16px -6px rgb(11 11 12 / .1); }
+    .case.large { grid-column: span 2; } .case.haute { grid-row: span 2; }
+    .scene { flex: 1; display: grid; place-items: center; padding: 24px 16px; min-height: 12rem; }
+    .scene > * { max-width: 100%; }
+    .pied { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #fff; border-top: 1px solid var(--trait); border-radius: 0 0 20px 20px; font-weight: 620; }
+    .pied small { margin-left: auto; font-size: 12px; font-weight: 580; padding: 4px 8px; border-radius: 8px; color: var(--c); background: color-mix(in srgb, var(--c) 10%, white); }
+  </style>
+</head>
+<body>
+  <p class="bandeau">Démo de comparaison — <strong>Concept B « Planche spécimen »</strong> (retenu ; version complète : <a href="../maquette/index.html">maquette</a>). <a href="a-vue-eclatee.html">Voir A</a> <a href="c-signal.html">Voir C</a></p>
+  <div class="wrap">
+    <header><span class="marque"><i aria-hidden="true"><b></b><b></b><b></b><b></b></i>NgShelf</span>
+      <nav aria-label="Navigation"><span style="--c:var(--vert)">Composants</span><span style="--c:var(--bleu)">Blocs</span><span style="--c:var(--rouille)">Templates</span><span style="--c:var(--framboise)">Designs</span></nav></header>
+    <section class="hero" aria-labelledby="titre-b">
+      <h1 id="titre-b">Des composants Angular à prendre tels quels.</h1>
+      <div><p class="lead">Composants, blocs et thèmes en code ouvert, sous licence MIT. Essayez-les ici, copiez le code ou téléchargez-les.</p><a class="btn" href="../maquette/catalogue.html">Parcourir le catalogue</a></div>
+    </section>
+    <div class="barre"><span>Tout fonctionne : basculez, choisissez une date, faites glisser.</span>
+      <div class="seg" role="radiogroup" aria-label="Habiller la planche" data-habiller>
+        <button type="button" role="radio" aria-checked="true" data-d="planche">Planche</button><button type="button" role="radio" aria-checked="false" data-d="fleuve">Fleuve</button><button type="button" role="radio" aria-checked="false" data-d="laterite">Latérite</button>
+      </div></div>
+    <div class="planche" data-planche></div>
+  </div>
+  <script src="../maquette/js/config.js"></script>
+  <script>NGS.site.chemins.contrat = '../design-system/contrat-tokens.css';</script>
+  <script src="../maquette/js/registre.js"></script>
+  <script src="../maquette/js/contrat.js"></script>
+  <script src="../maquette/js/apercu.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
+  <script>
+    var CASES = [['calendrier', 'large haute', 'Composant', 'var(--vert)'], ['interrupteur', '', 'Composant', 'var(--vert)'], ['curseur', '', 'Composant', 'var(--vert)'],
+      ['champ-email', '', 'Composant', 'var(--vert)'], ['notifications', '', 'Composant', 'var(--vert)'], ['questions-frequentes', 'large', 'Bloc', 'var(--bleu)']];
+    var planche = document.querySelector('[data-planche]');
+    planche.innerHTML = CASES.map(function (c) {
+      var r = NGS.trouver(c[0]);
+      return '<article class="case ' + c[1] + '"><div class="scene"><ngs-apercu ressource="' + c[0] + '"></ngs-apercu></div><div class="pied">' + r.titre + '<small style="--c:' + c[3] + '">' + c[2] + '</small></div></article>';
+    }).join('');
+    var reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    NGS.contrat.charger(NGS.site.chemins.contrat).then(function () {
+      var cases = planche.querySelectorAll('.case');
+      cases.forEach(function (c) { NGS.contrat.appliquer(c, NGS.contrat.valeurs('planche', 'clair')); });
+      if (!reduit) {
+        gsap.timeline({ defaults: { ease: 'expo.out' } })
+          .from('h1, .lead, .btn', { y: 24, autoAlpha: 0, stagger: 0.08, duration: 0.9 })
+          .from(cases, { y: 36, scale: 0.96, autoAlpha: 0, duration: 0.9, stagger: { each: 0.07, grid: 'auto' } }, 0.3);
+      }
+      document.querySelector('[data-habiller]').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-d]'); if (!b) return;
+        this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
+        cases.forEach(function (c, i) {
+          var appliquer = function () { NGS.contrat.appliquer(c, NGS.contrat.valeurs(b.dataset.d, 'clair')); };
+          if (reduit) return appliquer();
+          gsap.delayedCall(i * 0.07, appliquer);
+          gsap.fromTo(c, { scale: 1 }, { scale: 0.985, duration: 0.12, delay: i * 0.07, yoyo: true, repeat: 1, clearProps: 'scale' });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

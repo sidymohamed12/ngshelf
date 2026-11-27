@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="fr" data-titre="accueil.titre-page">
+<head>
+  <!--@head-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preload" href="./assets/fonts/chivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/chivo-mono-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script>
+    // Splash : premier chargement seulement (pas lors d'une navigation interne), jamais en reduced-motion.
+    window.__ngsDebut = performance.now();
+    try { if (document.referrer && new URL(document.referrer).origin === location.origin) document.documentElement.classList.add('ngs-sans-splash'); } catch (e) {}
+    // Thème du site (clair / sombre / système) : cookie fonctionnel ngs_theme, appliqué AVANT le premier rendu
+    // (pas de flash). En Angular, ce script reste en ligne dans index.html.
+    (function () {
+      var h = document.documentElement;
+      var m = document.cookie.match(/(?:^|; )ngs_theme=(clair|sombre|systeme)/);
+      var choix = m ? m[1] : 'systeme';
+      var sombre = choix === 'sombre' || (choix === 'systeme' && matchMedia('(prefers-color-scheme: dark)').matches);
+      h.setAttribute('data-theme-choix', choix);
+      if (sombre) h.setAttribute('data-theme', 'sombre');
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', sombre ? '#111113' : '#ffffff');
+    })();
+  </script>
+  <style>
+    /* Pas de flash avant compilation de Tailwind ; filet de sécurité si le JS échoue. */
+    html.ngs-js:not(.ngs-styled) body > :not(.ngs-splash) { opacity: 0; animation: ngs-filet 0s 2.5s forwards; }
+    /* Fond sombre posé avant Tailwind : aucun éclair blanc en mode sombre. */
+    html[data-theme="sombre"] { background: #111113; color-scheme: dark; }
+    @keyframes ngs-filet { to { opacity: 1; } }
+    /* Splash (ADR 0005, forme : ADR 0006) : CSS critique en ligne (avant Tailwind), SVG en ligne, @keyframes CSS
+       seulement (ni GSAP ni JS). Valeurs recopiées de tokens.css (marque, --ease-enter, --ease-in-out) :
+       en Angular, ce bloc va dans index.html, à côté du splash. Fond : blanc en clair, bleu nuit en sombre. */
+    .ngs-splash { position: fixed; inset: 0; z-index: 1001; display: grid; place-items: center; background: #fff; pointer-events: none; }
+    .ngs-splash__logo { width: clamp(160px, 28vw, 260px); height: auto; overflow: visible; }
+    .ngs-splash__logo g { transform-box: fill-box; }
+    .ngs-sp-planche rect { fill: #fd6437; }
+    .ngs-sp-eq { stroke: #191f42; }
+    .ngs-sp-n, .ngs-sp-g { fill: #191f42; }
+    .ngs-sp-planche { transform-origin: 50% 50%; animation: ngs-sp-planche 220ms cubic-bezier(.22,1,.36,1) both; }
+    .ngs-sp-n, .ngs-sp-g { transform-origin: 50% 100%; animation: ngs-sp-chute 380ms 100ms both; }
+    .ngs-sp-g { animation-delay: 220ms; }
+    .ngs-splash .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .ngs-splash.is-sortie { animation: ngs-splash-sortie 320ms cubic-bezier(.65,0,.35,1) forwards; }
+    /* 1. la planche se pose (0 à 220 ms) ; 2. « n » tombe (100 ms), « g » 120 ms après : chute, impact (écrasement), rebond. */
+    @keyframes ngs-sp-planche { from { transform: scaleX(.15); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes ngs-sp-chute {
+      0% { transform: translateY(-48%); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.9,.4); }
+      8% { opacity: 1; }
+      62% { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+      70% { transform: scaleY(.94); }
+      78% { transform: translateY(-4%); animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+      100% { transform: none; opacity: 1; }
+    }
+    @keyframes ngs-splash-sortie { to { clip-path: inset(0 0 100% 0); } }
+    html[data-theme="sombre"] .ngs-splash { background: #191f42; }
+    html[data-theme="sombre"] .ngs-sp-eq { stroke: #ededf0; }
+    html[data-theme="sombre"] .ngs-sp-n, html[data-theme="sombre"] .ngs-sp-g { fill: #ededf0; }
+    html.ngs-sans-splash .ngs-splash { display: none; }
+    @media (prefers-reduced-motion: reduce) { .ngs-splash { display: none; } }
+    /* Minuteur de sécurité : le splash disparaît seul au plus tard à 1,2 s (ADR 0005). */
+    .ngs-splash { animation: ngs-splash-filet 0s 1.2s forwards; }
+    .ngs-splash.is-sortie { animation: ngs-splash-sortie 320ms cubic-bezier(.65,0,.35,1) forwards; }
+    @keyframes ngs-splash-filet { to { visibility: hidden; } }
+    /* Transitions de page (View Transitions entre documents) : critiques, donc en ligne. */
+    @media (prefers-reduced-motion: no-preference) {
+      @view-transition { navigation: auto; }
+      ::view-transition-old(root) { animation: ngs-page-sortie 180ms cubic-bezier(.65, 0, .35, 1) both; }
+      ::view-transition-new(root) { animation: ngs-page-entree 300ms cubic-bezier(.22, 1, .36, 1) 60ms both; }
+      ::view-transition-group(apercu-ressource) { animation-duration: 480ms; animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
+      ::view-transition-old(apercu-ressource), ::view-transition-new(apercu-ressource) { height: 100%; object-fit: cover; }
+      ::view-transition-group(entete) { animation: none; }
+      .ngs-header { view-transition-name: entete; }
+    }
+    @keyframes ngs-page-sortie { to { opacity: 0; transform: translateY(-8px); } }
+    @keyframes ngs-page-entree { from { opacity: 0; transform: translateY(8px); } }
+  </style>
+  <noscript><style>.ngs-splash { display: none !important; }</style></noscript>
+  <script src="../design-system/load.js" data-assets="./assets/"></script>
+  <!--/@head-->
+  <link rel="icon" href="../logo/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../logo/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="../logo/apple-touch-icon.png">
+  <title>NgShelf — composants Angular à copier ou télécharger</title>
+  <meta name="description" content="Composants, blocs et thèmes Angular en code ouvert (MIT). Essayez-les dans la page, copiez le code ou téléchargez-les, sans compte.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.28/dist/lenis.css">
+  <style>
+    /* Styles propres à l'accueil : mise en page uniquement, valeurs en tokens. */
+    .hero { padding-block: clamp(2.5rem, 1rem + 5vw, 5.5rem) clamp(2rem, 4vw, 3.5rem); }
+    .hero__titre { margin: 0; max-width: 13ch; font-size: clamp(2.6rem, 1.4rem + 3.6vw, 4.75rem); }
+    .hero__titre .line { padding-bottom: 0.06em; }
+    .planche-barre { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem 2rem; margin-bottom: 1.25rem; }
+    .accueil-planche .ngs-case__stage { min-height: 12rem; }
+
+    /* Familles : piste horizontale (épinglée en desktop uniquement) */
+    .familles { padding-block: var(--space-section) 0; overflow: hidden; }
+    .familles__piste { display: grid; gap: var(--space-gutter); padding-inline: var(--space-inline); }
+    .famille {
+      display: grid; gap: 1.5rem; align-content: start;
+      padding: clamp(1.5rem, 3vw, 2.5rem); border-radius: var(--radius-panel);
+      background: var(--cat-soft); min-width: 0;
+    }
+    .famille__nom {
+      margin: 0; color: var(--cat); font-size: clamp(3rem, 2rem + 5vw, 7.5rem); line-height: 0.9; letter-spacing: -0.04em;
+      /* Signature v0.4 : la graisse (et l'approche) montent quand le panneau arrive au centre (GSAP anime --wght). */
+      font-weight: var(--wght, var(--wght-signature-a)); letter-spacing: calc(-0.02em - (var(--wght, 800) - 460) * 0.00008em);
+    }
+    .famille__compte { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .famille__vitrine { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+    .famille__vitrine .ngs-case__stage { min-height: 9.5rem; padding: 1rem; }
+    @media (min-width: 64rem) {
+      .familles--pin .familles__piste { display: flex; width: max-content; padding-right: 12vw; }
+      .familles--pin .famille { width: min(72vw, 62rem); min-height: min(68vh, 40rem); grid-template-columns: 1fr 1fr; align-content: stretch; }
+      .familles--pin .famille > .famille__texte { align-self: end; }
+    }
+
+    /* Gestes : texte à gauche, démonstration collante à droite */
+    .gestes__rangee { padding-block: clamp(2rem, 8vh, 6rem); border-top: 1px solid var(--color-border); }
+    .gestes__rangee:first-child { border-top: 0; }
+    .ngs-motion .gestes__titre { color: var(--color-text-muted); transition: color var(--duration-in) var(--ease-out); }
+    .gestes__rangee.is-actif .gestes__titre { color: var(--color-text); }
+    @media (min-width: 64rem) {
+      .gestes__demo { position: sticky; top: calc(4.25rem + 2rem); }
+      .gestes__rangee { min-height: 62vh; display: grid; align-content: center; }
+    }
+    @media (min-width: 64rem) { .ngs-motion .gestes__vue { grid-area: 1 / 1; } }
+    .gestes__demo { gap: var(--space-gutter); }
+    .gestes__demo > * { min-width: 0; }
+    .zip-liste li span:nth-child(2) { overflow-wrap: anywhere; min-width: 0; }
+    .zip-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+    .zip-liste li { display: flex; align-items: center; gap: 0.75rem; min-height: 48px; padding: 0 1rem; border-radius: var(--radius-button); background: var(--color-code-surface); font-family: var(--font-mono); font-size: 0.875rem; }
+    .zip-liste li span:last-child { margin-left: auto; color: var(--color-code-comment); font-variant-numeric: tabular-nums; }
+
+    /* Contrat de tokens */
+    .jeton { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.25rem 1rem; padding-block: 1.1rem; border-top: 1px solid var(--color-border); transition: opacity var(--duration-in) var(--ease-out); }
+    .jeton__nom { font-family: var(--font-mono); font-size: 0.9375rem; overflow-wrap: anywhere; }
+    .jeton__role { grid-column: 1 / -1; margin: 0; color: var(--color-text-muted); font-size: var(--text-small); }
+    .jeton__valeur { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+    .ngs-motion .jeton { opacity: 0.45; }
+    .ngs-motion .jeton.is-actif { opacity: 1; }
+    .temoin { position: sticky; top: calc(4.25rem + 1.5rem); display: grid; gap: 1.25rem; padding: clamp(1.25rem, 3vw, 2rem); border-radius: var(--radius-panel); border: 1px solid var(--color-border); background: var(--color-surface); }
+    .temoin__scene { display: grid; gap: 1.25rem; padding: 1.5rem; border-radius: 14px; background: var(--ngs-color-surface, var(--color-canvas)); transition: background-color var(--duration-theme) var(--ease-out); }
+
+    /* Contribuer : tracé SVG */
+    .trace path { fill: none; stroke: var(--color-text); stroke-width: 2; stroke-linecap: round; }
+    .trace circle { fill: var(--color-canvas); stroke: var(--color-text); stroke-width: 2; }
+    .trace text { font-family: var(--font-sans); font-size: 15px; font-weight: 600; fill: var(--color-text); }
+    .trace .trace__sous { font-weight: 400; fill: var(--color-text-muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <!--@splash-->
+  <div class="ngs-splash" role="status" aria-live="polite">
+    <svg class="ngs-splash__logo" viewBox="320 236 896 491" aria-hidden="true" focusable="false"><g class="ngs-sp-planche"><rect x="320" y="548" width="896" height="64" rx="32"/><g class="ngs-sp-eq" fill="none" stroke-width="22" stroke-linejoin="round"><path d="M336 600 L336 716 L457 600 Z"/><path d="M1200 600 L1200 716 L1079 600 Z"/></g></g><g class="ngs-sp-n"><path d="M671.5 538.09c-8 2.02-18.19.41-26.43.41H462.58c-15.11 0-36.88 2.34-51.21-.31-5.81-.48-11.56-3.96-16.38-7.04-13.84-8.83-23.32-23.41-25.11-39.82-.66-6.03-.29-12.18-.29-18.24-.04-42.25-.08-84.5-.02-126.75.01-12.42.01-24.83 0-37.25-.01-8.87-.61-17.930 1.32-26.64 5.51-24.83 27.74-44.12 53.22-45.9 7.93-.55 16.04-.11 23.99-.1 14.59.01 29.17-.02 43.75-.01 42.25.01 84.5-.15 126.75 0 30.72.11 57.75-5.48 80.15 20.7 16.54 19.35 12.95 45.58 12.91 69.18-.06 37.59.1 75.17.02 112.75-.02 11.42-.03 22.84 0 34.25.02 6.92.52 14.12-.46 20.98-2.69 18.68-20.07 41.32-39.72 43.79m-223.06-237.1-.03 176.8 58.46-.02c-.3-25.16.19-50.34.05-75.5-.08-13.14-1.96-28.08 5.14-39.83 10.56-17.47 37.19-21.16 53.17-8.98 4.35 3.32 7.49 7.83 9.83 12.73 5.48 11.46 3.59 25.67 3.63 37.99.1 24.49.76 49.11.04 73.59l58.51-.06c.22-26.95.13-53.9.12-80.85 0-20.28.95-40.53-7.84-59.39-21.67-46.51-89.9-55.43-122.57-15.95l-.15-20.57z"/></g><g class="ngs-sp-g"><path d="M1126.27 538.3l-260.12-.09c-6.52-.8-12.69-4.66-17.9-8.43-11.63-8.43-19.84-21.73-21.57-36.09-1-8.28-.38-16.91-.39-25.24-.04-41.58-.1-83.17.03-124.76.04-11.92.05-23.84.03-35.75-.01-9.42-.56-18.88 1.47-28.14 5.02-22.83 24.92-39.3 47.49-42.87 8.35-1.33 17.29-.54 25.72-.49 13.83.09 27.67.01 41.51 0 44.75-.05 89.51-.15 134.26-.01 30.47.09 55.52-4.6 77.92 21.04 16.54 18.93 13.29 43.11 13.31 66.32.03 38.34.08 76.68 0 115.01-.02 11.92.07 23.84-.01 35.76-.04 7.57.42 15.21-1.28 22.65-4.43 19.45-20.58 36.930-40.47 41.09m-89.5-230.35c-29.07-32.55-87.49-23.74-115.17 6.36-25.95 28.22-27.68 70.67-4.24 100.91 7.96 10.26 18.96 17.73 30.72 22.94 12.75 5.64 28.36 8.4 42.27 7.04 18.49-1.81 33.13-6.49 46.7-19.77.26 12.93-.34 26.79-9.89 36.68-14.25 14.76-44.34 16.72-60.11 3.31-3.52-2.99-5.8-6.7-7.81-10.79l-54.46.05c2.77 14.79 9.19 27.85 20.7 37.78 34.95 30.19 116.87 30.1 146.63-7.87 19.04-24.28 17.4-49.99 17.33-79.13-.11-37.72-.23-75.46.01-113.19l-52.43.08z"/><path d="M956.51 366.5c1.3-37.46 50.19-48.44 72.53-21.53 5.02 6.03 8.2 14.5 7.93 22.41-1.34 39.61-60.33 51.11-76.79 15.57-2.34-5.04-3.86-10.86-3.67-16.45"/></g></svg>
+    <span class="sr-only" data-t="splash.chargement">Chargement de NgShelf</span>
+  </div>
+  <!--/@splash-->
+  <!--@header-->
+  <a class="ngs-skip" href="#contenu" data-t="lien.evitement">Aller au contenu</a>
+  <header class="ngs-header">
+    <div class="ngs-container ngs-header__row">
+      <a class="ngs-brand" href="index.html" aria-label="Accueil de NgShelf" data-t-aria="nav.accueil">
+        <svg class="ngs-brand__logo" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#ngshelf-logo"></use></svg>
+        <span data-nom-court>Shelf</span>
+      </a>
+      <nav class="ngs-nav" aria-label="Navigation principale" data-t-aria="nav.principale">
+        <a class="ngs-nav-link" href="catalogue.html" data-mega data-nav="catalogue" aria-expanded="false" aria-controls="mega-catalogue">
+          <span data-t="nav.catalogue">Catalogue</span>
+          <svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg>
+        </a>
+        <a class="ngs-nav-link ngs-cat-composants" href="catalogue.html?c=composants" data-nav="composants"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.composants">Composants</span></a>
+        <a class="ngs-nav-link ngs-cat-blocs" href="catalogue.html?c=blocs" data-nav="blocs"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.blocs">Blocs</span></a>
+        <a class="ngs-nav-link ngs-cat-designs" href="catalogue.html?c=designs" data-nav="designs"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.designs">Designs</span></a>
+        <a class="ngs-nav-link" href="a-propos.html" data-nav="a-propos" data-t="nav.apropos">À propos</a>
+      </nav>
+      <div class="ml-auto flex items-center gap-2">
+        <button class="ngs-search-trigger" type="button" data-recherche aria-label="Rechercher une ressource" data-t-aria="recherche.declencheur">
+          <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#magnifying-glass"></use></svg>
+          <span class="ngs-search-trigger__text" data-t="recherche.declencheur">Rechercher une ressource</span>
+          <kbd class="ngs-kbd" data-raccourci><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#command"></use></svg>K</kbd>
+        </button>
+        <div class="ngs-theme" data-theme-ctl>
+          <button class="ngs-btn ngs-btn--ghost ngs-btn--icon" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-theme" aria-label="Thème du site : système" data-theme-btn>
+            <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#desktop" data-theme-icone></use></svg>
+          </button>
+          <div class="ngs-theme__menu" id="menu-theme" role="menu" aria-label="Thème du site" data-t-aria="theme.titre" data-theme-menu>
+            <p class="ngs-theme__titre" aria-hidden="true" data-t="theme.titre">Thème du site</p>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="false" data-theme-valeur="clair"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#sun"></use></svg><span data-t="theme.clair">Clair</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#check"></use></svg></button>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="false" data-theme-valeur="sombre"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#moon"></use></svg><span data-t="theme.sombre">Sombre</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#check"></use></svg></button>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="true" data-theme-valeur="systeme"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#desktop"></use></svg><span data-t="theme.systeme">Système</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#check"></use></svg></button>
+          </div>
+        </div>
+        <a class="ngs-btn ngs-btn--ghost ngs-btn--icon ngs-header__github" href="#" aria-label="Code source sur GitHub" data-t-aria="nav.github">
+          <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#github-logo"></use></svg>
+        </a>
+        <button class="ngs-btn ngs-btn--ghost ngs-btn--icon ngs-menu-btn" type="button" data-menu-ouvrir aria-expanded="false" aria-controls="menu-mobile" aria-label="Ouvrir le menu" data-t-aria="nav.menu.ouvrir">
+          <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#list"></use></svg>
+        </button>
+      </div>
+    </div>
+    <div class="ngs-mega" id="mega-catalogue" role="region" aria-label="Catalogue" data-t-aria="nav.catalogue"></div>
+  </header>
+  <div class="ngs-menu" id="menu-mobile" role="dialog" aria-modal="true" aria-label="Navigation principale" data-t-aria="nav.principale" tabindex="-1">
+    <div class="flex items-center justify-between min-h-[3.25rem]">
+      <span class="ngs-brand" role="img" aria-label="NgShelf" data-t-aria="marque.nom"><svg class="ngs-brand__logo" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#ngshelf-logo"></use></svg><span data-nom-court aria-hidden="true">Shelf</span></span>
+      <button class="ngs-btn ngs-btn--ghost ngs-btn--icon" type="button" data-menu-fermer aria-label="Fermer le menu" data-t-aria="nav.menu.fermer">
+        <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#x"></use></svg>
+      </button>
+    </div>
+    <div class="overflow-auto grid gap-6 content-start">
+      <ul class="ngs-menu__list">
+        <li><a class="ngs-menu__link" href="catalogue.html"><span data-t="nav.catalogue">Catalogue</span></a></li>
+        <li><a class="ngs-menu__link ngs-cat-composants" href="catalogue.html?c=composants"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.composants">Composants</span></a></li>
+        <li><a class="ngs-menu__link ngs-cat-blocs" href="catalogue.html?c=blocs"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.blocs">Blocs</span></a></li>
+        <li><a class="ngs-menu__link ngs-cat-templates" href="catalogue.html?c=templates"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.templates">Templates</span></a></li>
+        <li><a class="ngs-menu__link ngs-cat-designs" href="catalogue.html?c=designs"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.designs">Designs</span></a></li>
+        <li><a class="ngs-menu__link" href="a-propos.html"><span data-t="nav.apropos">À propos</span></a></li>
+      </ul>
+      <details class="ngs-facette">
+        <summary><span data-t="mega.secteurs">Par secteur</span><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg></summary>
+        <ul class="ngs-mega__liste pb-4 px-2" data-menu-secteurs></ul>
+      </details>
+    </div>
+    <a class="ngs-btn ngs-btn--secondary mt-auto" href="#">
+      <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#github-logo"></use></svg>
+      <span data-t="nav.github">Code source sur GitHub</span>
+    </a>
+  </div>
+  <!--/@header-->
+
+  <main id="contenu" tabindex="-1">
+    <!-- ============ Hero : texte + vitrine (un vrai site assemblé avec des pièces) ============ -->
+    <section class="hero" aria-labelledby="hero-titre">
+      <div class="ngs-container grid gap-10 xl:grid-cols-12 xl:items-center">
+        <div class="grid gap-6 xl:col-span-5 content-start" data-hero-texte>
+          <h1 class="ngs-display hero__titre m-0" id="hero-titre" data-t="accueil.h1">Des composants Angular à prendre tels quels.</h1>
+          <p class="ngs-lead m-0" data-t="accueil.lead">Composants, blocs et thèmes en code ouvert, sous licence MIT. Essayez-les ici, copiez le code ou téléchargez-les. Aucun compte, aucun paiement.</p>
+          <p class="ngs-small m-0 font-semibold" data-t="accueil.fait">Pour Angular 22, en composants standalone et signals, sans dépendance.</p>
+          <div class="flex flex-wrap gap-3">
+            <a class="ngs-btn ngs-btn--lg" href="catalogue.html" data-magnet>
+              <span data-t="accueil.cta">Parcourir le catalogue</span>
+            </a>
+            <a class="ngs-btn ngs-btn--lg ngs-btn--secondary" href="#demarrer" data-t="accueil.cta2">Lire comment démarrer</a>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 pt-2" data-hero-habiller>
+            <span class="ngs-label" id="habiller-label" data-t="accueil.planche.design">Habiller avec un design</span>
+            <div class="ngs-seg" role="radiogroup" aria-labelledby="habiller-label" data-habiller>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="true" data-valeur="planche">Planche</button>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="false" data-valeur="fleuve">Fleuve</button>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="false" data-valeur="laterite">Latérite</button>
+            </div>
+          </div>
+        </div>
+
+        <figure class="ngs-vitrine xl:col-span-7 m-0" aria-labelledby="vitrine-legende" data-vitrine>
+          <div class="ngs-vitrine__cadre" data-vitrine-cadre>
+            <div class="ngs-vitrine__barre" aria-hidden="true">
+              <span class="ngs-vitrine__adresse"><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#browser"></use></svg><span data-t="accueil.vitrine.adresse">chez-awa.sn</span></span>
+            </div>
+            <div class="ngs-vitrine__page" data-vitrine-page>
+              <div class="ngs-vitrine__piece" data-piece>
+                <ngs-apercu ressource="navbar-restaurant"></ngs-apercu>
+                <a class="ngs-etiquette ngs-cat-blocs" style="top:-14px;left:14px" href="ressource.html?r=navbar-restaurant" data-etiquette>Navbar</a>
+              </div>
+              <div class="ngs-vitrine__piece" data-piece>
+                <ngs-apercu ressource="hero-restaurant"></ngs-apercu>
+                <a class="ngs-etiquette ngs-cat-blocs" style="top:-14px;left:14px" href="ressource.html?r=hero-restaurant" data-etiquette>Hero</a>
+              </div>
+            </div>
+          </div>
+          <div class="ngs-vitrine__flottant ngs-vitrine__flottant--toast" data-flottant data-profondeur="8">
+            <ngs-apercu ressource="notifications" demo="toast"></ngs-apercu>
+            <a class="ngs-etiquette ngs-cat-composants" style="top:-14px;right:14px" href="ressource.html?r=notifications" data-etiquette>Notification</a>
+          </div>
+          <div class="ngs-vitrine__flottant ngs-vitrine__flottant--cal" data-flottant data-profondeur="14">
+            <ngs-apercu ressource="calendrier"></ngs-apercu>
+            <a class="ngs-etiquette ngs-cat-composants" style="top:-14px;left:14px" href="ressource.html?r=calendrier" data-etiquette>Calendrier</a>
+          </div>
+          <figcaption class="ngs-small ngs-muted mt-6 max-w-[34rem]" id="vitrine-legende" data-t="accueil.vitrine.legende">Quatre pièces du catalogue, une vraie page : survolez une étiquette pour ouvrir sa fiche.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ Planche ============ -->
+    <section class="ngs-container" style="padding-block: clamp(3rem, 6vw, 6rem) 0" aria-labelledby="planche-titre" id="planche">
+      <div class="planche-barre">
+        <div class="grid gap-2">
+          <h2 class="ngs-h2 m-0" id="planche-titre" data-t="accueil.planche.h2">Toutes les pièces, en vrai</h2>
+          <p class="ngs-lead m-0" data-t="accueil.planche.aide">Tout fonctionne : basculez, choisissez une date, faites glisser.</p>
+        </div>
+      </div>
+      <div class="ngs-planche accueil-planche" data-planche></div>
+    </section>
+
+    <!-- ============ Quatre familles (moment épinglé) ============ -->
+    <section class="familles" aria-labelledby="familles-titre" data-familles>
+      <div class="ngs-container mb-10 lg:mb-14 grid gap-4 lg:grid-cols-12">
+        <h2 class="ngs-h2 m-0 lg:col-span-6" id="familles-titre" data-t="accueil.familles.h2">Quatre familles de pièces</h2>
+        <p class="ngs-lead m-0 lg:col-span-5 lg:col-start-8 self-end" data-t="accueil.familles.lead">Du plus petit contrôle à la page entière. Chaque famille a sa couleur, partout sur le site.</p>
+      </div>
+      <div class="familles__piste" data-piste></div>
+    </section>
+
+    <!-- ============ Deux gestes ============ -->
+    <section class="ngs-container" style="padding-block: var(--space-section) 0" aria-labelledby="gestes-titre" id="demarrer">
+      <h2 class="ngs-h2 m-0 max-w-[18ch]" id="gestes-titre" data-t="accueil.gestes.h2">Deux gestes, et la pièce est chez vous</h2>
+      <div class="grid gap-10 lg:grid-cols-12 mt-10 lg:mt-4">
+        <div class="lg:col-span-5" data-gestes>
+          <div class="gestes__rangee" data-vue="copier">
+            <h3 class="ngs-h3 gestes__titre m-0" data-t="accueil.gestes.copier.titre">Copier le code</h3>
+            <p class="ngs-lead mt-3 mb-0 max-w-[34ch]" data-t="accueil.gestes.copier.texte">Chaque fichier se copie seul, ou tout d’un coup. Le code affiché est celui qui tourne dans l’aperçu.</p>
+          </div>
+          <div class="gestes__rangee" data-vue="telecharger">
+            <h3 class="ngs-h3 gestes__titre m-0" data-t="accueil.gestes.telecharger.titre">Télécharger le composant</h3>
+            <p class="ngs-lead mt-3 mb-0 max-w-[34ch]" data-t="accueil.gestes.telecharger.texte">Un zip avec les fichiers, un README (dépendances, version d’Angular) et la licence.</p>
+          </div>
+        </div>
+        <div class="lg:col-span-7 min-w-0">
+          <div class="gestes__demo grid" data-gestes-demo>
+            <div class="gestes__vue ngs-code" data-vue-panneau="copier">
+              <div class="ngs-code__bar">
+                <span class="ngs-code__file flex-1 min-w-0 truncate">interrupteur.component.ts</span>
+                <button class="ngs-copy" type="button" data-copier-demo>
+                  <svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#copy"></use></svg>
+                  <span class="ngs-btn__label-idle" data-t="ressource.code.copier">Copier</span>
+                  <span class="ngs-btn__label-done" data-t="ressource.code.copie">Copié</span>
+                </button>
+              </div>
+              <pre tabindex="0"><code data-code-demo></code></pre>
+            </div>
+            <div class="gestes__vue ngs-code p-5 grid gap-4 content-start" data-vue-panneau="telecharger">
+              <div class="flex items-center gap-3">
+                <svg class="ngs-icon ngs-icon--lg" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#file-zip"></use></svg>
+                <span class="font-mono text-sm">interrupteur-tailwind.zip</span>
+              </div>
+              <ul class="zip-liste" data-zip-liste></ul>
+              <button class="ngs-btn ngs-btn--on-dark justify-self-start" type="button" data-zip-demo>
+                <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#download-simple"></use></svg>
+                <span data-t="ressource.telecharger">Télécharger le composant</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Douze tokens ============ -->
+    <section class="ngs-container" style="padding-block: var(--space-section) 0" aria-labelledby="contrat-titre">
+      <div class="grid gap-10 lg:grid-cols-12">
+        <div class="lg:col-span-6">
+          <h2 class="ngs-h2 m-0" id="contrat-titre" data-t="accueil.contrat.h2">Douze tokens pour tout régler</h2>
+          <p class="ngs-lead mt-5 mb-10 max-w-[40ch]" data-t="accueil.contrat.lead">Chaque ressource lit ses valeurs dans des variables CSS avec une valeur de repli. Copiée seule, elle fonctionne ; posez les variables, elle prend votre style.</p>
+          <div data-jetons></div>
+        </div>
+        <div class="lg:col-span-5 lg:col-start-8">
+          <div class="temoin" data-temoin>
+            <p class="ngs-label m-0" data-t="accueil.contrat.temoin">Témoins : trois composants du catalogue</p>
+            <div class="temoin__scene" data-temoin-scene>
+              <ngs-apercu ressource="interrupteur"></ngs-apercu>
+              <ngs-apercu ressource="champ-email"></ngs-apercu>
+              <ngs-apercu ressource="notifications"></ngs-apercu>
+            </div>
+            <a class="ngs-link ngs-link--rest justify-self-start" href="ressource.html?r=calendrier">
+              <span data-t="accueil.gestes.essai">Essayer sur le calendrier</span>
+              <svg class="ngs-icon ngs-icon--sm ngs-icon--move" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#arrow-right"></use></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Contribuer ============ -->
+    <section class="ngs-container" style="padding-block: var(--space-section)" aria-labelledby="contribuer-titre" id="contribuer">
+      <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
+        <div class="lg:col-span-5 grid gap-6">
+          <h2 class="ngs-h2 m-0" id="contribuer-titre" data-t="accueil.contribuer.h2">Ajoutez votre pièce à la planche</h2>
+          <p class="ngs-lead m-0" data-t="accueil.contribuer.texte">Le catalogue vit de contributions. Une ressource, c’est un dossier : ses fichiers, une démo et une fiche de description. Chaque proposition est relue avant publication.</p>
+          <div class="flex flex-wrap gap-3">
+            <a class="ngs-btn" href="#" data-t="accueil.contribuer.cta">Lire le guide de contribution</a>
+            <a class="ngs-btn ngs-btn--secondary" href="#">
+              <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#github-logo"></use></svg>
+              <span data-t="accueil.contribuer.cta2">Voir le dépôt sur GitHub</span>
+            </a>
+          </div>
+        </div>
+        <div class="lg:col-span-6 lg:col-start-7">
+          <svg class="trace w-full h-auto" viewBox="0 0 560 300" role="img" aria-labelledby="trace-titre" data-trace>
+            <title id="trace-titre" data-t="accueil.contribuer.trace">Parcours d’une contribution : votre dossier, une demande de fusion, une relecture, puis la publication sur la planche.</title>
+            <path d="M40 240 C 140 240, 140 60, 240 60 S 340 240, 420 160 S 500 60, 520 60" data-trace-chemin />
+            <g data-trace-noeud><circle cx="40" cy="240" r="9" /><text x="40" y="276" text-anchor="start" data-t="accueil.contribuer.etape1">Votre dossier</text></g>
+            <g data-trace-noeud><circle cx="240" cy="60" r="9" /><text x="240" y="32" text-anchor="middle" data-t="accueil.contribuer.etape2">Demande de fusion</text></g>
+            <g data-trace-noeud><circle cx="420" cy="160" r="9" /><text x="420" y="196" text-anchor="middle" data-t="accueil.contribuer.etape3">Relecture</text></g>
+            <g data-trace-noeud><circle cx="520" cy="60" r="9" /><text x="520" y="32" text-anchor="end" data-t="accueil.contribuer.etape4">Publié</text><text class="trace__sous" x="520" y="96" text-anchor="end" data-t="accueil.contribuer.etape4.sous">sur la planche</text></g>
+          </svg>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!--@footer-->
+  <footer class="ngs-footer">
+    <div class="ngs-container grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-5 grid gap-5 content-start">
+        <span class="ngs-brand" role="img" aria-label="NgShelf" data-t-aria="marque.nom"><svg class="ngs-brand__logo" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#ngshelf-logo"></use></svg><span data-nom-court aria-hidden="true">Shelf</span></span>
+        <p class="ngs-muted ngs-small m-0 max-w-[28rem]" data-t="pied.texte">NgShelf est un catalogue open source de ressources Angular. Code sous licence MIT, sans compte ni paiement.</p>
+        <div class="grid gap-3">
+          <h2 class="ngs-label m-0 ngs-muted" id="pied-suivre" data-t="pied.suivre">Suivre Sidy</h2>
+          <ul class="ngs-reseaux" aria-labelledby="pied-suivre">
+            <li><a class="ngs-reseau" href="#" data-reseau="instagram" rel="me noopener" aria-label="Instagram de Sidy" data-t-aria="pied.instagram"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#instagram-logo"></use></svg></a></li>
+            <li><a class="ngs-reseau" href="#" data-reseau="tiktok" rel="me noopener" aria-label="TikTok de Sidy" data-t-aria="pied.tiktok"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#tiktok-logo"></use></svg></a></li>
+            <li><a class="ngs-reseau" href="#" data-reseau="linkedin" rel="me noopener" aria-label="LinkedIn de Sidy" data-t-aria="pied.linkedin"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#linkedin-logo"></use></svg></a></li>
+            <li><a class="ngs-reseau" href="#" data-reseau="github" rel="me noopener" aria-label="GitHub de Sidy" data-t-aria="pied.github"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#github-logo"></use></svg></a></li>
+            <li><a class="ngs-reseau" href="#" data-reseau="email" aria-label="Écrire un e-mail à Sidy" data-t-aria="pied.email"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#envelope-simple"></use></svg></a></li>
+          </ul>
+        </div>
+      </div>
+      <nav class="lg:col-span-3 grid gap-3 content-start" aria-labelledby="pied-catalogue">
+        <h2 class="ngs-label m-0 ngs-muted" id="pied-catalogue" data-t="pied.catalogue">Catalogue</h2>
+        <a class="ngs-link justify-self-start" href="catalogue.html?c=composants" data-t="nav.composants">Composants</a>
+        <a class="ngs-link justify-self-start" href="catalogue.html?c=blocs" data-t="nav.blocs">Blocs</a>
+        <a class="ngs-link justify-self-start" href="catalogue.html?c=templates" data-t="nav.templates">Templates</a>
+        <a class="ngs-link justify-self-start" href="catalogue.html?c=designs" data-t="nav.designs">Designs</a>
+      </nav>
+      <nav class="lg:col-span-4 grid gap-3 content-start" aria-labelledby="pied-projet">
+        <h2 class="ngs-label m-0 ngs-muted" id="pied-projet" data-t="pied.projet">Projet</h2>
+        <a class="ngs-link justify-self-start" href="a-propos.html" data-t="nav.apropos">À propos</a>
+        <a class="ngs-link justify-self-start" href="index.html#contribuer" data-t="pied.contribuer">Contribuer</a>
+        <a class="ngs-link justify-self-start" href="#" data-t="pied.licence">Licence MIT</a>
+        <a class="ngs-link justify-self-start" href="mentions-legales.html" data-t="pied.mentions">Mentions légales</a>
+        <a class="ngs-link justify-self-start" href="confidentialite.html" data-t="pied.confidentialite">Confidentialité</a>
+        <a class="ngs-link justify-self-start" href="cookies.html" data-t="pied.cookies">Cookies</a>
+      </nav>
+      <div class="lg:col-span-12 flex flex-wrap items-end justify-between gap-6 pt-6 border-t border-[var(--color-border)]">
+        <div class="grid gap-1">
+          <p class="ngs-small ngs-muted m-0" data-t="pied.marque">Angular est une marque de Google LLC. NgShelf est un projet indépendant, non affilié à Google.</p>
+          <p class="ngs-small ngs-muted m-0" data-t="pied.provisoire">Les ressources visibles dans cette maquette sont des démonstrations provisoires.</p>
+        </div>
+        <a class="ngs-signature" href="#" data-reseau="portfolio" data-signature aria-label="Conçu et développé par Sidy" data-t-aria="pied.signature.aria">
+          <span class="ngs-signature__mono" aria-hidden="true"><svg viewBox="0 0 32 32"><path data-signature-trace d="M22 9.5c-1.6-2.4-4.2-3.5-7-3.2-3.4.4-5.6 2.8-5 5.6.5 2.6 3.4 3.6 6.4 4.4 3.2.9 6.3 2 6.6 5 .3 3.2-2.6 5.6-6.4 5.6-3 0-5.4-1.2-6.8-3.4"/></svg></span>
+          <span class="ngs-signature__texte" aria-hidden="true"><small data-t="pied.signature">Développé par</small><strong>Sidy</strong></span>
+        </a>
+      </div>
+    </div>
+  </footer>
+  <!--/@footer-->
+
+  <!--@scripts-->
+  <script src="./js/config.js"></script>
+  <script src="./js/textes.fr.js"></script>
+  <script src="./js/registre.js"></script>
+  <script src="./js/contrat.js"></script>
+  <script src="./js/variantes.js"></script>
+  <script src="./js/apercu.js"></script>
+  <script src="./js/code.js"></script>
+  <script src="./js/zip.js"></script>
+  <script src="./js/livraison.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/Flip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/SplitText.min.js"></script>
+  <script src="./js/app.js"></script>
+  <!--/@scripts-->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.28/dist/lenis.min.js"></script>
+  <script src="./js/accueil.js"></script>
+</body>
+</html>

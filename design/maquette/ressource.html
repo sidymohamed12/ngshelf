@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <!--@head-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preload" href="./assets/fonts/chivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/chivo-mono-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script>
+    // Splash : premier chargement seulement (pas lors d'une navigation interne), jamais en reduced-motion.
+    window.__ngsDebut = performance.now();
+    try { if (document.referrer && new URL(document.referrer).origin === location.origin) document.documentElement.classList.add('ngs-sans-splash'); } catch (e) {}
+    // Thème du site (clair / sombre / système) : cookie fonctionnel ngs_theme, appliqué AVANT le premier rendu
+    // (pas de flash). En Angular, ce script reste en ligne dans index.html.
+    (function () {
+      var h = document.documentElement;
+      var m = document.cookie.match(/(?:^|; )ngs_theme=(clair|sombre|systeme)/);
+      var choix = m ? m[1] : 'systeme';
+      var sombre = choix === 'sombre' || (choix === 'systeme' && matchMedia('(prefers-color-scheme: dark)').matches);
+      h.setAttribute('data-theme-choix', choix);
+      if (sombre) h.setAttribute('data-theme', 'sombre');
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', sombre ? '#111113' : '#ffffff');
+    })();
+  </script>
+  <style>
+    /* Pas de flash avant compilation de Tailwind ; filet de sécurité si le JS échoue. */
+    html.ngs-js:not(.ngs-styled) body > :not(.ngs-splash) { opacity: 0; animation: ngs-filet 0s 2.5s forwards; }
+    /* Fond sombre posé avant Tailwind : aucun éclair blanc en mode sombre. */
+    html[data-theme="sombre"] { background: #111113; color-scheme: dark; }
+    @keyframes ngs-filet { to { opacity: 1; } }
+    /* Splash (ADR 0005, forme : ADR 0006) : CSS critique en ligne (avant Tailwind), SVG en ligne, @keyframes CSS
+       seulement (ni GSAP ni JS). Valeurs recopiées de tokens.css (marque, --ease-enter, --ease-in-out) :
+       en Angular, ce bloc va dans index.html, à côté du splash. Fond : blanc en clair, bleu nuit en sombre. */
+    .ngs-splash { position: fixed; inset: 0; z-index: 1001; display: grid; place-items: center; background: #fff; pointer-events: none; }
+    .ngs-splash__logo { width: clamp(160px, 28vw, 260px); height: auto; overflow: visible; }
+    .ngs-splash__logo g { transform-box: fill-box; }
+    .ngs-sp-planche rect { fill: #fd6437; }
+    .ngs-sp-eq { stroke: #191f42; }
+    .ngs-sp-n, .ngs-sp-g { fill: #191f42; }
+    .ngs-sp-planche { transform-origin: 50% 50%; animation: ngs-sp-planche 220ms cubic-bezier(.22,1,.36,1) both; }
+    .ngs-sp-n, .ngs-sp-g { transform-origin: 50% 100%; animation: ngs-sp-chute 380ms 100ms both; }
+    .ngs-sp-g { animation-delay: 220ms; }
+    .ngs-splash .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .ngs-splash.is-sortie { animation: ngs-splash-sortie 320ms cubic-bezier(.65,0,.35,1) forwards; }
+    /* 1. la planche se pose (0 à 220 ms) ; 2. « n » tombe (100 ms), « g » 120 ms après : chute, impact (écrasement), rebond. */
+    @keyframes ngs-sp-planche { from { transform: scaleX(.15); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes ngs-sp-chute {
+      0% { transform: translateY(-48%); opacity: 0; animation-timing-function: cubic-bezier(.5,0,.9,.4); }
+      8% { opacity: 1; }
+      62% { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+      70% { transform: scaleY(.94); }
+      78% { transform: translateY(-4%); animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+      100% { transform: none; opacity: 1; }
+    }
+    @keyframes ngs-splash-sortie { to { clip-path: inset(0 0 100% 0); } }
+    html[data-theme="sombre"] .ngs-splash { background: #191f42; }
+    html[data-theme="sombre"] .ngs-sp-eq { stroke: #ededf0; }
+    html[data-theme="sombre"] .ngs-sp-n, html[data-theme="sombre"] .ngs-sp-g { fill: #ededf0; }
+    html.ngs-sans-splash .ngs-splash { display: none; }
+    @media (prefers-reduced-motion: reduce) { .ngs-splash { display: none; } }
+    /* Minuteur de sécurité : le splash disparaît seul au plus tard à 1,2 s (ADR 0005). */
+    .ngs-splash { animation: ngs-splash-filet 0s 1.2s forwards; }
+    .ngs-splash.is-sortie { animation: ngs-splash-sortie 320ms cubic-bezier(.65,0,.35,1) forwards; }
+    @keyframes ngs-splash-filet { to { visibility: hidden; } }
+    /* Transitions de page (View Transitions entre documents) : critiques, donc en ligne. */
+    @media (prefers-reduced-motion: no-preference) {
+      @view-transition { navigation: auto; }
+      ::view-transition-old(root) { animation: ngs-page-sortie 180ms cubic-bezier(.65, 0, .35, 1) both; }
+      ::view-transition-new(root) { animation: ngs-page-entree 300ms cubic-bezier(.22, 1, .36, 1) 60ms both; }
+      ::view-transition-group(apercu-ressource) { animation-duration: 480ms; animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
+      ::view-transition-old(apercu-ressource), ::view-transition-new(apercu-ressource) { height: 100%; object-fit: cover; }
+      ::view-transition-group(entete) { animation: none; }
+      .ngs-header { view-transition-name: entete; }
+    }
+    @keyframes ngs-page-sortie { to { opacity: 0; transform: translateY(-8px); } }
+    @keyframes ngs-page-entree { from { opacity: 0; transform: translateY(8px); } }
+  </style>
+  <noscript><style>.ngs-splash { display: none !important; }</style></noscript>
+  <script src="../design-system/load.js" data-assets="./assets/"></script>
+  <!--/@head-->
+  <link rel="icon" href="../logo/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../logo/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="../logo/apple-touch-icon.png">
+  <title>Ressource — NgShelf</title>
+  <meta name="description" content="Aperçu live, réglages, code Tailwind ou CSS à copier et téléchargement d’une ressource Angular de NgShelf.">
+  <style>
+    .fil { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; margin: 0; padding: 0; font-size: var(--text-small); color: var(--color-text-muted); }
+    .fil li { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .fil li + li::before { content: "/"; color: var(--color-ink-300); }
+    .fil a { color: var(--color-text-muted); }
+    /* Colonnes de même hauteur : l'aperçu s'étire jusqu'au bas du panneau de réglages (pas de trou). */
+    .fiche-haut { display: grid; gap: 1.5rem; align-items: stretch; }
+    @media (min-width: 64rem) { .fiche-haut { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); } .fiche-identite { grid-column: 1 / -1; } }
+    @media (min-width: 80rem) { .fiche-haut { grid-template-columns: minmax(0, 3fr) minmax(0, 6fr) minmax(0, 3fr); } .fiche-identite { grid-column: auto; } }
+    .ngs-preview { min-height: 34rem; }
+    .ngs-preview__stage { position: relative; flex: 1; min-height: 28rem; height: auto; display: block; overflow: hidden; }
+    .cadre { position: absolute; top: clamp(0.75rem, 2vw, 1.5rem); bottom: clamp(0.75rem, 2vw, 1.5rem); left: 50%; translate: -50% 0; }
+    .cadre iframe { box-sizing: content-box; position: absolute; top: 0; left: 0; transform-origin: 0 0; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-canvas); }
+    .onglet-point { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--color-code-string); margin-left: 6px; vertical-align: middle; opacity: 0; }
+    .onglet-point.is-on { opacity: 1; }
+    .etapes { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.75rem; }
+    .etapes li::marker { font-weight: 650; font-variant-numeric: tabular-nums; }
+    .etapes code { font-size: 0.8125rem; background: var(--color-surface); padding: 0.1rem 0.35rem; border-radius: 6px; overflow-wrap: anywhere; }
+    .fiche-identite__corps { display: grid; gap: 1.25rem; align-content: start; }
+    @media (min-width: 64rem) and (max-width: 79.99rem) { .fiche-identite__corps { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; column-gap: 3rem; } }
+    @media (min-width: 80rem) { .fiche-identite__corps { position: sticky; top: calc(4.25rem + 1rem); } }
+    @media (max-width: 25rem) { [data-tailles] .tabular { display: none; } }
+    /* Élément partagé de la transition case → fiche (un seul nom à la fois, ADR 0005). */
+    @media (prefers-reduced-motion: no-preference) { [data-entree-apercu] { view-transition-name: apercu-ressource; } }
+    .code-entete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1.5rem; }
+  </style>
+</head>
+<body>
+  <!--@splash-->
+  <div class="ngs-splash" role="status" aria-live="polite">
+    <svg class="ngs-splash__logo" viewBox="320 236 896 491" aria-hidden="true" focusable="false"><g class="ngs-sp-planche"><rect x="320" y="548" width="896" height="64" rx="32"/><g class="ngs-sp-eq" fill="none" stroke-width="22" stroke-linejoin="round"><path d="M336 600 L336 716 L457 600 Z"/><path d="M1200 600 L1200 716 L1079 600 Z"/></g></g><g class="ngs-sp-n"><path d="M671.5 538.09c-8 2.02-18.19.41-26.43.41H462.58c-15.11 0-36.88 2.34-51.21-.31-5.81-.48-11.56-3.96-16.38-7.04-13.84-8.83-23.32-23.41-25.11-39.82-.66-6.03-.29-12.18-.29-18.24-.04-42.25-.08-84.5-.02-126.75.01-12.42.01-24.83 0-37.25-.01-8.87-.61-17.930 1.32-26.64 5.51-24.83 27.74-44.12 53.22-45.9 7.93-.55 16.04-.11 23.99-.1 14.59.01 29.17-.02 43.75-.01 42.25.01 84.5-.15 126.75 0 30.72.11 57.75-5.48 80.15 20.7 16.54 19.35 12.95 45.58 12.91 69.18-.06 37.59.1 75.17.02 112.75-.02 11.42-.03 22.84 0 34.25.02 6.92.52 14.12-.46 20.98-2.69 18.68-20.07 41.32-39.72 43.79m-223.06-237.1-.03 176.8 58.46-.02c-.3-25.16.19-50.34.05-75.5-.08-13.14-1.96-28.08 5.14-39.83 10.56-17.47 37.19-21.16 53.17-8.98 4.35 3.32 7.49 7.83 9.83 12.73 5.48 11.46 3.59 25.67 3.63 37.99.1 24.49.76 49.11.04 73.59l58.51-.06c.22-26.95.13-53.9.12-80.85 0-20.28.95-40.53-7.84-59.39-21.67-46.51-89.9-55.43-122.57-15.95l-.15-20.57z"/></g><g class="ngs-sp-g"><path d="M1126.27 538.3l-260.12-.09c-6.52-.8-12.69-4.66-17.9-8.43-11.63-8.43-19.84-21.73-21.57-36.09-1-8.28-.38-16.91-.39-25.24-.04-41.58-.1-83.17.03-124.76.04-11.92.05-23.84.03-35.75-.01-9.42-.56-18.88 1.47-28.14 5.02-22.83 24.92-39.3 47.49-42.87 8.35-1.33 17.29-.54 25.72-.49 13.83.09 27.67.01 41.51 0 44.75-.05 89.51-.15 134.26-.01 30.47.09 55.52-4.6 77.92 21.04 16.54 18.93 13.29 43.11 13.31 66.32.03 38.34.08 76.68 0 115.01-.02 11.92.07 23.84-.01 35.76-.04 7.57.42 15.21-1.28 22.65-4.43 19.45-20.58 36.930-40.47 41.09m-89.5-230.35c-29.07-32.55-87.49-23.74-115.17 6.36-25.95 28.22-27.68 70.67-4.24 100.91 7.96 10.26 18.96 17.73 30.72 22.94 12.75 5.64 28.36 8.4 42.27 7.04 18.49-1.81 33.13-6.49 46.7-19.77.26 12.93-.34 26.79-9.89 36.68-14.25 14.76-44.34 16.72-60.11 3.31-3.52-2.99-5.8-6.7-7.81-10.79l-54.46.05c2.77 14.79 9.19 27.85 20.7 37.78 34.95 30.19 116.87 30.1 146.63-7.87 19.04-24.28 17.4-49.99 17.33-79.13-.11-37.72-.23-75.46.01-113.19l-52.43.08z"/><path d="M956.51 366.5c1.3-37.46 50.19-48.44 72.53-21.53 5.02 6.03 8.2 14.5 7.93 22.41-1.34 39.61-60.33 51.11-76.79 15.57-2.34-5.04-3.86-10.86-3.67-16.45"/></g></svg>
+    <span class="sr-only" data-t="splash.chargement">Chargement de NgShelf</span>
+  </div>
+  <!--/@splash-->
+  <!--@header-->
+  <a class="ngs-skip" href="#contenu" data-t="lien.evitement">Aller au contenu</a>
+  <header class="ngs-header">
+    <div class="ngs-container ngs-header__row">
+      <a class="ngs-brand" href="index.html" aria-label="Accueil de NgShelf" data-t-aria="nav.accueil">
+        <svg class="ngs-brand__logo" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#ngshelf-logo"></use></svg>
+        <span data-nom-court>Shelf</span>
+      </a>
+      <nav class="ngs-nav" aria-label="Navigation principale" data-t-aria="nav.principale">
+        <a class="ngs-nav-link" href="catalogue.html" data-mega data-nav="catalogue" aria-expanded="false" aria-controls="mega-catalogue">
+          <span data-t="nav.catalogue">Catalogue</span>
+          <svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg>
+        </a>
+        <a class="ngs-nav-link ngs-cat-composants" href="catalogue.html?c=composants" data-nav="composants"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.composants">Composants</span></a>
+        <a class="ngs-nav-link ngs-cat-blocs" href="catalogue.html?c=blocs" data-nav="blocs"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.blocs">Blocs</span></a>
+        <a class="ngs-nav-link ngs-cat-designs" href="catalogue.html?c=designs" data-nav="designs"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.designs">Designs</span></a>
+        <a class="ngs-nav-link" href="a-propos.html" data-nav="a-propos" data-t="nav.apropos">À propos</a>
+      </nav>
+      <div class="ml-auto flex items-center gap-2">
+        <button class="ngs-search-trigger" type="button" data-recherche aria-label="Rechercher une ressource" data-t-aria="recherche.declencheur">
+          <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#magnifying-glass"></use></svg>
+          <span class="ngs-search-trigger__text" data-t="recherche.declencheur">Rechercher une ressource</span>
+          <kbd class="ngs-kbd" data-raccourci><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#command"></use></svg>K</kbd>
+        </button>
+        <div class="ngs-theme" data-theme-ctl>
+          <button class="ngs-btn ngs-btn--ghost ngs-btn--icon" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-theme" aria-label="Thème du site : système" data-theme-btn>
+            <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#desktop" data-theme-icone></use></svg>
+          </button>
+          <div class="ngs-theme__menu" id="menu-theme" role="menu" aria-label="Thème du site" data-t-aria="theme.titre" data-theme-menu>
+            <p class="ngs-theme__titre" aria-hidden="true" data-t="theme.titre">Thème du site</p>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="false" data-theme-valeur="clair"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#sun"></use></svg><span data-t="theme.clair">Clair</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#check"></use></svg></button>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="false" data-theme-valeur="sombre"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#moon"></use></svg><span data-t="theme.sombre">Sombre</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#check"></use></svg></button>
+            <button class="ngs-theme__option" type="button" role="menuitemradio" aria-checked="true" data-theme-valeur="systeme"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#desktop"></use></svg><span data-t="theme.systeme">Système</span><svg class="ngs-icon ngs-icon--sm ngs-theme__coche" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#check"></use></svg></button>
+          </div>
+        </div>
+        <a class="ngs-btn ngs-btn--ghost ngs-btn--icon ngs-header__github" href="#" aria-label="Code source sur GitHub" data-t-aria="nav.github">
+          <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#github-logo"></use></svg>
+        </a>
+        <button class="ngs-btn ngs-btn--ghost ngs-btn--icon ngs-menu-btn" type="button" data-menu-ouvrir aria-expanded="false" aria-controls="menu-mobile" aria-label="Ouvrir le menu" data-t-aria="nav.menu.ouvrir">
+          <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#list"></use></svg>
+        </button>
+      </div>
+    </div>
+    <div class="ngs-mega" id="mega-catalogue" role="region" aria-label="Catalogue" data-t-aria="nav.catalogue"></div>
+  </header>
+  <div class="ngs-menu" id="menu-mobile" role="dialog" aria-modal="true" aria-label="Navigation principale" data-t-aria="nav.principale" tabindex="-1">
+    <div class="flex items-center justify-between min-h-[3.25rem]">
+      <span class="ngs-brand" role="img" aria-label="NgShelf" data-t-aria="marque.nom"><svg class="ngs-brand__logo" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#ngshelf-logo"></use></svg><span data-nom-court aria-hidden="true">Shelf</span></span>
+      <button class="ngs-btn ngs-btn--ghost ngs-btn--icon" type="button" data-menu-fermer aria-label="Fermer le menu" data-t-aria="nav.menu.fermer">
+        <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#x"></use></svg>
+      </button>
+    </div>
+    <div class="overflow-auto grid gap-6 content-start">
+      <ul class="ngs-menu__list">
+        <li><a class="ngs-menu__link" href="catalogue.html"><span data-t="nav.catalogue">Catalogue</span></a></li>
+        <li><a class="ngs-menu__link ngs-cat-composants" href="catalogue.html?c=composants"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.composants">Composants</span></a></li>
+        <li><a class="ngs-menu__link ngs-cat-blocs" href="catalogue.html?c=blocs"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.blocs">Blocs</span></a></li>
+        <li><a class="ngs-menu__link ngs-cat-templates" href="catalogue.html?c=templates"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.templates">Templates</span></a></li>
+        <li><a class="ngs-menu__link ngs-cat-designs" href="catalogue.html?c=designs"><span class="ngs-nav-link__dot" aria-hidden="true"></span><span data-t="nav.designs">Designs</span></a></li>
+        <li><a class="ngs-menu__link" href="a-propos.html"><span data-t="nav.apropos">À propos</span></a></li>
+      </ul>
+      <details class="ngs-facette">
+        <summary><span data-t="mega.secteurs">Par secteur</span><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg></summary>
+        <ul class="ngs-mega__liste pb-4 px-2" data-menu-secteurs></ul>
+      </details>
+    </div>
+    <a class="ngs-btn ngs-btn--secondary mt-auto" href="#">
+      <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#github-logo"></use></svg>
+      <span data-t="nav.github">Code source sur GitHub</span>
+    </a>
+  </div>
+  <!--/@header-->
+
+  <main id="contenu" tabindex="-1" class="pb-24">
+    <div class="ngs-container pt-6" data-fiche>
+      <nav aria-label="Fil d’Ariane" data-t-aria="ressource.fil">
+        <ol class="fil" data-fil><li><a class="ngs-link" href="catalogue.html" data-t="pied.catalogue">Catalogue</a></li></ol>
+      </nav>
+
+      <div class="fiche-haut mt-6">
+        <!-- Identité et actions -->
+        <div class="fiche-identite" data-entree>
+          <div class="fiche-identite__corps">
+            <div class="grid gap-4 content-start">
+              <div class="flex flex-wrap gap-1.5" data-badges></div>
+              <h1 class="ngs-h2 m-0" data-titre>Ressource</h1>
+              <p class="m-0 ngs-muted" data-description></p>
+            </div>
+            <div class="grid gap-4 content-start">
+              <div class="grid gap-3 sm:flex sm:flex-wrap xl:grid">
+                <button class="ngs-btn ngs-btn--lg" type="button" data-copier-tout>
+                  <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#copy"></use></svg>
+                  <span class="ngs-btn__label-idle" data-t="ressource.copier">Copier le code</span>
+                  <span class="ngs-btn__label-done" data-t="ressource.copie">Code copié</span>
+                </button>
+                <button class="ngs-btn ngs-btn--lg ngs-btn--secondary" type="button" data-telecharger>
+                  <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#download-simple"></use></svg>
+                  <span class="ngs-btn__label-idle" data-libelle-telecharger>Télécharger le composant</span>
+                  <span class="ngs-btn__label-done" data-t="ressource.telecharge">Zip téléchargé</span>
+                </button>
+              </div>
+              <p class="m-0 ngs-small ngs-muted" data-variante-note></p>
+              <dl class="ngs-meta" data-meta></dl>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aperçu live (iframe isolée) -->
+        <section class="ngs-preview" aria-labelledby="apercu-titre" data-entree-apercu>
+          <div class="ngs-preview__bar">
+            <h2 class="sr-only" id="apercu-titre" data-t="ressource.apercu">Aperçu</h2>
+            <div class="ngs-seg" role="radiogroup" aria-label="Largeur de l’aperçu" data-t-aria="ressource.taille" data-tailles>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="true" data-valeur="auto" aria-label="Largeur adaptée au cadre" data-t-aria="ressource.taille.auto"><span data-t="ressource.taille.auto.court">Adaptée</span></button>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="false" data-valeur="390" aria-label="Téléphone, 390 pixels" data-t-aria="ressource.taille.mobile">
+                <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#device-mobile"></use></svg><span class="tabular">390</span></button>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="false" data-valeur="768" aria-label="Tablette, 768 pixels" data-t-aria="ressource.taille.tablette">
+                <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#device-tablet"></use></svg><span class="tabular">768</span></button>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="false" data-valeur="1280" aria-label="Ordinateur, 1280 pixels" data-t-aria="ressource.taille.bureau">
+                <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#desktop"></use></svg><span class="tabular">1280</span></button>
+            </div>
+            <div class="flex flex-wrap gap-1" data-rejouer hidden>
+              <button class="ngs-btn ngs-btn--ghost ngs-btn--sm" type="button" data-rejouer-entree>
+                <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#arrow-counter-clockwise"></use></svg>
+                <span data-t="ressource.rejouer.entree">Rejouer l’entrée</span>
+              </button>
+              <button class="ngs-btn ngs-btn--ghost ngs-btn--sm" type="button" data-rejouer-sortie hidden>
+                <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#arrow-up-right"></use></svg>
+                <span data-t="ressource.rejouer.sortie">Rejouer la sortie</span>
+              </button>
+            </div>
+            <div class="ngs-seg ml-auto" role="radiogroup" aria-label="Mode de l’aperçu" data-t-aria="ressource.mode" data-modes>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="true" data-valeur="clair">
+                <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#sun"></use></svg><span data-t="ressource.mode.clair">Clair</span></button>
+              <button class="ngs-seg__btn" type="button" role="radio" aria-checked="false" data-valeur="sombre">
+                <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#moon"></use></svg><span data-t="ressource.mode.sombre">Sombre</span></button>
+            </div>
+          </div>
+          <div class="ngs-preview__stage" data-stage>
+            <div class="cadre" data-cadre></div>
+          </div>
+        </section>
+
+        <!-- Réglages (tokens) : groupes repliables -->
+        <aside class="ngs-panel" aria-labelledby="reglages-titre" data-reglages-panneau>
+          <div class="ngs-panel__section">
+            <div class="flex items-center gap-2">
+              <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#sliders-horizontal"></use></svg>
+              <h2 class="ngs-h3 m-0 text-[1.25rem]" id="reglages-titre" data-t="ressource.reglages">Réglages</h2>
+            </div>
+            <p class="ngs-small ngs-muted m-0" data-t="ressource.reglages.aide">L’aperçu et le fichier tokens.css suivent vos réglages. Rien n’est enregistré.</p>
+          </div>
+          <details class="ngs-reglage" open>
+            <summary><span data-t="ressource.reglages.design">Design</span><span class="ngs-reglage__valeur" data-v-design></span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg></summary>
+            <div class="ngs-reglage__corps">
+              <div class="ngs-seg w-full" role="radiogroup" aria-label="Design" data-t-aria="ressource.reglages.design" data-r-design>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="true" data-valeur="planche">Planche</button>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="false" data-valeur="fleuve">Fleuve</button>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="false" data-valeur="laterite">Latérite</button>
+              </div>
+              <p class="ngs-small ngs-muted m-0" data-t="ressource.reglages.design.aide">Le design est l’habillage visuel (tokens). Il ne change pas le secteur de la ressource.</p>
+            </div>
+          </details>
+          <details class="ngs-reglage" open>
+            <summary><span data-t="ressource.reglages.couleur">Couleur d’action</span><span class="ngs-reglage__valeur" data-v-couleur></span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg></summary>
+            <div class="ngs-reglage__corps">
+              <div class="ngs-swatches" role="radiogroup" aria-label="Couleur d’action" data-t-aria="ressource.reglages.couleur" data-r-couleur></div>
+              <p class="ngs-contrast m-0" data-contraste></p>
+            </div>
+          </details>
+          <details class="ngs-reglage">
+            <summary><span data-t="ressource.reglages.rayon">Rayon</span><span class="ngs-reglage__valeur tabular" data-v-rayon></span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg></summary>
+            <div class="ngs-reglage__corps">
+              <div class="ngs-range-row">
+                <input class="ngs-range" id="r-rayon" type="range" min="0" max="24" step="1" value="10" aria-label="Rayon" data-t-aria="ressource.reglages.rayon" data-r-rayon>
+                <output for="r-rayon" data-r-rayon-sortie>10 px</output>
+              </div>
+            </div>
+          </details>
+          <details class="ngs-reglage">
+            <summary><span data-t="ressource.reglages.densite">Densité</span><span class="ngs-reglage__valeur" data-v-densite></span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg></summary>
+            <div class="ngs-reglage__corps">
+              <div class="ngs-seg w-full" role="radiogroup" aria-label="Densité" data-t-aria="ressource.reglages.densite" data-r-densite>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="false" data-valeur="0.85" data-t="ressource.reglages.densite.serree">Serrée</button>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="true" data-valeur="1" data-t="ressource.reglages.densite.normale">Normale</button>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="false" data-valeur="1.2" data-t="ressource.reglages.densite.aeree">Aérée</button>
+              </div>
+            </div>
+          </details>
+          <details class="ngs-reglage">
+            <summary><span data-t="ressource.reglages.police">Police</span><span class="ngs-reglage__valeur" data-v-police></span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg></summary>
+            <div class="ngs-reglage__corps">
+              <div class="ngs-seg w-full" role="radiogroup" aria-label="Police" data-t-aria="ressource.reglages.police" data-r-police>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="true" data-valeur="systeme" data-t="ressource.reglages.police.systeme">Système</button>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="false" data-valeur="arrondie" data-t="ressource.reglages.police.arrondie">Arrondie</button>
+                <button class="ngs-seg__btn flex-1" type="button" role="radio" aria-checked="false" data-valeur="serif" data-t="ressource.reglages.police.serif">Serif</button>
+              </div>
+            </div>
+          </details>
+          <details class="ngs-reglage" data-reglage-animations>
+            <summary><span data-t="ressource.reglages.animations">Animations</span><span class="ngs-reglage__valeur" data-v-animations></span><svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#caret-down"></use></svg></summary>
+            <div class="ngs-reglage__corps">
+              <label class="ngs-switch"><input type="checkbox" checked data-r-animations><span class="ngs-switch__track" aria-hidden="true"></span><span data-t="ressource.reglages.animations.label">Animations de la ressource</span></label>
+              <p class="ngs-small ngs-muted m-0" data-r-animations-aide></p>
+            </div>
+          </details>
+          <div class="ngs-panel__section">
+            <button class="ngs-btn ngs-btn--ghost ngs-btn--sm justify-self-start" type="button" data-reinitialiser>
+              <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#arrow-counter-clockwise"></use></svg>
+              <span data-t="ressource.reglages.reinitialiser">Réinitialiser les réglages</span>
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Code -->
+      <div class="grid gap-12 lg:grid-cols-12 mt-16 lg:mt-24">
+        <section class="lg:col-span-8 grid gap-5 content-start min-w-0" aria-labelledby="code-titre">
+          <div class="code-entete">
+            <h2 class="ngs-h3 m-0" id="code-titre" data-t="ressource.code">Code</h2>
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="ngs-label" id="variante-label" data-t="code.variante">Version du code</span>
+              <div class="ngs-seg" role="radiogroup" aria-labelledby="variante-label" data-variantes>
+                <button class="ngs-seg__btn" type="button" role="radio" aria-checked="true" data-valeur="tailwind" data-t="code.variante.tailwind">Tailwind</button>
+                <button class="ngs-seg__btn" type="button" role="radio" aria-checked="false" data-valeur="css" data-t="code.variante.css">CSS</button>
+              </div>
+            </div>
+          </div>
+          <p class="m-0 ngs-small ngs-muted" data-variante-aide></p>
+          <div class="ngs-code" data-code>
+            <div class="ngs-code__bar">
+              <div class="ngs-tabs ngs-tabs--dark" role="tablist" aria-labelledby="code-titre" data-onglets></div>
+              <button class="ngs-copy" type="button" data-copier-fichier>
+                <svg class="ngs-icon ngs-icon--sm" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#copy"></use></svg>
+                <span class="ngs-btn__label-idle" data-t="ressource.code.copier">Copier</span>
+                <span class="ngs-btn__label-done" data-t="ressource.code.copie">Copié</span>
+              </button>
+            </div>
+            <div data-panneaux></div>
+          </div>
+        </section>
+        <div class="lg:col-span-4 grid gap-12 content-start min-w-0">
+          <section class="grid gap-4" aria-labelledby="usage-titre">
+            <h2 class="ngs-h3 m-0" id="usage-titre" data-t="ressource.utilisation">Utilisation</h2>
+            <div class="ngs-code ngs-code--inline"><pre tabindex="0"><code data-usage></code></pre></div>
+          </section>
+          <section class="grid gap-4" aria-labelledby="installer-titre" data-installer>
+            <h2 class="ngs-h3 m-0" id="installer-titre" data-t="ressource.installer">Installer en trois étapes</h2>
+            <ol class="etapes" data-etapes></ol>
+          </section>
+          <section class="grid gap-3" aria-labelledby="dependances-titre">
+            <h2 class="ngs-h3 m-0" id="dependances-titre" data-t="ressource.dependances">Dépendances</h2>
+            <p class="m-0" data-dependances></p>
+            <p class="m-0 ngs-small ngs-muted" data-t="ressource.dependances.plus-tard">Les paquets npm et les autres ressources requises s’afficheront ici.</p>
+          </section>
+        </div>
+        <section class="lg:col-span-12 grid gap-4" aria-labelledby="api-titre" data-api-section>
+          <h2 class="ngs-h3 m-0" id="api-titre" data-t="ressource.api">Paramètres</h2>
+          <div class="overflow-x-auto">
+            <table class="ngs-table" data-api>
+              <thead><tr><th scope="col" data-t="ressource.api.nom">Nom</th><th scope="col" data-t="ressource.api.type">Type</th><th scope="col" data-t="ressource.api.defaut">Par défaut</th><th scope="col" data-t="ressource.api.role">Rôle</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <section class="mt-24 grid gap-6" aria-labelledby="autres-titre">
+        <h2 class="ngs-h3 m-0" id="autres-titre" data-t="ressource.autres">Autres ressources</h2>
+        <div class="ngs-planche" data-autres></div>
+      </section>
+    </div>
+
+    <div class="ngs-container pt-10" data-introuvable hidden>
+      <div class="ngs-state ngs-state--error" role="alert">
+        <span class="ngs-state__icon"><svg class="ngs-icon ngs-icon--lg" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#warning-circle"></use></svg></span>
+        <h1 class="ngs-state__title" data-t="ressource.introuvable.titre">Cette ressource n’existe pas</h1>
+        <p class="m-0 ngs-muted" data-t="ressource.introuvable.texte">Elle a peut-être été renommée. Retrouvez-la depuis le catalogue.</p>
+        <a class="ngs-btn" href="catalogue.html">
+          <svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#arrow-left"></use></svg>
+          <span data-t="ressource.introuvable.cta">Retour au catalogue</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!--@footer-->
+  <footer class="ngs-footer">
+    <div class="ngs-container grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-5 grid gap-5 content-start">
+        <span class="ngs-brand" role="img" aria-label="NgShelf" data-t-aria="marque.nom"><svg class="ngs-brand__logo" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#ngshelf-logo"></use></svg><span data-nom-court aria-hidden="true">Shelf</span></span>
+        <p class="ngs-muted ngs-small m-0 max-w-[28rem]" data-t="pied.texte">NgShelf est un catalogue open source de ressources Angular. Code sous licence MIT, sans compte ni paiement.</p>
+        <div class="grid gap-3">
+          <h2 class="ngs-label m-0 ngs-muted" id="pied-suivre" data-t="pied.suivre">Suivre Sidy</h2>
+          <ul class="ngs-reseaux" aria-labelledby="pied-suivre">
+            <li><a class="ngs-reseau" href="#" data-reseau="instagram" rel="me noopener" aria-label="Instagram de Sidy" data-t-aria="pied.instagram"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#instagram-logo"></use></svg></a></li>
+            <li><a class="ngs-reseau" href="#" data-reseau="tiktok" rel="me noopener" aria-label="TikTok de Sidy" data-t-aria="pied.tiktok"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#tiktok-logo"></use></svg></a></li>
+            <li><a class="ngs-reseau" href="#" data-reseau="linkedin" rel="me noopener" aria-label="LinkedIn de Sidy" data-t-aria="pied.linkedin"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#linkedin-logo"></use></svg></a></li>
+            <li><a class="ngs-reseau" href="#" data-reseau="github" rel="me noopener" aria-label="GitHub de Sidy" data-t-aria="pied.github"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#github-logo"></use></svg></a></li>
+            <li><a class="ngs-reseau" href="#" data-reseau="email" aria-label="Écrire un e-mail à Sidy" data-t-aria="pied.email"><svg class="ngs-icon" aria-hidden="true" focusable="false"><use href="../design-system/assets/icons/sprite.svg#envelope-simple"></use></svg></a></li>
+          </ul>
+        </div>
+      </div>
+      <nav class="lg:col-span-3 grid gap-3 content-start" aria-labelledby="pied-catalogue">
+        <h2 class="ngs-label m-0 ngs-muted" id="pied-catalogue" data-t="pied.catalogue">Catalogue</h2>
+        <a class="ngs-link justify-self-start" href="catalogue.html?c=composants" data-t="nav.composants">Composants</a>
+        <a class="ngs-link justify-self-start" href="catalogue.html?c=blocs" data-t="nav.blocs">Blocs</a>
+        <a class="ngs-link justify-self-start" href="catalogue.html?c=templates" data-t="nav.templates">Templates</a>
+        <a class="ngs-link justify-self-start" href="catalogue.html?c=designs" data-t="nav.designs">Designs</a>
+      </nav>
+      <nav class="lg:col-span-4 grid gap-3 content-start" aria-labelledby="pied-projet">
+        <h2 class="ngs-label m-0 ngs-muted" id="pied-projet" data-t="pied.projet">Projet</h2>
+        <a class="ngs-link justify-self-start" href="a-propos.html" data-t="nav.apropos">À propos</a>
+        <a class="ngs-link justify-self-start" href="index.html#contribuer" data-t="pied.contribuer">Contribuer</a>
+        <a class="ngs-link justify-self-start" href="#" data-t="pied.licence">Licence MIT</a>
+        <a class="ngs-link justify-self-start" href="mentions-legales.html" data-t="pied.mentions">Mentions légales</a>
+        <a class="ngs-link justify-self-start" href="confidentialite.html" data-t="pied.confidentialite">Confidentialité</a>
+        <a class="ngs-link justify-self-start" href="cookies.html" data-t="pied.cookies">Cookies</a>
+      </nav>
+      <div class="lg:col-span-12 flex flex-wrap items-end justify-between gap-6 pt-6 border-t border-[var(--color-border)]">
+        <div class="grid gap-1">
+          <p class="ngs-small ngs-muted m-0" data-t="pied.marque">Angular est une marque de Google LLC. NgShelf est un projet indépendant, non affilié à Google.</p>
+          <p class="ngs-small ngs-muted m-0" data-t="pied.provisoire">Les ressources visibles dans cette maquette sont des démonstrations provisoires.</p>
+        </div>
+        <a class="ngs-signature" href="#" data-reseau="portfolio" data-signature aria-label="Conçu et développé par Sidy" data-t-aria="pied.signature.aria">
+          <span class="ngs-signature__mono" aria-hidden="true"><svg viewBox="0 0 32 32"><path data-signature-trace d="M22 9.5c-1.6-2.4-4.2-3.5-7-3.2-3.4.4-5.6 2.8-5 5.6.5 2.6 3.4 3.6 6.4 4.4 3.2.9 6.3 2 6.6 5 .3 3.2-2.6 5.6-6.4 5.6-3 0-5.4-1.2-6.8-3.4"/></svg></span>
+          <span class="ngs-signature__texte" aria-hidden="true"><small data-t="pied.signature">Développé par</small><strong>Sidy</strong></span>
+        </a>
+      </div>
+    </div>
+  </footer>
+  <!--/@footer-->
+
+  <!--@scripts-->
+  <script src="./js/config.js"></script>
+  <script src="./js/textes.fr.js"></script>
+  <script src="./js/registre.js"></script>
+  <script src="./js/contrat.js"></script>
+  <script src="./js/variantes.js"></script>
+  <script src="./js/apercu.js"></script>
+  <script src="./js/code.js"></script>
+  <script src="./js/zip.js"></script>
+  <script src="./js/livraison.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/Flip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/SplitText.min.js"></script>
+  <script src="./js/app.js"></script>
+  <!--/@scripts-->
+  <script src="./js/ressource.js"></script>
+</body>
+</html>
