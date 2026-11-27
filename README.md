@@ -1,59 +1,72 @@
-# Ngshelf
+# NgShelf
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.3.0.
+Catalogue public de ressources Angular : composants à voir en vrai, à copier et à adapter. Site 100 % statique, prérendu au build, sans serveur ni back-end (voir l'ADR 0001 dans `docs/adr/`).
 
-## Development server
+## Stack
 
-To start a local development server, run:
+| Élément     | Choix                                                               |
+| ----------- | ------------------------------------------------------------------- |
+| Framework   | Angular 22 (zoneless, `OnPush` par défaut, signals)                 |
+| Langage     | TypeScript 6, mode `strict` et `strictTemplates`                    |
+| Style       | Tailwind CSS v4 (`@tailwindcss/postcss`)                            |
+| Rendu       | Prérendu statique (`outputMode: "static"`), hydratation côté client |
+| Tests       | Vitest via `ng test`                                                |
+| Hébergement | Cloudflare Pages (plan gratuit)                                     |
+| Outils      | Node 26, npm 11                                                     |
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Démarrage
 
 ```bash
-ng generate --help
+npm ci
+npm start
 ```
 
-## Building
+Le site est servi sur `http://localhost:4200/` et se recharge à chaque modification.
 
-To build the project run:
+## Scripts
 
-```bash
-ng build
+| Commande               | Rôle                                                                  |
+| ---------------------- | --------------------------------------------------------------------- |
+| `npm start`            | serveur de développement                                              |
+| `npm run build`        | build de production avec prérendu, sortie dans `dist/ngshelf/browser` |
+| `npm run build:dev`    | build de développement (sans optimisation, avec sourcemaps)           |
+| `npm run watch`        | build de développement en continu                                     |
+| `npm test`             | tests unitaires (Vitest)                                              |
+| `npm run format`       | formate le dépôt avec Prettier                                        |
+| `npm run format:check` | vérifie le formatage sans modifier les fichiers                       |
+
+## Structure
+
+```
+src/
+├── app/
+│   ├── core/       services singleton (SEO, cookies, configuration)
+│   ├── shared/     éléments réutilisés par au moins deux features
+│   ├── features/   une feature par dossier, routes lazy
+│   └── layouts/    gabarits de page
+├── index.html
+├── main.ts / main.server.ts
+└── styles.css      Tailwind et tokens
+public/             favicon, icônes, robots.txt, _headers
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Les imports passent par les alias `@core/*`, `@shared/*`, `@features/*` et `@layouts/*`, jamais par des chemins relatifs remontants.
 
-## Running unit tests
+## Déploiement : Cloudflare Pages
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Le build produit uniquement des fichiers statiques, sans serveur Node.
 
-```bash
-ng test
-```
+| Réglage Cloudflare Pages | Valeur                 |
+| ------------------------ | ---------------------- |
+| Commande de build        | `npm run build`        |
+| Dossier de sortie        | `dist/ngshelf/browser` |
+| Variable `NODE_VERSION`  | `26`                   |
 
-## Running end-to-end tests
+`public/_headers` est copié dans la sortie : cache long et immuable sur les fichiers hachés (`.js`, `.css`, `.woff2`), pas de cache forcé sur le HTML, en-têtes de sécurité et Content-Security-Policy stricte (aucun script en ligne, d'où `inlineCritical: false` en production).
 
-For end-to-end (e2e) testing, run:
+`public/robots.txt` ne contient pas de ligne `Sitemap` tant que le nom de domaine n'est pas connu.
 
-```bash
-ng e2e
-```
+## Prérequis
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Node 26
+- npm 11
