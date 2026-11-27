@@ -31,6 +31,7 @@ Le site est servi sur `http://localhost:4200/` et se recharge à chaque modifica
 | `npm run build`        | build de production avec prérendu, sortie dans `dist/ngshelf/browser` |
 | `npm run build:dev`    | build de développement (sans optimisation, avec sourcemaps)           |
 | `npm run watch`        | build de développement en continu                                     |
+| `npm run lint`         | analyse ESLint (angular-eslint, règles angular-sidy)                  |
 | `npm test`             | tests unitaires (Vitest)                                              |
 | `npm run format`       | formate le dépôt avec Prettier                                        |
 | `npm run format:check` | vérifie le formatage sans modifier les fichiers                       |
