@@ -1,9 +1,20 @@
 import { inject } from '@angular/core';
 import { ResolveFn, Route, Routes } from '@angular/router';
+import {
+  seoAPropos,
+  seoAccueil,
+  seoCatalogue,
+  seoCategorie,
+  seoFiche,
+  seoSecteur,
+  seoType,
+  pageIntrouvableSeo,
+} from './app.seo';
 import { LIBELLES_CATEGORIE, LIBELLES_SECTEUR, LIBELLES_TYPE, TEXTES } from '@core/i18n/textes.fr';
 import { SEGMENT_SECTEURS } from '@core/registre/chemins';
 import { FicheService } from '@features/ressource/services/fiche.service';
 import { ficheResolver } from '@features/ressource/services/ressource.resolver';
+import { CLE_SEO } from '@core/seo/page-seo';
 import { ficheVitrineResolver } from '@shared/vitrine/donnees-vitrine';
 import { donneesVitrineResolver } from '@shared/vitrine/donnees-vitrine';
 import {
@@ -29,7 +40,7 @@ const titreFiche: ResolveFn<string> = async (route) => {
 const routesCategories: Route[] = CATEGORIES.map((categorie) => ({
   path: SEGMENT_CATEGORIE[categorie],
   title: TEXTES.pages.listes.titrePage(LIBELLES_CATEGORIE[categorie].pluriel),
-  data: { categorie },
+  data: { categorie, [CLE_SEO]: seoCategorie(categorie) },
   loadComponent: () =>
     import('@features/categorie/pages/categorie.component').then((m) => m.CategorieComponent),
 }));
@@ -37,7 +48,7 @@ const routesCategories: Route[] = CATEGORIES.map((categorie) => ({
 /** Page d'un type : /composants/modale, /blocs/navbar… Un type inconnu reçoit le titre « introuvable ». */
 const routesTypes: Route[] = CATEGORIES_TYPEES.map((categorie) => ({
   path: `${SEGMENT_CATEGORIE[categorie]}/:type`,
-  data: { categorie },
+  data: { categorie, [CLE_SEO]: seoType(categorie) },
   title: ((route) => {
     const type = TYPES_PAR_CATEGORIE[categorie].find((t) => t === route.paramMap.get('type'));
     return type
@@ -65,6 +76,7 @@ export const routes: Routes = [
       {
         path: '',
         title: TEXTES.pages.accueil.titrePage,
+        data: { [CLE_SEO]: seoAccueil },
         resolve: { donnees: donneesVitrineResolver },
         loadComponent: () =>
           import('@features/accueil/pages/accueil.component').then((m) => m.AccueilComponent),
@@ -72,6 +84,7 @@ export const routes: Routes = [
       {
         path: 'catalogue',
         title: TEXTES.pages.catalogue.titrePage,
+        data: { [CLE_SEO]: seoCatalogue },
         loadComponent: () =>
           import('@features/catalogue/pages/catalogue.component').then((m) => m.CatalogueComponent),
       },
@@ -80,12 +93,14 @@ export const routes: Routes = [
       {
         path: `${SEGMENT_SECTEURS}/:secteur`,
         title: titreSecteur,
+        data: { [CLE_SEO]: seoSecteur },
         loadComponent: () =>
           import('@features/secteur/pages/secteur.component').then((m) => m.SecteurComponent),
       },
       {
         path: 'a-propos',
         title: TEXTES.pages.apropos.titrePage,
+        data: { [CLE_SEO]: seoAPropos },
         resolve: { fiche: ficheVitrineResolver },
         loadComponent: () =>
           import('@features/a-propos/pages/a-propos.component').then((m) => m.AProposComponent),
@@ -93,13 +108,24 @@ export const routes: Routes = [
       {
         path: ':categorie/:type/:slug',
         title: titreFiche,
+        data: { [CLE_SEO]: seoFiche },
         resolve: { donnees: ficheResolver },
         loadComponent: () =>
           import('@features/ressource/pages/ressource.component').then((m) => m.RessourceComponent),
       },
+      // Prérendue en /404/, puis copiée en 404.html à la racine du build (scripts/dist/seo.ts) : l'hébergeur la
+      // sert avec le statut 404 à toute adresse inconnue.
+      {
+        path: '404',
+        title: TEXTES.pages.introuvable.titrePage,
+        data: { [CLE_SEO]: pageIntrouvableSeo },
+        loadComponent: () =>
+          import('@features/not-found/pages/not-found.component').then((m) => m.NotFoundComponent),
+      },
       {
         path: '**',
         title: TEXTES.pages.introuvable.titrePage,
+        data: { [CLE_SEO]: pageIntrouvableSeo },
         loadComponent: () =>
           import('@features/not-found/pages/not-found.component').then((m) => m.NotFoundComponent),
       },

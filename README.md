@@ -83,9 +83,10 @@ src/
 ├── main.ts / main.server.ts
 └── styles.css      Tailwind, tokens et composants
 registry/           ressources du catalogue : un meta.json par ressource
+scripts/seo/        sitemap, robots.txt et contrôles SEO du build (fonctions pures, testées) ; scripts/dist/seo.ts les lance
 scripts/dev/        lanceur de `npm start` (site et aperçus ensemble)
 scripts/registre/   script Node de build du registre (TypeScript, exécuté tel quel par Node 26) et ses tests
-public/             favicon, icônes, fonts/, icons/sprite.svg, theme-init.js, robots.txt, _headers
+public/             favicon, icônes, ngshelf-og.png, fonts/, icons/sprite.svg, theme-init.js, robots.txt, _headers
 ```
 
 Les imports passent par les alias `@core/*`, `@shared/*`, `@features/*`, `@layouts/*` et `@generated/*`, jamais par des chemins relatifs remontants.
@@ -102,6 +103,17 @@ Les imports passent par les alias `@core/*`, `@shared/*`, `@features/*`, `@layou
 - **Catalogue filtrable** : `/catalogue`, `/<categorie>`, `/<categorie>/<type>` et `/secteurs/<secteur>` partagent `ExplorateurComponent` (facettes, recherche, tri, puces, planche, « Afficher plus » par 24). Les filtres sont dans l'URL (`?c=composants&type=a,b&secteur=x&q=…&tri=az&reglables=1&animees=1`, logique pure et testée dans `core/registre/filtres.ts`) ; un changement de filtre remplace les paramètres sans entrée d'historique ni remontée de la page. Ces URL ne sont ni prérendues ni indexées : `IndexationService` pose le canonique du chemin sans paramètres et `noindex, follow` dès qu'un paramètre est présent. Les vignettes des cases sont statiques (aperçus live : phase suivante, ADR 0003).
 - **Routes** : toutes lazy. Prérendues depuis le registre (`getPrerenderParams`) : `/<categorie>` (composants, blocs, templates, designs), `/<categorie>/<type>` et `/secteurs/<secteur>` seulement si au moins une ressource, `/<categorie>/<type>/<slug>` pour chaque fiche. Un type ou un secteur sans ressource n'a pas de page : il n'est pas un lien dans la navigation.
 
+## Référencement (SEO)
+
+- **Source unique du domaine : `SITE.url`** (`src/app/core/config/site.config.ts`, `null` tant que le domaine n'est pas choisi). Format : `https://votre-domaine`, sans barre finale ni chemin (le build refuse le reste). Jamais de domaine deviné.
+  - **Renseignée** : canoniques, `og:url`, `og:image`, `twitter:image` et adresses du JSON-LD absolus ; `sitemap.xml` généré ; ligne `Sitemap:` ajoutée à `robots.txt`.
+  - **`null`** : le build affiche un `AVERTISSEMENT SEO`, les canoniques restent relatifs (`/blocs`), `og:url`, `og:image`, `twitter:image` et les adresses du JSON-LD sont omis (une adresse relative y serait invalide), pas de sitemap ni de ligne `Sitemap:`.
+- **`SeoService`** (`core/seo/`) est le seul propriétaire du `<head>` pour le référencement : description, canonique, `robots`, Open Graph, Twitter Card et JSON-LD, rendus depuis un état complet (titre, page, indexation d'une liste filtrée), donc sans doublon ni ordre à respecter. Le titre reste celui de `title` de chaque route ; `TitreSeoStrategy` (remplace la stratégie de titre du routeur) le transmet au service avec le SEO de la page, déclaré dans `data.seo` de `app.routes.ts` (fabriques de `app.seo.ts`). Textes : `core/i18n/textes-seo.ts` (descriptions de 160 caractères au plus, testé).
+- **Pages non indexables** (`noindex, follow`, sans canonique) : 404, type ou secteur inconnu, ressource introuvable, catégorie sans ressource (`/templates` tant qu'elle est vide). **Listes filtrées** (`/catalogue?c=blocs`, ADR 0012) : `noindex` et canonique vers la page de chemin, via `IndexationService`, qui délègue à `SeoService`.
+- **Données structurées** (JSON-LD, un `<script type="application/ld+json">` par bloc, `<` échappé) : `WebSite` avec `author: Person` (accueil), `AboutPage` (À propos), `CollectionPage` (catalogue, catégories, types, secteurs), `SoftwareSourceCode` (fiches : code à copier sous licence MIT, pas `SoftwareApplication` qui suppose un produit installable) et `BreadcrumbList` partout sauf l'accueil. L'auteur est une `Person` (projet individuel, pas une organisation), `sameAs` lu dans `SITE.auteur`, e-mail jamais publié. La CSP `script-src 'self'` ne concerne pas ces blocs de données non exécutables ; `verifier:dist` les accepte et refuse un JSON-LD invalide.
+- **Build** : `npm run build` enchaîne `scripts/dist/seo.ts` : `404.html` (la route `/404` prérendue, déplacée à la racine : l'hébergeur la sert avec le statut 404), `sitemap.xml` (catégories, types et secteurs non vides, fiches non dépréciées ; ni `/apercu/*`, ni paramètres ; sans `lastmod` car la date de modification n'est pas connue) et `robots.txt`. `npm run verifier:dist` recoupe chaque adresse du sitemap avec une page prérendue.
+- **Image de partage** : `public/ngshelf-og.png` (1200 × 630, logo sur fond blanc, fournie par `design/logo/`). **Pas de `hreflang`** : il n'existe qu'une version française. Pas de manifeste web : aucun n'est prévu dans le design.
+
 ## Déploiement : Cloudflare Pages
 
 Le build produit uniquement des fichiers statiques, sans serveur Node.
@@ -114,7 +126,7 @@ Le build produit uniquement des fichiers statiques, sans serveur Node.
 
 `public/_headers` est copié dans la sortie : cache long et immuable sur les fichiers hachés (`.js`, `.css`, `.woff2`), pas de cache forcé sur le HTML, en-têtes de sécurité et Content-Security-Policy stricte (aucun script en ligne, d'où `inlineCritical: false` en production).
 
-`public/robots.txt` ne contient pas de ligne `Sitemap` tant que le nom de domaine n'est pas connu.
+`public/robots.txt` ne contient pas de ligne `Sitemap` : `npm run build` l'ajoute dans la sortie quand `SITE.url` est renseignée (voir « Référencement (SEO) »).
 
 ## Prérequis
 

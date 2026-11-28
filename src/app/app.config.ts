@@ -1,17 +1,21 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import {
+  TitleStrategy,
   provideRouter,
   withComponentInputBinding,
   withInMemoryScrolling,
   withViewTransitions,
 } from '@angular/router';
 import { surTransitionCreee } from '@core/motion/transitions';
+import { TitreSeoStrategy } from '@core/seo/titre-seo.strategy';
 import { routes } from './app.routes';
 import { provideClientHydration, withNoIncrementalHydration } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    // Même titre que le routeur, puis le SEO de la page (description, Open Graph, JSON-LD).
+    { provide: TitleStrategy, useExisting: TitreSeoStrategy },
     provideRouter(
       routes,
       withComponentInputBinding(),

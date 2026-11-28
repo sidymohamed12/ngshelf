@@ -6,7 +6,7 @@
     "start": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/dev/lancer.ts",
     "start:site": "ng serve ngshelf",
     "start:apercus": "ng serve apercus",
-    "build": "ng build ngshelf && ng build apercus && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/dist/assembler.ts",
+    "build": "ng build ngshelf && ng build apercus && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/dist/assembler.ts && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/dist/seo.ts",
     "verifier:dist": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/dist/verifier.ts",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

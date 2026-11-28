@@ -23,13 +23,18 @@ export function cheminSecteur(secteur: Secteur): string {
   return `/${SEGMENT_SECTEURS}/${secteur}`;
 }
 
+/** Chemin de la fiche d'une ressource typée : /<categorie>/<type>/<slug>. */
+export function cheminRessource(categorie: Categorie, type: TypeRessource, slug: string): string {
+  return `/${SEGMENT_CATEGORIE[categorie]}/${type}/${slug}`;
+}
+
 /**
  * Chemin de la fiche d'une ressource : /<categorie>/<type>/<slug>.
  * Un design n'a pas encore de fiche (/designs/<slug>, phase ultérieure) : null, pas de lien.
  */
 export function cheminFiche(entree: EntreeIndex): string | null {
   if (entree.type === null) return null;
-  return `/${SEGMENT_CATEGORIE[entree.categorie]}/${entree.type}/${entree.slug}`;
+  return cheminRessource(entree.categorie, entree.type, entree.slug);
 }
 
 /** Catégorie correspondant à un segment d'URL (« composants » donne « composant »), sinon undefined. */
