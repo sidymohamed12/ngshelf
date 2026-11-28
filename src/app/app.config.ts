@@ -19,7 +19,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withComponentInputBinding(),
-      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
+      // Les ancres (#section) sont rejointes en douceur par `DefilementService`, pas par un saut du routeur.
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'disabled' }),
       // View Transitions du router seulement (ADR 0011) : pas de repli GSAP, saut en mouvement réduit.
       withViewTransitions({
         skipInitialTransition: true,

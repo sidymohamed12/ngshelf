@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LienSectionDirective } from '@core/motion/lien-section.directive';
 import { SITE } from '@core/config/site.config';
 import { TEXTES_ACCUEIL } from '@core/i18n/textes-accueil';
 import { TEXTES_APROPOS } from '@core/i18n/textes-apropos';
@@ -14,7 +15,7 @@ import { DOSSIER_RESSOURCE } from '../a-propos.donnees';
  */
 @Component({
   selector: 'app-contribuer-a-propos',
-  imports: [RouterLink, IconeComponent],
+  imports: [RouterLink, LienSectionDirective, IconeComponent],
   templateUrl: './contribuer-a-propos.component.html',
 })
 export class ContribuerAProposComponent {

@@ -23,6 +23,7 @@ import {
   BibliothequesMouvementService,
   ClasseLenis,
 } from './bibliotheques-mouvement.service';
+import { DefilementService } from './defilement.service';
 import { MotionService } from './motion.service';
 
 /** Posée sur l'élément de la page tant que sa mise en scène existe : c'est elle qui permet de cacher ce qui va entrer. */
@@ -84,6 +85,7 @@ export class MouvementPageService {
   readonly #hote = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly #motion = inject(MotionService);
   readonly #chargeur = inject(BibliothequesMouvementService);
+  readonly #defilement = inject(DefilementService);
 
   readonly #navigateur = signal(false);
   readonly #bibliotheques = signal<Bibliotheques | null>(null);
@@ -201,6 +203,7 @@ export class MouvementPageService {
     gsap.ticker.lagSmoothing(0);
     this.#lenis = lenis;
     this.#pasLenis = pas;
+    this.#defilement.enregistrerLenis(lenis);
     return lenis;
   }
 
@@ -209,6 +212,7 @@ export class MouvementPageService {
     if (this.#pasLenis) gsap.ticker.remove(this.#pasLenis);
     gsap.ticker.lagSmoothing(LAG_DEFAUT_MS, LAG_DEFAUT_IMAGE_MS);
     this.#lenis.destroy();
+    this.#defilement.enregistrerLenis(null);
     this.#lenis = null;
     this.#pasLenis = null;
   }

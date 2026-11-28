@@ -1,5 +1,6 @@
 import { Component, input, model } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LienSectionDirective } from '@core/motion/lien-section.directive';
 import { TEXTES } from '@core/i18n/textes.fr';
 import { TEXTES_ACCUEIL } from '@core/i18n/textes-accueil';
 import { ChoixSegmentComponent } from '@shared/components/choix-segment/choix-segment.component';
@@ -15,7 +16,13 @@ import { OPTIONS_DESIGNS, PIECES_HERO } from '../accueil.donnees';
  */
 @Component({
   selector: 'app-hero-accueil',
-  imports: [RouterLink, ChoixSegmentComponent, PieceVitrineComponent, IconeComponent],
+  imports: [
+    RouterLink,
+    LienSectionDirective,
+    ChoixSegmentComponent,
+    PieceVitrineComponent,
+    IconeComponent,
+  ],
   templateUrl: './hero-accueil.component.html',
 })
 export class HeroAccueilComponent {

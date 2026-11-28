@@ -9,9 +9,13 @@
             <svg appIcone="github-logo"></svg><span>{{ t.contribuerCta }}</span>
           </a>
         }
-        <a class="ngs-btn ngs-btn--secondary" routerLink="/" fragment="contribuer">{{
-          t.contribuerCta2
-        }}</a>
+        <a
+          class="ngs-btn ngs-btn--secondary"
+          routerLink="/"
+          scroll="manual"
+          fragment="contribuer"
+          >{{ t.contribuerCta2 }}</a
+        >
       </div>
       @if (!depot) {
         <p class="ngs-small ngs-muted m-0">{{ t.contribuerProvisoire }}</p>

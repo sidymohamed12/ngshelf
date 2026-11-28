@@ -30,9 +30,13 @@
               <div class="ngs-state famille__vide">
                 <span class="ngs-state__icon"><svg appIcone="browser" taille="lg"></svg></span>
                 <p class="ngs-state__title">{{ t.famillesTemplatesVide }}</p>
-                <a class="ngs-btn ngs-btn--secondary" routerLink="/" fragment="contribuer">{{
-                  t.famillesTemplatesCta
-                }}</a>
+                <a
+                  class="ngs-btn ngs-btn--secondary"
+                  routerLink="/"
+                  scroll="manual"
+                  fragment="contribuer"
+                  >{{ t.famillesTemplatesCta }}</a
+                >
               </div>
             }
             @case ('design') {

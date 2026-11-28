@@ -1,5 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LienSectionDirective } from '@core/motion/lien-section.directive';
 import { DESCRIPTIONS_CATEGORIE, LIBELLES_CATEGORIE, libelleCompte } from '@core/i18n/textes.fr';
 import { TEXTES_ACCUEIL } from '@core/i18n/textes-accueil';
 import { cheminCategorie } from '@core/registre/chemins';
@@ -64,7 +65,7 @@ function pastille(design: DesignContrat & { readonly slug: string }): PastilleDe
  */
 @Component({
   selector: 'app-familles-accueil',
-  imports: [RouterLink, IconeComponent, PlancheComponent],
+  imports: [RouterLink, LienSectionDirective, IconeComponent, PlancheComponent],
   templateUrl: './familles-accueil.component.html',
 })
 export class FamillesAccueilComponent {

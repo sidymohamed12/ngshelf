@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LienSectionDirective } from '@core/motion/lien-section.directive';
 import { TEXTES } from '@core/i18n/textes.fr';
 import { TEXTES_APROPOS } from '@core/i18n/textes-apropos';
 import { IconeComponent } from '@shared/components/icone/icone.component';
@@ -9,7 +10,7 @@ import { PIECES_APESANTEUR } from '../a-propos.donnees';
 /** Hero : le titre, deux actions, cinq vraies pièces du catalogue « en apesanteur » et trois faits. */
 @Component({
   selector: 'app-hero-a-propos',
-  imports: [RouterLink, IconeComponent, PieceVitrineComponent],
+  imports: [RouterLink, LienSectionDirective, IconeComponent, PieceVitrineComponent],
   templateUrl: './hero-a-propos.component.html',
 })
 export class HeroAProposComponent {
