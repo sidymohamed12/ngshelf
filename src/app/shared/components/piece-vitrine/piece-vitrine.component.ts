@@ -34,6 +34,8 @@ export class PieceVitrineComponent {
   /** Rapport largeur / hauteur de la scène (ex. « 16 / 9 »). */
   readonly ratio = input('16 / 9');
   readonly coin = input<'gauche' | 'droite'>('gauche');
+  /** Faux pour une pièce témoin sans lien vers sa fiche. */
+  readonly etiquette = input(true);
 
   protected readonly classe = computed(() => classeCategorie(this.piece().categorie));
   protected readonly libelle = computed(() => LIBELLES_TYPE[this.piece().type]);

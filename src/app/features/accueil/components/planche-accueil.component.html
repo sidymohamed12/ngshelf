@@ -1,0 +1,21 @@
+<section
+  class="ngs-container accueil-section accueil-section--planche"
+  aria-labelledby="planche-titre"
+  id="planche"
+>
+  <div class="planche-barre">
+    <div class="grid gap-2">
+      <h2 class="ngs-h2 m-0" id="planche-titre">{{ t.plancheH2 }}</h2>
+      <p class="ngs-lead m-0">{{ t.plancheAide }}</p>
+    </div>
+  </div>
+  <div class="accueil-planche" data-planche>
+    <app-planche
+      [entrees]="cases()"
+      [erreur]="entrees() === null"
+      [avecTitre]="false"
+      [reglages]="reglages()"
+      (reessayer)="reessayer.emit()"
+    />
+  </div>
+</section>

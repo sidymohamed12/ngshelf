@@ -1,7 +1,11 @@
-<section class="ngs-container grid content-start gap-6 py-16 xl:py-24" aria-labelledby="titre">
-  <h1 class="ngs-display m-0 max-w-[13ch]" id="titre">{{ textes.h1 }}</h1>
-  <p class="ngs-lead m-0 max-w-prose">{{ textes.lead }}</p>
-  <div>
-    <a class="ngs-btn ngs-btn--lg" routerLink="/catalogue">{{ textes.cta }}</a>
-  </div>
-</section>
+<app-hero-accueil
+  [design]="design()"
+  (designChange)="habiller($event)"
+  [reglages]="reglagesVitrine()"
+  [habillable]="habillable()"
+/>
+<app-planche-accueil [entrees]="entrees()" [reglages]="reglagesCases()" (reessayer)="recharger()" />
+<app-familles-accueil [entrees]="entrees()" [fiche]="fiche()" />
+<app-gestes-accueil [fiche]="fiche()" (reessayer)="recharger()" />
+<app-contrat-accueil [fiche]="fiche()" />
+<app-contribuer-accueil />

@@ -1,0 +1,80 @@
+<section class="hero" aria-labelledby="hero-titre">
+  <div class="ngs-container grid gap-10 xl:grid-cols-12 xl:items-center">
+    <div class="grid content-start gap-6 xl:col-span-5" data-hero-texte>
+      <h1 class="ngs-display hero__titre m-0" id="hero-titre">{{ textes.h1 }}</h1>
+      <p class="ngs-lead m-0">{{ textes.lead }}</p>
+      <p class="ngs-small m-0 font-semibold">{{ t.fait }}</p>
+      <div class="flex flex-wrap gap-3">
+        <a class="ngs-btn ngs-btn--lg" routerLink="/catalogue" data-magnet>{{ textes.cta }}</a>
+        <a class="ngs-btn ngs-btn--lg ngs-btn--secondary" routerLink="/" fragment="demarrer">{{
+          t.cta2
+        }}</a>
+      </div>
+      @if (habillable()) {
+        <div class="flex flex-wrap items-center gap-3 pt-2" data-hero-habiller>
+          <span class="ngs-label" id="habiller-label">{{ t.plancheDesign }}</span>
+          <app-choix-segment
+            [options]="options"
+            [valeur]="design()"
+            (valeurChange)="design.set($event)"
+            libelleId="habiller-label"
+          />
+        </div>
+      }
+    </div>
+
+    <figure
+      class="ngs-vitrine m-0 xl:col-span-7"
+      aria-labelledby="vitrine-legende"
+      data-vitrine
+      [style]="reglages() ?? null"
+    >
+      <div class="ngs-vitrine__cadre" data-vitrine-cadre>
+        <div class="ngs-vitrine__barre" aria-hidden="true">
+          <span class="ngs-vitrine__adresse">
+            <svg appIcone="browser" taille="sm"></svg>
+            <span>{{ t.vitrineAdresse }}</span>
+          </span>
+        </div>
+        <div class="ngs-vitrine__page">
+          <app-piece-vitrine
+            class="ngs-vitrine__piece"
+            data-piece
+            [piece]="pieces.navbar"
+            [reglages]="reglages()"
+            ratio="520 / 76"
+          />
+          <app-piece-vitrine
+            class="ngs-vitrine__piece"
+            data-piece
+            [piece]="pieces.hero"
+            [reglages]="reglages()"
+            ratio="520 / 300"
+          />
+        </div>
+      </div>
+      <div
+        class="ngs-vitrine__flottant ngs-vitrine__flottant--toast"
+        data-flottant
+        data-profondeur="8"
+      >
+        <app-piece-vitrine
+          [piece]="pieces.notification"
+          [reglages]="reglages()"
+          ratio="520 / 100"
+          coin="droite"
+        />
+      </div>
+      <div
+        class="ngs-vitrine__flottant ngs-vitrine__flottant--cal"
+        data-flottant
+        data-profondeur="14"
+      >
+        <app-piece-vitrine [piece]="pieces.calendrier" [reglages]="reglages()" ratio="520 / 560" />
+      </div>
+      <figcaption class="ngs-small ngs-muted mt-6 max-w-[34rem]" id="vitrine-legende">
+        {{ t.vitrineLegende }}
+      </figcaption>
+    </figure>
+  </div>
+</section>
