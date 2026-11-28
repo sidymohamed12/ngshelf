@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-28). Complète les ADR 0015 et 0017 (aperçus des cases) ; la décision sur la taille de la scène (hauteur fixe de 13 rem, aperçu de 520 px réduit) est remplacée pour les ressources qui déclarent leur taille.
+proposé (2026-11-28). Amendé par l'ADR 0026 : la case ne prend plus le rapport de `apercuCase` (toutes les cases ont le même rapport, l'aperçu est mis à l'échelle dedans) ; `apercuCase` reste la taille de rendu. Complète les ADR 0015 et 0017 (aperçus des cases) ; la décision sur la taille de la scène (hauteur fixe de 13 rem, aperçu de 520 px réduit) est remplacée pour les ressources qui déclarent leur taille.
 
 ## Contexte
 
