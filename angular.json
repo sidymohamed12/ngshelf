@@ -110,7 +110,8 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "include": ["**/*.spec.ts", "../scripts/**/*.spec.ts"]
+            "include": ["**/*.spec.ts", "../scripts/**/*.spec.ts"],
+            "setupFiles": ["src/test-setup.ts"]
           }
         },
         "lint": {
