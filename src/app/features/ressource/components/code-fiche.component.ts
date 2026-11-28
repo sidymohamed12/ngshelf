@@ -3,15 +3,16 @@ import {
   ElementRef,
   afterRenderEffect,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
   viewChildren,
 } from '@angular/core';
 import { TEXTES_FICHE } from '@core/i18n/textes-fiche';
 import { PressePapiersService } from '@core/presse-papiers/presse-papiers.service';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { colorer } from '@shared/livraison/colorer';
-import { VarianteLivree } from '@shared/livraison/livraison';
 import { FichierAffiche, FragmentCode } from '@shared/models/fiche.model';
 import { EtatFiche } from '../services/etat-fiche';
 import { FragmentCodeService } from '../services/fragment-code.service';
@@ -92,6 +93,11 @@ export class CodeFicheComponent {
   );
 
   constructor() {
+    // La variante se choisit dans la barre de l'aperçu : on revient au premier onglet du nouveau code.
+    effect(() => {
+      this.etat.variante();
+      untracked(() => this.actif.set(0));
+    });
     // Version CSS : le fragment est chargé au premier besoin, dans le navigateur seulement.
     afterRenderEffect(() => {
       const fiche = this.etat.fiche();
@@ -126,11 +132,6 @@ export class CodeFicheComponent {
     } catch {
       this.chargement.set('erreur');
     }
-  }
-
-  protected choisirVariante(variante: VarianteLivree): void {
-    this.etat.choisirVariante(variante);
-    this.actif.set(0);
   }
 
   protected selectionner(i: number): void {

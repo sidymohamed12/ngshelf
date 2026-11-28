@@ -208,6 +208,11 @@ export class RessourceComponent {
     this.rechargement.update((n) => n + 1);
   }
 
+  /** Interrupteur « Animations » de la barre : même état que celui du panneau de réglages. */
+  protected basculerAnimations(actives: boolean): void {
+    this.etat.animations.set(actives);
+  }
+
   protected animationsCoupees(): boolean {
     return !this.etat.animationsPermises();
   }

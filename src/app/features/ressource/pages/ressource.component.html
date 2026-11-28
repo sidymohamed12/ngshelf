@@ -90,65 +90,33 @@
         </div>
       </div>
 
-      <section class="ngs-preview app-apercu" aria-labelledby="apercu-titre">
-        <div class="ngs-preview__bar">
-          <h2 class="sr-only" id="apercu-titre">{{ textes.apercu.titre }}</h2>
-          <div class="ngs-seg" role="radiogroup" [attr.aria-label]="textes.apercu.taille">
-            @for (taille of tailles; track taille.valeur) {
-              <button
-                class="ngs-seg__btn"
-                type="button"
-                role="radio"
-                [attr.aria-checked]="etat.largeur() === taille.valeur"
-                [attr.aria-label]="largeurAriaLabel(taille.valeur)"
-                (click)="etat.largeur.set(taille.valeur)"
-              >
-                @if (taille.icone; as icone) {
-                  <svg [appIcone]="icone"></svg>
-                  <span class="tabular">{{ taille.valeur }}</span>
-                } @else {
-                  <span>{{ textes.apercu.tailleAutoCourt }}</span>
-                }
-              </button>
-            }
-          </div>
-          @if (motion()?.rejouer; as rejouer) {
-            <div class="flex flex-wrap gap-1">
-              @if (rejouer.entree) {
+      <div class="fiche-corps">
+        <section class="ngs-preview app-apercu" aria-labelledby="apercu-titre">
+          <div
+            class="ngs-preview__bar fiche-barre"
+            role="group"
+            [attr.aria-label]="textes.barre.titre"
+          >
+            <h2 class="sr-only" id="apercu-titre">{{ textes.apercu.titre }}</h2>
+            <div class="ngs-seg" role="radiogroup" [attr.aria-label]="textes.apercu.taille">
+              @for (taille of tailles; track taille.valeur) {
                 <button
-                  class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+                  class="ngs-seg__btn"
                   type="button"
-                  [disabled]="animationsCoupees()"
-                  (click)="rejouerEntree()"
+                  role="radio"
+                  [attr.aria-checked]="etat.largeur() === taille.valeur"
+                  [attr.aria-label]="largeurAriaLabel(taille.valeur)"
+                  (click)="etat.largeur.set(taille.valeur)"
                 >
-                  <svg appIcone="arrow-counter-clockwise"></svg>
-                  <span>{{ textes.apercu.rejouerEntree }}</span>
-                </button>
-              }
-              @if (rejouer.sortie) {
-                <button
-                  class="ngs-btn ngs-btn--ghost ngs-btn--sm"
-                  type="button"
-                  [disabled]="animationsCoupees()"
-                  (click)="rejouerSortie()"
-                >
-                  <svg appIcone="arrow-up-right"></svg>
-                  <span>{{ textes.apercu.rejouerSortie }}</span>
+                  @if (taille.icone; as icone) {
+                    <svg [appIcone]="icone"></svg>
+                    <span class="tabular">{{ taille.valeur }}</span>
+                  } @else {
+                    <span>{{ textes.apercu.tailleAutoCourt }}</span>
+                  }
                 </button>
               }
             </div>
-          }
-          <div class="ml-auto flex flex-wrap items-center gap-2">
-            <a
-              class="ngs-btn ngs-btn--ghost ngs-btn--sm"
-              target="_blank"
-              rel="noopener noreferrer"
-              [href]="urlAutonome()"
-            >
-              <svg appIcone="arrow-square-out"></svg>
-              <span>{{ textes.apercu.ouvrir }}</span>
-              <span class="sr-only">{{ textes.apercu.nouvelOnglet }}</span>
-            </a>
             <div class="ngs-seg" role="radiogroup" [attr.aria-label]="textes.apercu.mode">
               <button
                 class="ngs-seg__btn"
@@ -169,19 +137,110 @@
                 <svg appIcone="moon"></svg><span>{{ textes.apercu.sombre }}</span>
               </button>
             </div>
+            @if (f.designs.length > 1) {
+              <div class="fiche-barre__groupe">
+                <span class="ngs-label ngs-muted" id="barre-design">{{
+                  textes.reglages.design
+                }}</span>
+                <div class="ngs-seg" role="radiogroup" aria-labelledby="barre-design">
+                  @for (design of f.designs; track design.slug) {
+                    <button
+                      class="ngs-seg__btn"
+                      type="button"
+                      role="radio"
+                      [attr.aria-checked]="etat.design() === design.slug"
+                      (click)="etat.choisirDesign(design.slug)"
+                    >
+                      {{ design.nom }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+            <label class="ngs-switch fiche-barre__animations">
+              <input
+                type="checkbox"
+                [checked]="etat.animations() && motion() !== null"
+                [disabled]="motion() === null"
+                (change)="basculerAnimations($any($event.target).checked)"
+              />
+              <span class="ngs-switch__track" aria-hidden="true"></span>
+              <span>{{ textes.reglages.animations }}</span>
+            </label>
+            <div class="fiche-barre__groupe">
+              <span class="ngs-label ngs-muted" id="barre-variante">{{
+                textes.code.variante
+              }}</span>
+              <div class="ngs-seg" role="radiogroup" aria-labelledby="barre-variante">
+                <button
+                  class="ngs-seg__btn"
+                  type="button"
+                  role="radio"
+                  [attr.aria-checked]="etat.variante() === 'tailwind'"
+                  (click)="etat.choisirVariante('tailwind')"
+                >
+                  {{ textes.code.tailwind }}
+                </button>
+                <button
+                  class="ngs-seg__btn"
+                  type="button"
+                  role="radio"
+                  [attr.aria-checked]="etat.variante() === 'css'"
+                  (click)="etat.choisirVariante('css')"
+                >
+                  {{ textes.code.css }}
+                </button>
+              </div>
+            </div>
+            <div class="fiche-barre__fin">
+              @if (motion()?.rejouer; as rejouer) {
+                @if (rejouer.entree) {
+                  <button
+                    class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+                    type="button"
+                    [disabled]="animationsCoupees()"
+                    (click)="rejouerEntree()"
+                  >
+                    <svg appIcone="arrow-counter-clockwise"></svg>
+                    <span>{{ textes.apercu.rejouerEntree }}</span>
+                  </button>
+                }
+                @if (rejouer.sortie) {
+                  <button
+                    class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+                    type="button"
+                    [disabled]="animationsCoupees()"
+                    (click)="rejouerSortie()"
+                  >
+                    <svg appIcone="arrow-up-right"></svg>
+                    <span>{{ textes.apercu.rejouerSortie }}</span>
+                  </button>
+                }
+              }
+              <a
+                class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+                target="_blank"
+                rel="noopener noreferrer"
+                [href]="urlAutonome()"
+              >
+                <svg appIcone="arrow-square-out"></svg>
+                <span>{{ textes.apercu.ouvrir }}</span>
+                <span class="sr-only">{{ textes.apercu.nouvelOnglet }}</span>
+              </a>
+            </div>
           </div>
-        </div>
-        <app-apercu-frame
-          [slug]="f.meta.slug"
-          [titre]="f.meta.titre.fr"
-          [largeur]="etat.largeur()"
-          [reglages]="etat.messageApercu()"
-          [rechargement]="rechargement()"
-          [sortie]="sortie()"
-        />
-      </section>
+          <app-apercu-frame
+            [slug]="f.meta.slug"
+            [titre]="f.meta.titre.fr"
+            [largeur]="etat.largeur()"
+            [reglages]="etat.messageApercu()"
+            [rechargement]="rechargement()"
+            [sortie]="sortie()"
+          />
+        </section>
 
-      <app-reglages-fiche />
+        <app-reglages-fiche />
+      </div>
     </div>
 
     <div class="mt-16 grid gap-12 lg:mt-24 lg:grid-cols-12">

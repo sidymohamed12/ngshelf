@@ -25,44 +25,71 @@
   color: var(--color-text-muted);
 }
 
-/* Colonnes de même hauteur : l'aperçu s'étire jusqu'au bas du panneau de réglages. */
+/*
+  Haut de la fiche (ADR 0019) : un bandeau d'identité sur toute la largeur (titre, description, copie,
+  téléchargement, fiche technique), puis l'aperçu avec sa barre de réglages fréquents et, à droite, le panneau
+  de réglages par tokens, inchangé. L'aperçu s'étire jusqu'au bas du panneau.
+*/
 .fiche-haut {
+  display: grid;
+  gap: 1.5rem;
+}
+.fiche-corps {
   display: grid;
   gap: 1.5rem;
   align-items: stretch;
 }
 @media (min-width: 64rem) {
-  .fiche-haut {
+  .fiche-corps {
     grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-  }
-  .fiche-identite {
-    grid-column: 1 / -1;
   }
 }
 @media (min-width: 80rem) {
-  .fiche-haut {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 6fr) minmax(0, 3fr);
-  }
-  .fiche-identite {
-    grid-column: auto;
+  .fiche-corps {
+    grid-template-columns: minmax(0, 9fr) minmax(0, 3fr);
   }
 }
 .fiche-identite__corps {
   display: grid;
-  gap: 1.25rem;
+  gap: 1.25rem 3rem;
   align-content: start;
 }
-@media (min-width: 64rem) and (max-width: 79.99rem) {
+@media (min-width: 64rem) {
   .fiche-identite__corps {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
     align-items: start;
-    column-gap: 3rem;
   }
 }
-@media (min-width: 80rem) {
-  .fiche-identite__corps {
-    position: sticky;
-    top: calc(4.25rem + 1rem);
+
+/* Barre de réglages fréquents de l'aperçu : taille, mode, design, animations, version du code. */
+.fiche-barre {
+  gap: 0.5rem 1rem;
+}
+.fiche-barre__groupe {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 100%;
+}
+.fiche-barre__groupe .ngs-seg {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.fiche-barre__animations {
+  position: relative;
+}
+.fiche-barre__fin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  margin-left: auto;
+}
+@media (max-width: 47.99rem) {
+  .fiche-barre__fin {
+    margin-left: 0;
   }
 }
 
