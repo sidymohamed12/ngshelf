@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { VIGNETTES_SIMULTANEES_MAX, VignettesService } from '@core/apercu/vignettes.service';
-import { messagePret } from '@shared/apercu/protocole';
+import { messageManipulation, messagePret } from '@shared/apercu/protocole';
 import { ValeursContrat } from '@shared/livraison/livraison';
 import {
   ApercuVignetteComponent,
@@ -10,6 +10,7 @@ import {
   dimensionsVignette,
   urlVignette,
 } from './apercu-vignette.component';
+import { DIMENSIONS_RENDU } from '@shared/models/taxonomie.model';
 
 describe('urlVignette', () => {
   it('demande la vignette, clair et animée par défaut', () => {
@@ -45,11 +46,46 @@ describe('dimensionsVignette', () => {
   });
 
   it('n’agrandit jamais : une case large reçoit l’aperçu à sa taille', () => {
-    expect(dimensionsVignette(900, 300)).toEqual({ largeur: 900, hauteur: 300, echelle: 1 });
+    expect(dimensionsVignette(900, 300)).toEqual({
+      largeur: 900,
+      hauteur: 300,
+      echelle: 1,
+      gauche: 0,
+      haut: 0,
+    });
+  });
+
+  it('avec une taille déclarée, tient en entier : zone plus haute que le rapport, centré en hauteur', () => {
+    const d = dimensionsVignette(480, 360, { largeur: 960, hauteur: 540 });
+    expect(d).toEqual({ largeur: 960, hauteur: 540, echelle: 0.5, gauche: 0, haut: 45 });
+  });
+
+  it('avec une taille déclarée, tient en entier : zone plus large que le rapport, centré en largeur', () => {
+    const d = dimensionsVignette(480, 360, { largeur: 520, hauteur: 600 });
+    expect(d.echelle).toBeCloseTo(0.6);
+    expect(d.haut).toBe(0);
+    expect(d.gauche).toBe(84);
+    expect(d.largeur * d.echelle).toBeLessThanOrEqual(480);
+    expect(d.hauteur * d.echelle).toBeLessThanOrEqual(360);
+  });
+
+  it('rendu grand écran : 1440 × 1080 dans une case 4 / 3, tout le cadre est occupé sans bande', () => {
+    const d = dimensionsVignette(337, 253, DIMENSIONS_RENDU['grand-ecran']);
+    expect(d.largeur).toBe(1440);
+    expect(d.hauteur).toBe(1080);
+    expect(d.echelle).toBeCloseTo(337 / 1440);
+    expect(d.gauche).toBe(0);
+    expect(d.haut).toBeLessThanOrEqual(1);
   });
 
   it('renvoie des dimensions nulles tant que la case n’est pas mesurée', () => {
-    expect(dimensionsVignette(0, 0)).toEqual({ largeur: 0, hauteur: 0, echelle: 1 });
+    expect(dimensionsVignette(0, 0)).toEqual({
+      largeur: 0,
+      hauteur: 0,
+      echelle: 1,
+      gauche: 0,
+      haut: 0,
+    });
   });
 });
 
@@ -120,6 +156,24 @@ describe('ApercuVignetteComponent', () => {
     expect(iframe?.getAttribute('tabindex')).toBe('-1');
     expect(iframe?.getAttribute('src')).toBe('/apercu/boutons?vignette=1');
     expect(fixture.nativeElement.getAttribute('data-etat')).toBe('chargement');
+  });
+
+  it('montre un squelette (jamais l’icône) en attente et pendant le chargement', async () => {
+    demarrer();
+    const hote = fixture.nativeElement as HTMLElement;
+    expect(hote.querySelector('app-squelette')).not.toBeNull();
+    expect(hote.querySelector('.ngs-vignette__icone')).toBeNull();
+    await visible(true);
+    expect(hote.getAttribute('data-etat')).toBe('chargement');
+    expect(hote.querySelector('app-squelette')).not.toBeNull();
+    expect(hote.querySelector('.ngs-vignette__icone')).toBeNull();
+  });
+
+  it('garde l’icône comme repli seulement : échec ou économie de données, sans squelette', async () => {
+    demarrer(true);
+    const hote = fixture.nativeElement as HTMLElement;
+    expect(hote.querySelector('.ngs-vignette__icone')).not.toBeNull();
+    expect(hote.querySelector('app-squelette')).toBeNull();
   });
 
   it('n’attend pas : une case qui sort avant le délai ne charge rien', async () => {
@@ -216,5 +270,128 @@ describe('ApercuVignetteComponent', () => {
     expect(fixture.nativeElement.getAttribute('data-etat')).toBe('erreur');
     expect(cadre()).toBeNull();
     expect(TestBed.inject(VignettesService).actives).toBe(0);
+  });
+
+  describe('aperçu interactif (ADR 0017)', () => {
+    function pret(): void {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: messagePret(),
+          origin: 'null',
+          source: cadre()?.contentWindow ?? null,
+        }),
+      );
+      fixture.detectChanges();
+    }
+
+    function depuisLApercu(donnees: unknown, origine = 'null'): void {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: donnees,
+          origin: origine,
+          source: cadre()?.contentWindow ?? null,
+        }),
+      );
+      fixture.detectChanges();
+    }
+
+    const bouton = (): HTMLButtonElement | null =>
+      (fixture.nativeElement as HTMLElement).querySelector('button.ngs-vignette__manip');
+
+    it('reste un décor sans bouton quand elle n’est pas interactive (vitrines)', async () => {
+      demarrer();
+      await visible(true);
+      pret();
+      expect(bouton()).toBeNull();
+      expect(fixture.nativeElement.classList).not.toContain('ngs-vignette--interactif');
+    });
+
+    it('garde la sandbox et le tabindex -1, et ajoute un seul bouton « Manipuler l’aperçu » une fois prête', async () => {
+      demarrer();
+      fixture.componentRef.setInput('interactif', true);
+      await visible(true);
+      expect(bouton()).toBeNull();
+      pret();
+      const iframe = cadre();
+      expect(iframe?.getAttribute('sandbox')).toBe('allow-scripts');
+      expect(iframe?.getAttribute('tabindex')).toBe('-1');
+      expect(iframe?.getAttribute('allow')).toBe('');
+      expect(iframe?.getAttribute('title')).toBe('Aperçu interactif de Boutons');
+      expect(fixture.nativeElement.querySelectorAll('button')).toHaveLength(1);
+      expect(bouton()?.getAttribute('aria-label')).toBe('Manipuler l’aperçu de Boutons');
+      expect(bouton()?.getAttribute('aria-pressed')).toBe('false');
+    });
+
+    it('donne le focus à l’iframe quand on active le bouton', async () => {
+      demarrer();
+      fixture.componentRef.setInput('interactif', true);
+      await visible(true);
+      pret();
+      const focus = vi.spyOn(cadre() as HTMLIFrameElement, 'focus');
+      bouton()?.click();
+      expect(focus).toHaveBeenCalledOnce();
+    });
+
+    it('affiche l’état actif annoncé par l’aperçu et l’annonce aux lecteurs d’écran', async () => {
+      demarrer();
+      fixture.componentRef.setInput('interactif', true);
+      await visible(true);
+      pret();
+      depuisLApercu(messageManipulation(true));
+      expect(fixture.nativeElement.classList).toContain('ngs-vignette--actif');
+      expect(bouton()?.getAttribute('aria-pressed')).toBe('true');
+      expect(fixture.nativeElement.querySelector('.ngs-vignette__indice')?.textContent).toContain(
+        'Échap',
+      );
+      expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain(
+        'Échap pour rendre la main',
+      );
+      depuisLApercu(messageManipulation(false));
+      expect(fixture.nativeElement.classList).not.toContain('ngs-vignette--actif');
+      expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent?.trim()).toBe('');
+    });
+
+    it('reprend le focus sur le bouton quand l’aperçu rend la main avec Échap', async () => {
+      demarrer();
+      fixture.componentRef.setInput('interactif', true);
+      await visible(true);
+      pret();
+      const focus = vi.spyOn(bouton() as HTMLButtonElement, 'focus');
+      depuisLApercu(messageManipulation(true));
+      depuisLApercu(messageManipulation(false, false));
+      expect(focus).not.toHaveBeenCalled();
+      depuisLApercu(messageManipulation(true));
+      depuisLApercu(messageManipulation(false, true));
+      expect(focus).toHaveBeenCalledOnce();
+    });
+
+    it('ignore une manipulation qui ne vient pas de l’iframe de la case', async () => {
+      demarrer();
+      fixture.componentRef.setInput('interactif', true);
+      await visible(true);
+      pret();
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: messageManipulation(true),
+          origin: 'null',
+          source: window,
+        }),
+      );
+      fixture.detectChanges();
+      expect(fixture.nativeElement.classList).not.toContain('ngs-vignette--actif');
+      depuisLApercu(messageManipulation(true), 'https://evil.test');
+      expect(fixture.nativeElement.classList).not.toContain('ngs-vignette--actif');
+    });
+
+    it('rend la main quand la case sort du viewport', async () => {
+      demarrer();
+      fixture.componentRef.setInput('interactif', true);
+      await visible(true);
+      pret();
+      depuisLApercu(messageManipulation(true));
+      await visible(false);
+      expect(fixture.nativeElement.classList).not.toContain('ngs-vignette--actif');
+      expect(bouton()).toBeNull();
+    });
   });
 });

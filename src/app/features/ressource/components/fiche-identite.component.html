@@ -1,0 +1,70 @@
+<header class="fiche-identite">
+  <div class="fiche-identite__tete">
+    <div class="grid min-w-0 gap-3">
+      <div class="flex flex-wrap gap-1.5">
+        <span class="ngs-badge" [class]="'ngs-badge ' + classeCategorie()">{{ categorie() }}</span>
+        @if (fiche().meta.contratTokens !== null) {
+          <span class="ngs-badge ngs-badge--reglable">{{ textes.badges.reglable }}</span>
+        }
+        @if (fiche().meta.statut === 'provisoire') {
+          <span class="ngs-badge ngs-badge--provisoire">{{ textes.badges.provisoire }}</span>
+        }
+        @if (motion()) {
+          <span class="ngs-badge ngs-badge--anime">
+            <svg appIcone="wave-sine" taille="sm"></svg>
+            {{ textes.meta.animations }}
+          </span>
+        }
+      </div>
+      <h1 class="ngs-h2 m-0">{{ fiche().meta.titre.fr }}</h1>
+    </div>
+    <div class="fiche-identite__actions">
+      <button class="ngs-btn ngs-btn--lg" type="button" (click)="copier.emit()">
+        <svg appIcone="copy"></svg>
+        <span>{{ copie() ? textes.copie : textes.copier }}</span>
+      </button>
+      <button
+        class="ngs-btn ngs-btn--lg ngs-btn--secondary"
+        type="button"
+        [disabled]="telechargement() === 'encours'"
+        (click)="telecharger.emit()"
+      >
+        <svg appIcone="download-simple"></svg>
+        <span>{{ libelleTelecharger() }}</span>
+      </button>
+    </div>
+  </div>
+  <p class="m-0 ngs-muted fiche-identite__description">{{ fiche().meta.description.fr }}</p>
+  @if (telechargement() === 'erreur') {
+    <p class="m-0 ngs-small ngs-contrast--ko" role="alert">
+      {{ textes.zipErreur }}
+      <button class="ngs-link" type="button" (click)="telecharger.emit()">
+        {{ textes.reessayer }}
+      </button>
+    </p>
+  }
+  <dl class="fiche-meta">
+    <div>
+      <dt>{{ textes.meta.angular }}</dt>
+      <dd>{{ textes.meta.angularValeur(fiche().meta.angularMin) }}</dd>
+    </div>
+    <div>
+      <dt>{{ textes.meta.dependances }}</dt>
+      <dd>{{ textes.meta.aucune }}</dd>
+    </div>
+    <div>
+      <dt>{{ textes.meta.animations }}</dt>
+      <dd>{{ momentsTexte() }}</dd>
+    </div>
+    <div>
+      <dt>{{ textes.meta.licence }}</dt>
+      <dd>{{ fiche().meta.licence }}</dd>
+    </div>
+    <div>
+      <dt>{{ textes.meta.ajout }}</dt>
+      <dd>
+        <time [attr.datetime]="fiche().meta.ajouteLe">{{ fiche().meta.ajouteLe }}</time>
+      </dd>
+    </div>
+  </dl>
+</header>

@@ -101,9 +101,8 @@ describe('validerRegistre', () => {
     expect(resultat.metas).toHaveLength(2);
   });
 
-  it('accepte une taille de case et un motion complet', () => {
-    expect(valider(ressource({ motion: MOTION, tailleCase: 'large-haute' }))).toEqual([]);
-    expect(valider(ressource({ tailleCase: 'normale' }))).toEqual([]);
+  it('accepte un motion complet', () => {
+    expect(valider(ressource({ motion: MOTION }))).toEqual([]);
   });
 
   it('accepte rejouer quand la sortie figure dans les moments', () => {
@@ -115,11 +114,41 @@ describe('validerRegistre', () => {
     expect(valider(ressource({ motion }))).toEqual([]);
   });
 
-  it('refuse une taille de case inconnue', () => {
-    expect(valider(ressource({ tailleCase: 'geante' }))).toEqual([
-      expect.stringContaining(
-        "« tailleCase » doit être l'une de : normale, large, haute, large-haute",
-      ),
+  it('accepte une taille de rendu d’aperçu de case', () => {
+    expect(valider(ressource({ apercuCase: { largeur: 960, hauteur: 540 } }))).toEqual([]);
+  });
+
+  it('refuse une taille de rendu d’aperçu hors bornes, incomplète ou inconnue', () => {
+    expect(valider(ressource({ apercuCase: { largeur: 100, hauteur: 540 } }))).toEqual([
+      expect.stringContaining('« apercuCase.largeur » doit être un entier de 240 à 1600'),
+    ]);
+    expect(valider(ressource({ apercuCase: { largeur: 960 } }))).toEqual([
+      expect.stringContaining('« apercuCase.hauteur »'),
+    ]);
+    expect(valider(ressource({ apercuCase: { largeur: 960, hauteur: 540, ratio: 2 } }))).toEqual([
+      expect.stringContaining('champ inconnu « ratio »'),
+    ]);
+    expect(valider(ressource({ apercuCase: '16/9' }))).toEqual([
+      expect.stringContaining('« apercuCase » doit être'),
+    ]);
+  });
+
+  it('accepte le rendu grand écran de l’aperçu (ADR 0027)', () => {
+    expect(valider(ressource({ rendu: 'grand-ecran' }))).toEqual([]);
+  });
+
+  it('refuse un rendu inconnu, ou combiné à une taille de rendu déclarée', () => {
+    expect(valider(ressource({ rendu: 'tablette' }))).toEqual([
+      expect.stringContaining("« rendu » doit valoir l'une de ces valeurs : grand-ecran"),
+    ]);
+    expect(
+      valider(ressource({ rendu: 'grand-ecran', apercuCase: { largeur: 960, hauteur: 540 } })),
+    ).toEqual([expect.stringContaining('« rendu » et « apercuCase » sont exclusifs')]);
+  });
+
+  it('refuse l’ancienne taille de case, supprimée avec la planche uniforme (ADR 0026)', () => {
+    expect(valider(ressource({ tailleCase: 'large' }))).toEqual([
+      expect.stringContaining('champ inconnu « tailleCase »'),
     ]);
   });
 
@@ -170,11 +199,14 @@ describe('validerRegistre', () => {
 
   it('refuse ces options sur un design, qui n’a ni animation ni case propre', () => {
     const erreurs = validerRegistre([
-      { chemin: 'designs/fleuve', meta: design({ motion: null, tailleCase: 'large' }) },
+      {
+        chemin: 'designs/fleuve',
+        meta: design({ motion: null, apercuCase: { largeur: 520, hauteur: 400 } }),
+      },
     ]).erreurs;
     expect(erreurs).toEqual([
       expect.stringContaining('champ inconnu « motion »'),
-      expect.stringContaining('champ inconnu « tailleCase »'),
+      expect.stringContaining('champ inconnu « apercuCase »'),
     ]);
   });
 

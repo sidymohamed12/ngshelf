@@ -1,10 +1,12 @@
 import { Service, signal } from '@angular/core';
 
 /**
- * Nombre maximal de vignettes vivantes en même temps (ADR 0015). Chacune est une iframe qui démarre
- * l'application d'aperçus : au-delà, les cases restent sur leur icône jusqu'à ce qu'une place se libère.
+ * Nombre maximal de vignettes vivantes en même temps (ADR 0015, relevé de 8 à 12 par l'ADR 0017). Chacune est
+ * une iframe qui démarre l'application d'aperçus (environ 12 Mo mesurés chacune) : au-delà, les cases restent
+ * sur leur icône jusqu'à ce qu'une place se libère. Douze couvrent une fenêtre de 2560 px de large et de
+ * 1500 px de haut ; avec huit, les cases en trop restaient sur l'icône sur un grand écran.
  */
-export const VIGNETTES_SIMULTANEES_MAX = 8;
+export const VIGNETTES_SIMULTANEES_MAX = 12;
 
 /**
  * Répartit les places de vignettes vivantes entre les cases visibles. Une vignette réserve une place

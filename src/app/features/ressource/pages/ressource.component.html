@@ -24,153 +24,25 @@
       </ol>
     </nav>
 
-    <div class="fiche-haut mt-6">
-      <div class="fiche-identite">
-        <div class="fiche-identite__corps">
-          <div class="grid content-start gap-4">
-            <div class="flex flex-wrap gap-1.5">
-              <span class="ngs-badge" [class]="'ngs-badge ' + classeCategorie()">{{
-                chemins()[1]?.libelle
-              }}</span>
-              @if (f.meta.contratTokens !== null) {
-                <span class="ngs-badge ngs-badge--reglable">{{ textes.badges.reglable }}</span>
-              }
-              @if (f.meta.statut === 'provisoire') {
-                <span class="ngs-badge ngs-badge--provisoire">{{ textes.badges.provisoire }}</span>
-              }
-              @if (motion()) {
-                <span class="ngs-badge ngs-badge--anime">
-                  <svg appIcone="wave-sine" taille="sm"></svg>
-                  {{ textes.meta.animations }}
-                </span>
-              }
-            </div>
-            <h1 class="ngs-h2 m-0">{{ f.meta.titre.fr }}</h1>
-            <p class="m-0 ngs-muted">{{ f.meta.description.fr }}</p>
-          </div>
-          <div class="grid content-start gap-4">
-            <div class="grid gap-3 sm:flex sm:flex-wrap xl:grid">
-              <button class="ngs-btn ngs-btn--lg" type="button" (click)="copierTout()">
-                <svg appIcone="copy"></svg>
-                <span>{{ copie() ? textes.copie : textes.copier }}</span>
-              </button>
-              <button
-                class="ngs-btn ngs-btn--lg ngs-btn--secondary"
-                type="button"
-                [disabled]="telechargement() === 'encours'"
-                (click)="telecharger()"
-              >
-                <svg appIcone="download-simple"></svg>
-                <span>{{ libelleTelecharger() }}</span>
-              </button>
-            </div>
-            @if (telechargement() === 'erreur') {
-              <p class="m-0 ngs-small ngs-contrast--ko" role="alert">
-                {{ textes.zipErreur }}
-                <button class="ngs-link" type="button" (click)="telecharger()">
-                  {{ textes.reessayer }}
-                </button>
-              </p>
-            }
-            <dl class="ngs-meta">
-              <dt>{{ textes.meta.angular }}</dt>
-              <dd>{{ textes.meta.angularValeur(f.meta.angularMin) }}</dd>
-              <dt>{{ textes.meta.dependances }}</dt>
-              <dd>{{ textes.meta.aucune }}</dd>
-              <dt>{{ textes.meta.animations }}</dt>
-              <dd>{{ momentsTexte() }}</dd>
-              <dt>{{ textes.meta.licence }}</dt>
-              <dd>{{ f.meta.licence }}</dd>
-              <dt>{{ textes.meta.ajout }}</dt>
-              <dd>
-                <time [attr.datetime]="f.meta.ajouteLe">{{ f.meta.ajouteLe }}</time>
-              </dd>
-            </dl>
-          </div>
-        </div>
-      </div>
+    <app-fiche-identite
+      class="mt-6 block"
+      [fiche]="f"
+      [categorie]="chemins()[1]?.libelle ?? ''"
+      [copie]="copie()"
+      [telechargement]="telechargement()"
+      (copier)="copierTout()"
+      (telecharger)="telecharger()"
+    />
 
+    <div class="fiche-corps mt-6">
       <section class="ngs-preview app-apercu" aria-labelledby="apercu-titre">
-        <div class="ngs-preview__bar">
-          <h2 class="sr-only" id="apercu-titre">{{ textes.apercu.titre }}</h2>
-          <div class="ngs-seg" role="radiogroup" [attr.aria-label]="textes.apercu.taille">
-            @for (taille of tailles; track taille.valeur) {
-              <button
-                class="ngs-seg__btn"
-                type="button"
-                role="radio"
-                [attr.aria-checked]="etat.largeur() === taille.valeur"
-                [attr.aria-label]="largeurAriaLabel(taille.valeur)"
-                (click)="etat.largeur.set(taille.valeur)"
-              >
-                @if (taille.icone; as icone) {
-                  <svg [appIcone]="icone"></svg>
-                  <span class="tabular">{{ taille.valeur }}</span>
-                } @else {
-                  <span>{{ textes.apercu.tailleAutoCourt }}</span>
-                }
-              </button>
-            }
-          </div>
-          @if (motion()?.rejouer; as rejouer) {
-            <div class="flex flex-wrap gap-1">
-              @if (rejouer.entree) {
-                <button
-                  class="ngs-btn ngs-btn--ghost ngs-btn--sm"
-                  type="button"
-                  [disabled]="animationsCoupees()"
-                  (click)="rejouerEntree()"
-                >
-                  <svg appIcone="arrow-counter-clockwise"></svg>
-                  <span>{{ textes.apercu.rejouerEntree }}</span>
-                </button>
-              }
-              @if (rejouer.sortie) {
-                <button
-                  class="ngs-btn ngs-btn--ghost ngs-btn--sm"
-                  type="button"
-                  [disabled]="animationsCoupees()"
-                  (click)="rejouerSortie()"
-                >
-                  <svg appIcone="arrow-up-right"></svg>
-                  <span>{{ textes.apercu.rejouerSortie }}</span>
-                </button>
-              }
-            </div>
-          }
-          <div class="ml-auto flex flex-wrap items-center gap-2">
-            <a
-              class="ngs-btn ngs-btn--ghost ngs-btn--sm"
-              target="_blank"
-              rel="noopener noreferrer"
-              [href]="urlAutonome()"
-            >
-              <svg appIcone="arrow-square-out"></svg>
-              <span>{{ textes.apercu.ouvrir }}</span>
-              <span class="sr-only">{{ textes.apercu.nouvelOnglet }}</span>
-            </a>
-            <div class="ngs-seg" role="radiogroup" [attr.aria-label]="textes.apercu.mode">
-              <button
-                class="ngs-seg__btn"
-                type="button"
-                role="radio"
-                [attr.aria-checked]="etat.mode() === 'clair'"
-                (click)="etat.mode.set('clair')"
-              >
-                <svg appIcone="sun"></svg><span>{{ textes.apercu.clair }}</span>
-              </button>
-              <button
-                class="ngs-seg__btn"
-                type="button"
-                role="radio"
-                [attr.aria-checked]="etat.mode() === 'sombre'"
-                (click)="etat.mode.set('sombre')"
-              >
-                <svg appIcone="moon"></svg><span>{{ textes.apercu.sombre }}</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <h2 class="sr-only" id="apercu-titre">{{ textes.apercu.titre }}</h2>
+        <app-barre-apercu
+          [motion]="motion()"
+          [urlAutonome]="urlAutonome()"
+          (rejouerEntree)="rejouerEntree()"
+          (rejouerSortie)="rejouerSortie()"
+        />
         <app-apercu-frame
           [slug]="f.meta.slug"
           [titre]="f.meta.titre.fr"
@@ -181,11 +53,13 @@
         />
       </section>
 
-      <app-reglages-fiche />
+      <div class="fiche-corps__reglages">
+        <app-reglages-fiche />
+      </div>
     </div>
 
-    <div class="mt-16 grid gap-12 lg:mt-24 lg:grid-cols-12">
-      <div class="min-w-0 lg:col-span-8">
+    <div class="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-12">
+      <div class="fiche-code lg:col-span-8">
         <app-code-fiche />
       </div>
       <div class="grid min-w-0 content-start gap-12 lg:col-span-4">
@@ -245,7 +119,7 @@
     </div>
 
     @if (autres().length > 0) {
-      <section class="mt-24 grid gap-6" aria-labelledby="autres-titre">
+      <section class="mt-16 grid gap-6" aria-labelledby="autres-titre">
         <h2 class="ngs-h3 m-0" id="autres-titre">{{ textes.autres }}</h2>
         <app-planche [entrees]="autres()" />
       </section>

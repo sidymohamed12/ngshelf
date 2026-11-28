@@ -16,15 +16,15 @@ import { cheminCategorie, cheminType } from '@core/registre/chemins';
 import { PlancheComponent } from '@shared/components/planche/planche.component';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
-import { Moment } from '@shared/models/motion.model';
-import { classeCategorie } from '@shared/utils/taxonomie-affichage';
 import { RegistreService } from '@core/registre/registre.service';
 import { parametresVersRecherche } from '@shared/apercu/parametres';
 import { ecrireRechercheApercu } from '@shared/apercu/reglages-url';
 import { ApercuFrameComponent, urlApercu } from '../components/apercu-frame.component';
+import { BarreApercuComponent } from '../components/barre-apercu.component';
+import { FicheIdentiteComponent } from '../components/fiche-identite.component';
 import { CodeFicheComponent } from '../components/code-fiche.component';
 import { ReglagesFicheComponent } from '../components/reglages-fiche.component';
-import { EtatFiche, LargeurApercu } from '../services/etat-fiche';
+import { EtatFiche } from '../services/etat-fiche';
 import { FicheService, ResultatFiche } from '../services/fiche.service';
 import {
   ContenuLivre,
@@ -35,16 +35,6 @@ import {
 
 const DELAI_RETOUR_MS = 2200;
 const NOMBRE_AUTRES = 3;
-
-const TAILLES: readonly {
-  valeur: LargeurApercu;
-  icone: 'device-mobile' | 'device-tablet' | 'desktop' | null;
-}[] = [
-  { valeur: 'auto', icone: null },
-  { valeur: 390, icone: 'device-mobile' },
-  { valeur: 768, icone: 'device-tablet' },
-  { valeur: 1280, icone: 'desktop' },
-];
 
 /**
  * Fiche d'une ressource, URL /<categorie>/<type>/<slug> (ADR 0004). Les données arrivent du resolver,
@@ -58,6 +48,8 @@ const TAILLES: readonly {
     IconeComponent,
     PlancheComponent,
     ApercuFrameComponent,
+    BarreApercuComponent,
+    FicheIdentiteComponent,
     ReglagesFicheComponent,
     CodeFicheComponent,
   ],
@@ -76,7 +68,6 @@ export class RessourceComponent {
   protected readonly textes = TEXTES_FICHE;
   protected readonly erreur = TEXTES.etats;
   protected readonly introuvable = TEXTES.pages.ressource;
-  protected readonly tailles = TAILLES;
   readonly #fiches = inject(FicheService);
   readonly #registre = inject(RegistreService);
   readonly #livraison = inject(LivraisonFicheService);
@@ -98,10 +89,6 @@ export class RessourceComponent {
 
   protected readonly meta = computed(() => this.fiche()?.meta ?? null);
   protected readonly motion = computed(() => this.meta()?.motion ?? null);
-  protected readonly classeCategorie = computed(() => {
-    const m = this.meta();
-    return m ? classeCategorie(m.categorie) : '';
-  });
   protected readonly chemins = computed(() => {
     const m = this.meta();
     if (!m) return [];
@@ -109,12 +96,6 @@ export class RessourceComponent {
       { libelle: LIBELLES_CATEGORIE[m.categorie].pluriel, chemin: cheminCategorie(m.categorie) },
       { libelle: LIBELLES_TYPE[m.type], chemin: cheminType(m.categorie, m.type) },
     ];
-  });
-  protected readonly momentsTexte = computed(() => {
-    const m = this.motion();
-    if (!m) return TEXTES_FICHE.meta.sansAnimation;
-    const libelles = m.moments.map((moment: Moment) => TEXTES_FICHE.moments[moment]);
-    return TEXTES_FICHE.meta.animationsValeur(libelles.join(', '));
   });
   /** Adresse de la page d'aperçu autonome, avec le design, le mode et les réglages courants (ADR 0016). */
   protected readonly urlAutonome = computed(() => {
@@ -144,11 +125,6 @@ export class RessourceComponent {
     const code = this.fiche()?.usage ?? '';
     if (!this.motion() || this.etat.animations()) return code;
     return code.replace(/<(ngs-[\w-]+)([\s\S]*?)(\s*)\/>/, '<$1$2 [animations]="false" />');
-  });
-  protected readonly libelleTelecharger = computed(() => {
-    const t = this.telechargement();
-    if (t === 'encours') return TEXTES_FICHE.telechargeEnCours;
-    return t === 'fait' ? TEXTES_FICHE.telecharge : TEXTES_FICHE.telecharger;
   });
 
   constructor() {
@@ -187,13 +163,6 @@ export class RessourceComponent {
     );
   }
 
-  protected largeurAriaLabel(valeur: LargeurApercu): string {
-    const t = TEXTES_FICHE.apercu;
-    if (valeur === 390) return t.tailleMobile;
-    if (valeur === 768) return t.tailleTablette;
-    return valeur === 1280 ? t.tailleBureau : t.tailleAuto;
-  }
-
   protected rejouerEntree(): void {
     this.rechargement.update((n) => n + 1);
   }
@@ -201,15 +170,6 @@ export class RessourceComponent {
   protected rejouerSortie(): void {
     const classes = this.motion()?.rejouer?.sortie;
     if (classes) this.sortie.set({ id: (this.sortie()?.id ?? 0) + 1, classes });
-  }
-
-  protected surAnimations(): void {
-    // Le réglage change : l'aperçu est rechargé, l'entrée se rejoue (ou non) sous le nouveau réglage.
-    this.rechargement.update((n) => n + 1);
-  }
-
-  protected animationsCoupees(): boolean {
-    return !this.etat.animationsPermises();
   }
 
   #contenu(): ContenuLivre | null {

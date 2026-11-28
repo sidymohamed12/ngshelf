@@ -134,7 +134,9 @@
   outline-offset: 4px;
 }
 @container (max-width: 56rem) {
+  /* Texte posé sur le mur : le mur couvre toute la largeur (sans fondu latéral) et s'estompe. */
   .mur__scene {
+    mask-image: none;
     opacity: 0.4;
   }
   .mur__contenu {

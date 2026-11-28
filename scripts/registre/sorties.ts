@@ -1,5 +1,6 @@
 import type { Compteurs, EntreeIndex } from '../../src/app/shared/models/index-catalogue.model.ts';
 import type { MetaRegistre } from './valider.ts';
+import { DIMENSIONS_RENDU } from '../../src/app/shared/models/taxonomie.model.ts';
 import type {
   Categorie,
   Secteur,
@@ -16,19 +17,21 @@ export interface Sorties {
   readonly compteurs: Compteurs;
 }
 
-/** Un design n'a ni type, ni animation propre, ni case de taille particulière. `animee` dérive de `motion` (ADR 0007). */
-function champsPropres(meta: MetaRegistre): Pick<EntreeIndex, 'type' | 'animee' | 'tailleCase'> {
-  if (meta.categorie === 'design') return { type: null, animee: false, tailleCase: 'normale' };
-  return {
-    type: meta.type,
-    animee: meta.motion !== null,
-    tailleCase: meta.tailleCase ?? 'normale',
-  };
+/** Un design n'a ni type ni animation propre. `animee` dérive de `motion` (ADR 0007). */
+function champsPropres(meta: MetaRegistre): Pick<EntreeIndex, 'type' | 'animee'> {
+  if (meta.categorie === 'design') return { type: null, animee: false };
+  return { type: meta.type, animee: meta.motion !== null };
 }
 
 function designMisEnAvant(meta: MetaRegistre): Pick<EntreeIndex, 'designMisEnAvant'> {
   const slug = meta.categorie === 'design' ? undefined : meta.designsMisEnAvant?.[0];
   return slug === undefined ? {} : { designMisEnAvant: slug };
+}
+
+function apercuCase(meta: MetaRegistre): Pick<EntreeIndex, 'apercuCase'> {
+  if (meta.categorie === 'design') return {};
+  const dimensions = meta.rendu === undefined ? meta.apercuCase : DIMENSIONS_RENDU[meta.rendu];
+  return dimensions === undefined ? {} : { apercuCase: dimensions };
 }
 
 function versEntree(meta: MetaRegistre): EntreeIndex {
@@ -37,6 +40,7 @@ function versEntree(meta: MetaRegistre): EntreeIndex {
     categorie: meta.categorie,
     ...champsPropres(meta),
     ...designMisEnAvant(meta),
+    ...apercuCase(meta),
     titre: meta.titre,
     description: meta.description,
     secteurs: meta.secteurs,

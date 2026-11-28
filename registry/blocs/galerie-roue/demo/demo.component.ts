@@ -1,51 +1,25 @@
 import { Component, inject } from '@angular/core';
 import { ApercuService } from '@apercus/apercu.service';
+import { imagesDemo } from '@apercus/images-demo';
 import { ElementGalerieRoue, GalerieRoueComponent } from '../galerie-roue.component';
 
-const ELEMENTS: readonly ElementGalerieRoue[] = [
-  {
-    image: 'images/aube-ocre.svg',
-    titre: 'Aube ocre',
-    sousTitre: 'Série Lumières',
-    alt: 'Illustration abstraite : un soleil pâle sur des reliefs ocre.',
-  },
-  {
-    image: 'images/rose-poudre.svg',
-    titre: 'Rose poudré',
-    sousTitre: 'Série Lumières',
-    alt: 'Illustration abstraite : un ciel rose au-dessus de collines framboise.',
-  },
-  {
-    image: 'images/foret-verte.svg',
-    titre: 'Forêt verte',
-    sousTitre: 'Série Nuits',
-    alt: 'Illustration abstraite : une lune claire sur des crêtes vert sombre.',
-  },
-  {
-    image: 'images/nuit-bleue.svg',
-    titre: 'Nuit bleue',
-    sousTitre: 'Série Nuits',
-    alt: 'Illustration abstraite : une lune sur des reliefs bleu nuit.',
-  },
-  {
-    image: 'images/crepuscule.svg',
-    titre: 'Crépuscule',
-    sousTitre: 'Série Horizons',
-    alt: 'Illustration abstraite : un soleil orangé sur des crêtes violettes.',
-  },
-  {
-    image: 'images/ciel-clair.svg',
-    titre: 'Ciel clair',
-    sousTitre: 'Série Horizons',
-    alt: 'Illustration abstraite : un ciel pâle au-dessus de collines bleues.',
-  },
-  {
-    image: 'images/or-chaud.svg',
-    titre: 'Or chaud',
-    sousTitre: 'Série Lumières',
-    alt: 'Illustration abstraite : un grand soleil doré sur des terres brunes.',
-  },
+const IMAGES = imagesDemo('galerie-roue');
+const TITRES: readonly (readonly [string, string])[] = [
+  ['Aube ocre', 'Série Lumières'],
+  ['Rose poudré', 'Série Lumières'],
+  ['Forêt verte', 'Série Nuits'],
+  ['Nuit bleue', 'Série Nuits'],
+  ['Crépuscule', 'Série Horizons'],
+  ['Ciel clair', 'Série Horizons'],
+  ['Or chaud', 'Série Lumières'],
 ];
+
+const ELEMENTS: readonly ElementGalerieRoue[] = TITRES.map(([titre, sousTitre], i) => ({
+  image: IMAGES[i]?.src ?? '',
+  titre,
+  sousTitre,
+  alt: IMAGES[i]?.alt ?? titre,
+}));
 
 /** Scène de l'aperçu : sept illustrations, la troisième au départ (non livrée). */
 @Component({

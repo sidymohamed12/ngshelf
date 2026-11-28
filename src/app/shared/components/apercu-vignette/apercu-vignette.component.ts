@@ -20,8 +20,13 @@ import { ThemeService } from '@core/theme/theme.service';
 import { lireMessageVersSite, messageReglages, vientDeLApercu } from '@shared/apercu/protocole';
 import { ecrireRechercheApercu } from '@shared/apercu/reglages-url';
 import { ValeursContrat } from '@shared/livraison/livraison';
+import { ApercuCase } from '@shared/models/taxonomie.model';
 import { IconeComponent } from '../icone/icone.component';
+import { SqueletteComponent } from '../squelette/squelette.component';
 import { NomIcone } from '../icone/icones';
+
+/** Design de l'aperçu quand la ressource n'en met aucun en avant. */
+const DESIGN_APERCU_PAR_DEFAUT = 'planche';
 
 export type EtatVignette = 'veille' | 'chargement' | 'pret' | 'erreur';
 
@@ -54,15 +59,40 @@ export function urlVignette(options: {
   return `/apercu/${options.slug}?${recherche.toString()}`;
 }
 
-/** Dimensions de l'iframe et échelle d'affichage : l'aperçu garde sa largeur de test et rétrécit pour tenir. */
+/** Dimensions de l'iframe, échelle d'affichage et décalage (haut-gauche) de l'aperçu dans la zone. */
+export interface DimensionsVignette {
+  readonly largeur: number;
+  readonly hauteur: number;
+  readonly echelle: number;
+  readonly gauche: number;
+  readonly haut: number;
+}
+
+/**
+ * Dimensions de l'iframe et échelle d'affichage dans la zone `largeur × hauteur` (de rapport commun à toutes
+ * les cases, ADR 0026). Avec une taille de rendu déclarée (ADR 0023), l'aperçu la garde et rétrécit pour tenir
+ * en entier, centré (« contain », rien n'est coupé). Sans elle, il garde sa largeur de test et remplit la zone.
+ */
 export function dimensionsVignette(
   largeur: number,
   hauteur: number,
-): { readonly largeur: number; readonly hauteur: number; readonly echelle: number } {
-  if (largeur <= 0 || hauteur <= 0) return { largeur: 0, hauteur: 0, echelle: 1 };
+  reference?: ApercuCase,
+): DimensionsVignette {
+  if (largeur <= 0 || hauteur <= 0)
+    return { largeur: 0, hauteur: 0, echelle: 1, gauche: 0, haut: 0 };
+  if (reference) {
+    const echelle = Math.min(largeur / reference.largeur, hauteur / reference.hauteur);
+    return {
+      largeur: reference.largeur,
+      hauteur: reference.hauteur,
+      echelle,
+      gauche: Math.round((largeur - reference.largeur * echelle) / 2),
+      haut: Math.round((hauteur - reference.hauteur * echelle) / 2),
+    };
+  }
   const largeurIframe = Math.max(largeur, LARGEUR_NOMINALE_PX);
   const echelle = largeur / largeurIframe;
-  return { largeur: largeurIframe, hauteur: hauteur / echelle, echelle };
+  return { largeur: largeurIframe, hauteur: hauteur / echelle, echelle, gauche: 0, haut: 0 };
 }
 
 interface NavigatorAvecConnexion extends Navigator {
@@ -75,14 +105,26 @@ let compteur = 0;
  * Aperçu vivant d'une case de la planche (ADR 0015) : une iframe `sandbox="allow-scripts"` vers
  * `/apercu/<slug>?vignette=1`, comme celle de la fiche, calée sur la case. Elle n'existe que quand la case
  * est visible (300 ms, jamais pendant un défilement rapide), dans la limite de places de `VignettesService`,
- * et disparaît quand la case sort du viewport. Sans place, avec « économie de données » ou après un échec,
- * la case garde son icône. Décorative : la case entière est le lien vers la fiche.
+ * et disparaît quand la case sort du viewport. Pendant l'attente, un squelette ; avec « économie de données »
+ * ou après un échec, l'icône de la ressource (repli).
+ *
+ * `interactif` (planche, ADR 0017) : l'aperçu est manipulable (clic, glisser, saisie, survol) ; la molette et le
+ * clavier restent à la page jusqu'à ce que le visiteur prenne la main (clic dans l'aperçu ou bouton « Manipuler
+ * l'aperçu », seul arrêt de tabulation ajouté). Échap, un clic ailleurs ou un Tab hors de l'aperçu la rendent.
+ * Sans `interactif` (vitrines d'accueil), l'aperçu reste décoratif, sans pointeur ni focus.
  */
 @Component({
   selector: 'app-apercu-vignette',
-  imports: [IconeComponent],
+  imports: [IconeComponent, SqueletteComponent],
   templateUrl: './apercu-vignette.component.html',
-  host: { class: 'ngs-vignette', '[attr.data-etat]': 'etat()' },
+  host: {
+    class: 'ngs-vignette',
+    '[class]': 'classeDesign()',
+    '[style.--apercu-fond]': "reglages()?.['--ngs-color-surface']",
+    '[class.ngs-vignette--interactif]': 'interactif()',
+    '[class.ngs-vignette--actif]': 'manipule()',
+    '[attr.data-etat]': 'etat()',
+  },
 })
 export class ApercuVignetteComponent {
   readonly slug = input.required<string>();
@@ -95,8 +137,12 @@ export class ApercuVignetteComponent {
    * l'habillage de l'accueil et les témoins du contrat. Absentes, l'aperçu garde le design de l'adresse.
    */
   readonly reglages = input<ValeursContrat>();
+  /** Taille de rendu de la ressource (meta.json) : l'aperçu la garde et rétrécit pour tenir en entier, centré dans la zone de la case. */
+  readonly apercuCase = input<ApercuCase>();
   /** Faux : les animations de la ressource sont coupées (interrupteur « Animations » de À propos). Le mouvement réduit les coupe toujours. */
   readonly animations = input(true);
+  /** Vrai : aperçu manipulable avec son bouton « Manipuler l'aperçu » ; faux : décor sans interaction. */
+  readonly interactif = input(false);
 
   protected readonly etat = signal<EtatVignette>('veille');
   protected readonly textes = TEXTES.vignette;
@@ -107,7 +153,10 @@ export class ApercuVignetteComponent {
   readonly #mouvementReduit = inject(MotionService).mouvementReduit;
   readonly #destroyRef = inject(DestroyRef);
   readonly #id = `vignette-${compteur++}`;
+  /** Vrai quand l'aperçu a la main (annoncé par l'aperçu lui-même : le focus est dans l'iframe). */
+  protected readonly manipule = signal(false);
   private readonly iframe = viewChild<ElementRef<HTMLIFrameElement>>('cadre');
+  private readonly declencheur = viewChild<ElementRef<HTMLButtonElement>>('declencheur');
 
   readonly #visible = signal(false);
   readonly #economie = signal(false);
@@ -118,8 +167,17 @@ export class ApercuVignetteComponent {
   #minuteurEchec: ReturnType<typeof setTimeout> | undefined;
   #urlChargee = '';
 
+  /**
+   * Repli : l'icône de la ressource ne s'affiche que si l'aperçu ne viendra pas (échec, délai dépassé,
+   * « économie de données »). Tant qu'il est attendu (case hors écran, démarrage, chargement), un squelette.
+   */
+  protected readonly repli = computed(() => this.etat() === 'erreur' || this.#economie());
   protected readonly dimensions = computed(() =>
-    dimensionsVignette(this.#disponible().largeur, this.#disponible().hauteur),
+    dimensionsVignette(this.#disponible().largeur, this.#disponible().hauteur, this.apercuCase()),
+  );
+  /** Design de l'aperçu : fixe, derrière l'aperçu mis à l'échelle, le fond de sa page (ADR 0026). */
+  protected readonly classeDesign = computed(
+    () => `ngs-vignette--${this.design() ?? DESIGN_APERCU_PAR_DEFAUT}`,
   );
   protected readonly url = computed(() =>
     urlVignette({
@@ -129,7 +187,13 @@ export class ApercuVignetteComponent {
       animations: this.animations() && !this.#mouvementReduit(),
     }),
   );
-  protected readonly titreIframe = computed(() => this.textes.iframe(this.titre()));
+  protected readonly titreIframe = computed(() =>
+    this.interactif()
+      ? this.textes.iframeInteractif(this.titre())
+      : this.textes.iframe(this.titre()),
+  );
+  protected readonly nomBouton = computed(() => this.textes.manipulerPour(this.titre()));
+  protected readonly annonce = computed(() => (this.manipule() ? this.textes.actifAnnonce : ''));
 
   constructor() {
     afterNextRender(() => {
@@ -172,6 +236,7 @@ export class ApercuVignetteComponent {
     this.#minuteurDemarrage = undefined;
     this.#urlChargee = '';
     this.actif.set(false);
+    this.manipule.set(false);
     this.etat.set('veille');
     this.#vignettes.liberer(this.#id);
   }
@@ -181,6 +246,7 @@ export class ApercuVignetteComponent {
     const url = this.url();
     if (!iframe || !this.actif() || url === this.#urlChargee) return;
     this.#urlChargee = url;
+    this.manipule.set(false);
     this.etat.set('chargement');
     clearTimeout(this.#minuteurEchec);
     this.#minuteurEchec = setTimeout(() => this.#echouer(), DELAI_VIGNETTE_MS);
@@ -201,6 +267,11 @@ export class ApercuVignetteComponent {
       }),
       '*',
     );
+  }
+
+  /** Bouton « Manipuler l'aperçu » : donne le focus à l'iframe, qui prend alors la main et le dit au site. */
+  protected manipuler(): void {
+    this.iframe()?.nativeElement.focus();
   }
 
   #echouer(): void {
@@ -240,9 +311,15 @@ export class ApercuVignetteComponent {
     const surMessage = (evenement: MessageEvent<unknown>): void => {
       const cible = this.iframe()?.nativeElement.contentWindow;
       if (!vientDeLApercu(evenement, cible)) return;
-      if (lireMessageVersSite(evenement.data)?.type !== 'ngs-pret') return;
-      clearTimeout(this.#minuteurEchec);
-      this.etat.set('pret');
+      const message = lireMessageVersSite(evenement.data);
+      if (message?.type === 'ngs-pret') {
+        clearTimeout(this.#minuteurEchec);
+        this.etat.set('pret');
+      } else if (message?.type === 'ngs-manipulation' && this.interactif()) {
+        this.manipule.set(message.actif);
+        // Échap dans l'aperçu : le focus revient au bouton, pour ne pas le laisser dans un document qui l'a rendu.
+        if (message.echap) this.declencheur()?.nativeElement.focus();
+      }
     };
     fenetre.addEventListener('message', surMessage);
     this.#destroyRef.onDestroy(() => fenetre.removeEventListener('message', surMessage));

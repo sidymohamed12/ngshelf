@@ -64,8 +64,19 @@ export interface MessageHauteur {
   readonly hauteur: number;
 }
 
+/**
+ * Aperçu vers site : l'aperçu d'une case prend ou rend la main sur la molette et le clavier (ADR 0017).
+ * `echap` : il la rend parce que le visiteur a appuyé sur Échap, le site lui reprend alors le focus.
+ */
+export interface MessageManipulation {
+  readonly v: typeof VERSION_PROTOCOLE;
+  readonly type: 'ngs-manipulation';
+  readonly actif: boolean;
+  readonly echap: boolean;
+}
+
 export type MessageVersApercu = MessageReglages | MessageSortie;
-export type MessageVersSite = MessagePret | MessageSortieFin | MessageHauteur;
+export type MessageVersSite = MessagePret | MessageSortieFin | MessageHauteur | MessageManipulation;
 
 function estObjet(valeur: unknown): valeur is Readonly<Record<string, unknown>> {
   return typeof valeur === 'object' && valeur !== null && !Array.isArray(valeur);
@@ -129,6 +140,18 @@ function lireHauteur(m: Readonly<Record<string, unknown>>): MessageHauteur | nul
     : null;
 }
 
+function lireManipulation(m: Readonly<Record<string, unknown>>): MessageManipulation | null {
+  const { actif, echap } = m;
+  if (typeof actif !== 'boolean') return null;
+  if (echap !== undefined && typeof echap !== 'boolean') return null;
+  return {
+    v: VERSION_PROTOCOLE,
+    type: 'ngs-manipulation',
+    actif,
+    echap: actif ? false : (echap ?? false),
+  };
+}
+
 function enveloppe(donnees: unknown): Readonly<Record<string, unknown>> | null {
   return estObjet(donnees) && donnees['v'] === VERSION_PROTOCOLE ? donnees : null;
 }
@@ -148,6 +171,7 @@ export function lireMessageVersSite(donnees: unknown): MessageVersSite | null {
   if (type === 'ngs-pret') return { v: VERSION_PROTOCOLE, type };
   if (type === 'ngs-sortie-fin') return { v: VERSION_PROTOCOLE, type };
   if (type === 'ngs-hauteur' && message) return lireHauteur(message);
+  if (type === 'ngs-manipulation' && message) return lireManipulation(message);
   return null;
 }
 
@@ -210,4 +234,8 @@ export function messageSortieFin(): MessageSortieFin {
 
 export function messageHauteur(hauteur: number): MessageHauteur {
   return { v: VERSION_PROTOCOLE, type: 'ngs-hauteur', hauteur };
+}
+
+export function messageManipulation(actif: boolean, echap = false): MessageManipulation {
+  return { v: VERSION_PROTOCOLE, type: 'ngs-manipulation', actif, echap: actif ? false : echap };
 }

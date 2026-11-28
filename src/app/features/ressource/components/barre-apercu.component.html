@@ -1,0 +1,77 @@
+<div class="ngs-preview__bar fiche-barre" role="group" [attr.aria-label]="textes.barre.titre">
+  <div class="ngs-seg" role="radiogroup" [attr.aria-label]="textes.apercu.taille">
+    @for (taille of tailles; track taille.valeur) {
+      <button
+        class="ngs-seg__btn"
+        type="button"
+        role="radio"
+        [attr.aria-checked]="etat.largeur() === taille.valeur"
+        [attr.aria-label]="largeurAriaLabel(taille.valeur)"
+        (click)="etat.largeur.set(taille.valeur)"
+      >
+        @if (taille.icone; as icone) {
+          <svg [appIcone]="icone"></svg>
+          <span class="tabular">{{ taille.valeur }}</span>
+        } @else {
+          <span>{{ textes.apercu.tailleAutoCourt }}</span>
+        }
+      </button>
+    }
+  </div>
+  <div class="ngs-seg" role="radiogroup" [attr.aria-label]="textes.apercu.mode">
+    <button
+      class="ngs-seg__btn"
+      type="button"
+      role="radio"
+      [attr.aria-checked]="etat.mode() === 'clair'"
+      (click)="etat.mode.set('clair')"
+    >
+      <svg appIcone="sun"></svg><span>{{ textes.apercu.clair }}</span>
+    </button>
+    <button
+      class="ngs-seg__btn"
+      type="button"
+      role="radio"
+      [attr.aria-checked]="etat.mode() === 'sombre'"
+      (click)="etat.mode.set('sombre')"
+    >
+      <svg appIcone="moon"></svg><span>{{ textes.apercu.sombre }}</span>
+    </button>
+  </div>
+  <div class="fiche-barre__fin">
+    @if (motion()?.rejouer; as rejouer) {
+      @if (rejouer.entree) {
+        <button
+          class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+          type="button"
+          [disabled]="animationsCoupees()"
+          (click)="rejouerEntree.emit()"
+        >
+          <svg appIcone="arrow-counter-clockwise"></svg>
+          <span>{{ textes.apercu.rejouerEntree }}</span>
+        </button>
+      }
+      @if (rejouer.sortie) {
+        <button
+          class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+          type="button"
+          [disabled]="animationsCoupees()"
+          (click)="rejouerSortie.emit()"
+        >
+          <svg appIcone="arrow-up-right"></svg>
+          <span>{{ textes.apercu.rejouerSortie }}</span>
+        </button>
+      }
+    }
+    <a
+      class="ngs-btn ngs-btn--ghost ngs-btn--sm"
+      target="_blank"
+      rel="noopener noreferrer"
+      [href]="urlAutonome()"
+    >
+      <svg appIcone="arrow-square-out"></svg>
+      <span>{{ textes.apercu.ouvrir }}</span>
+      <span class="sr-only">{{ textes.apercu.nouvelOnglet }}</span>
+    </a>
+  </div>
+</div>

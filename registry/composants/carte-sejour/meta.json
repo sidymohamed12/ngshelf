@@ -23,7 +23,7 @@
       "sortie": "sejour-sortie"
     }
   },
-  "tailleCase": "normale",
+  "apercuCase": { "largeur": 520, "hauteur": 470 },
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

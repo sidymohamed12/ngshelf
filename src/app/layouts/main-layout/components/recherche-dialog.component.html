@@ -46,7 +46,7 @@
         <span class="sr-only">{{ textes.chargement }}</span>
         <div class="grid gap-2 p-2" aria-hidden="true">
           @for (ligne of lignesChargement; track ligne) {
-            <div class="ngs-skeleton h-14"></div>
+            <app-squelette class="h-14" />
           }
         </div>
       </div>

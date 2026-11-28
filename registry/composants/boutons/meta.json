@@ -13,7 +13,6 @@
   "tags": ["bouton", "action", "cta", "chargement"],
   "contratTokens": 1,
   "motion": null,
-  "tailleCase": "normale",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

@@ -13,7 +13,6 @@
   "tags": ["formulaire", "slider", "range", "réglage"],
   "contratTokens": 1,
   "motion": null,
-  "tailleCase": "normale",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

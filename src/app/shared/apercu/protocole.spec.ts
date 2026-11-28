@@ -3,6 +3,7 @@ import {
   lireMessageVersApercu,
   lireMessageVersSite,
   messageHauteur,
+  messageManipulation,
   messagePret,
   messageReglages,
   messageSortie,
@@ -137,6 +138,33 @@ describe('lireMessageVersSite', () => {
     for (const hauteur of [-1, Number.NaN, Infinity, 20_001, '300']) {
       expect(lireMessageVersSite({ v: 1, type: 'ngs-hauteur', hauteur })).toBeNull();
     }
+  });
+
+  it('lit la prise et la remise de la main, avec Échap seulement à la remise', () => {
+    expect(lireMessageVersSite(messageManipulation(true))).toEqual(messageManipulation(true));
+    expect(lireMessageVersSite(messageManipulation(false, true))).toEqual({
+      v: 1,
+      type: 'ngs-manipulation',
+      actif: false,
+      echap: true,
+    });
+    expect(lireMessageVersSite({ v: 1, type: 'ngs-manipulation', actif: false })).toEqual(
+      messageManipulation(false),
+    );
+    expect(
+      lireMessageVersSite({ v: 1, type: 'ngs-manipulation', actif: true, echap: true }),
+    ).toEqual(messageManipulation(true));
+  });
+
+  it('refuse une manipulation mal formée', () => {
+    for (const donnees of [
+      { v: 1, type: 'ngs-manipulation' },
+      { v: 1, type: 'ngs-manipulation', actif: 'oui' },
+      { v: 1, type: 'ngs-manipulation', actif: false, echap: 1 },
+    ]) {
+      expect(lireMessageVersSite(donnees)).toBeNull();
+    }
+    expect(lireMessageVersApercu(messageManipulation(true))).toBeNull();
   });
 
   it('ignore un type inconnu, une autre version et un message destiné à l’aperçu', () => {

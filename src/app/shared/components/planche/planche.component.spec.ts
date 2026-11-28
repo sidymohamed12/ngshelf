@@ -14,7 +14,6 @@ const CARTE: EntreeIndex = {
   tags: [],
   contratTokens: 1,
   animee: false,
-  tailleCase: 'normale',
   statut: 'provisoire',
   ajouteLe: '2026-11-26',
 };
@@ -50,6 +49,8 @@ describe('PlancheComponent', () => {
     const el = afficher(undefined, { chargement: true });
     expect(el.querySelector('[role="status"]')?.textContent).toContain(TEXTES.etats.chargement);
     expect(el.querySelector('ul')).toBeNull();
+    expect(el.querySelectorAll('app-squelette').length).toBeGreaterThan(6);
+    expect(el.querySelector('.ngs-case__stage svg')).toBeNull();
   });
 
   it('affiche une erreur annoncée, avec un bouton qui relance le chargement', () => {
@@ -68,15 +69,32 @@ describe('PlancheComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Pas encore de template');
   });
 
-  it('affiche une case par ressource : lien de fiche, type, secteur, vignette décorative', () => {
+  it('affiche une case par ressource : lien de fiche, type, secteur, scène exposée (aperçu manipulable)', () => {
     const el = afficher([CARTE]);
     const lien = el.querySelector<HTMLAnchorElement>('h3 a');
     expect(lien?.getAttribute('href')).toBe('/composants/carte/carte-sejour');
     expect(lien?.textContent).toContain('Carte de séjour');
     expect(el.querySelector('.ngs-badge')?.textContent).toContain('Carte');
     expect(el.querySelector('.ngs-badge--secteur')?.textContent).toContain('Voyage');
-    expect(el.querySelector('.ngs-case__stage')?.getAttribute('aria-hidden')).toBe('true');
+    expect(el.querySelector('.ngs-case__stage')?.hasAttribute('aria-hidden')).toBe(false);
     expect(el.querySelector('.ngs-case')?.classList).toContain('ngs-cat-composants');
+  });
+
+  it('ne met aucun élément interactif sous un lien : la scène est hors du lien, qui couvre le pied', () => {
+    const el = afficher([CARTE]);
+    const lien = el.querySelector('a.ngs-case__link');
+    expect(lien?.closest('.ngs-case__foot')).not.toBeNull();
+    expect(lien?.closest('.ngs-case__stage')).toBeNull();
+    expect(el.querySelector('.ngs-case__stage a, .ngs-case__stage button')).toBeNull();
+    expect(el.querySelectorAll('a')).toHaveLength(1);
+  });
+
+  it('montre le repère « Voir la fiche » dans le pied, sans second lien', () => {
+    const el = afficher([CARTE]);
+    const repere = el.querySelector('.ngs-case__foot .ngs-case__open');
+    expect(repere?.textContent).toContain(TEXTES_LISTE.voirFiche);
+    expect(repere?.getAttribute('aria-hidden')).toBe('true');
+    expect(repere?.closest('a')).toBeNull();
   });
 
   it('décrit le lien de la case par la description de la ressource', () => {
@@ -85,13 +103,24 @@ describe('PlancheComponent', () => {
     expect(el.querySelector(`#${id}`)?.textContent).toContain('Une carte cliquable.');
   });
 
-  it('donne à la case la taille du registre et le badge « Animée »', () => {
-    const el = afficher([{ ...CARTE, animee: true, tailleCase: 'large-haute' }]);
-    const classes = el.querySelector('.ngs-case')?.classList;
-    expect(classes).toContain('ngs-case--wide');
-    expect(classes).toContain('ngs-case--tall');
+  it('affiche le badge « Animée » et donne la même forme à toutes les cases', () => {
+    const el = afficher([{ ...CARTE, animee: true }]);
     expect(el.querySelector('.ngs-badge--anime')?.textContent).toContain(TEXTES_LISTE.anime);
     expect(afficher([CARTE]).querySelector('.ngs-badge--anime')).toBeNull();
+  });
+
+  it('garde la même zone d’aperçu pour toutes les cases, quelle que soit la taille déclarée', () => {
+    const el = afficher([
+      CARTE,
+      { ...CARTE, slug: 'large', apercuCase: { largeur: 960, hauteur: 540 } },
+    ]);
+    const scenes = el.querySelectorAll<HTMLElement>('.ngs-case__stage');
+    expect(scenes).toHaveLength(2);
+    for (const scene of Array.from(scenes)) {
+      expect(scene.style.aspectRatio).toBe('');
+      expect(scene.classList).not.toContain('ngs-case__stage--ratio');
+    }
+    expect(el.querySelector('.ngs-case--wide, .ngs-case--tall')).toBeNull();
   });
 
   it('ne charge aucun aperçu live : pas d’iframe, de ressource embarquée ni d’image', () => {
@@ -110,6 +139,7 @@ describe('PlancheComponent', () => {
     const el = afficher([DESIGN]);
     expect(el.querySelector('h3 a')).toBeNull();
     expect(el.querySelector('.ngs-case__open')).toBeNull();
+    expect(el.querySelector('.ngs-case__stage')?.getAttribute('aria-hidden')).toBe('true');
     expect(el.querySelector('h3')?.textContent).toContain('Design Fleuve');
     expect(el.querySelector('.ngs-badge')?.textContent).toContain('Design');
   });

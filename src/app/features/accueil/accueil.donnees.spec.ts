@@ -4,9 +4,9 @@ import blocs from '@generated/registre/index-bloc.json';
 import designs from '@generated/registre/index-design.json';
 import {
   DESIGNS_ACCUEIL,
-  DISPOSITION_PLANCHE,
   PIECES_HERO,
   SLUGS_FAMILLES,
+  SLUGS_PLANCHE,
   estDesignAccueil,
 } from './accueil.donnees';
 
@@ -23,10 +23,14 @@ describe("données de l'accueil", () => {
 
   it('ne compose la planche et les familles que de ressources du registre', () => {
     const slugs = new Set(REGISTRE.map((e) => e.slug));
-    for (const { slug } of DISPOSITION_PLANCHE) expect(slugs.has(slug)).toBe(true);
+    for (const slug of SLUGS_PLANCHE) expect(slugs.has(slug)).toBe(true);
     for (const liste of Object.values(SLUGS_FAMILLES)) {
       for (const slug of liste) expect(slugs.has(slug)).toBe(true);
     }
+  });
+
+  it('compose une planche de douze pièces distinctes (dernière rangée pleine)', () => {
+    expect(new Set(SLUGS_PLANCHE).size).toBe(12);
   });
 
   it('reconnaît les trois designs du catalogue et eux seuls', () => {

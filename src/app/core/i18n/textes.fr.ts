@@ -94,9 +94,16 @@ export const TEXTES = {
     erreurTexte: $localize`:@@etat.erreur.texte:Vérifiez votre connexion, puis réessayez.`,
     reessayer: $localize`:@@etat.reessayer:Réessayer`,
   },
-  /** Aperçu vivant d'une case de la planche (décoratif : la case entière est le lien vers la fiche). */
+  /** Aperçu vivant d'une case de la planche : manipulable (ADR 0017), la fiche s'ouvre par le pied de la case. */
   vignette: {
     iframe: (titre: string) => $localize`:@@vignette.iframe:Aperçu de ${titre}:titre:`,
+    iframeInteractif: (titre: string) =>
+      $localize`:@@vignette.iframe.interactif:Aperçu interactif de ${titre}:titre:`,
+    manipuler: $localize`:@@vignette.manipuler:Manipuler l’aperçu`,
+    manipulerPour: (titre: string) =>
+      $localize`:@@vignette.manipuler.pour:Manipuler l’aperçu de ${titre}:titre:`,
+    quitter: $localize`:@@vignette.quitter:Échap pour quitter`,
+    actifAnnonce: $localize`:@@vignette.actif.annonce:Aperçu actif : la molette et le clavier agissent sur l’aperçu. Échap pour rendre la main.`,
   },
   pages: {
     accueil: {
@@ -154,6 +161,7 @@ export const TEXTES_LISTE = {
   titre: $localize`:@@liste.titre:Ressources`,
   anime: $localize`:@@badge.anime:Animée`,
   animeTitre: $localize`:@@badge.anime.titre:Cette ressource a ses propres animations, désactivables`,
+  voirFiche: $localize`:@@liste.voir-fiche:Voir la fiche`,
   videTitre: $localize`:@@liste.vide.titre:Rien à afficher pour l’instant`,
   videTexte: $localize`:@@liste.vide.texte:Cette page n’a pas encore de ressource. Parcourez le catalogue pour en trouver d’autres.`,
   videCta: $localize`:@@liste.vide.cta:Voir le catalogue`,
