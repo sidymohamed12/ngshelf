@@ -22,6 +22,7 @@ import { ecrireRechercheApercu } from '@shared/apercu/reglages-url';
 import { ValeursContrat } from '@shared/livraison/livraison';
 import { ApercuCase } from '@shared/models/taxonomie.model';
 import { IconeComponent } from '../icone/icone.component';
+import { SqueletteComponent } from '../squelette/squelette.component';
 import { NomIcone } from '../icone/icones';
 
 export type EtatVignette = 'veille' | 'chargement' | 'pret' | 'erreur';
@@ -85,8 +86,8 @@ let compteur = 0;
  * Aperçu vivant d'une case de la planche (ADR 0015) : une iframe `sandbox="allow-scripts"` vers
  * `/apercu/<slug>?vignette=1`, comme celle de la fiche, calée sur la case. Elle n'existe que quand la case
  * est visible (300 ms, jamais pendant un défilement rapide), dans la limite de places de `VignettesService`,
- * et disparaît quand la case sort du viewport. Sans place, avec « économie de données » ou après un échec,
- * la case garde son icône.
+ * et disparaît quand la case sort du viewport. Pendant l'attente, un squelette ; avec « économie de données »
+ * ou après un échec, l'icône de la ressource (repli).
  *
  * `interactif` (planche, ADR 0017) : l'aperçu est manipulable (clic, glisser, saisie, survol) ; la molette et le
  * clavier restent à la page jusqu'à ce que le visiteur prenne la main (clic dans l'aperçu ou bouton « Manipuler
@@ -95,7 +96,7 @@ let compteur = 0;
  */
 @Component({
   selector: 'app-apercu-vignette',
-  imports: [IconeComponent],
+  imports: [IconeComponent, SqueletteComponent],
   templateUrl: './apercu-vignette.component.html',
   host: {
     class: 'ngs-vignette',
@@ -145,6 +146,11 @@ export class ApercuVignetteComponent {
   #minuteurEchec: ReturnType<typeof setTimeout> | undefined;
   #urlChargee = '';
 
+  /**
+   * Repli : l'icône de la ressource ne s'affiche que si l'aperçu ne viendra pas (échec, délai dépassé,
+   * « économie de données »). Tant qu'il est attendu (case hors écran, démarrage, chargement), un squelette.
+   */
+  protected readonly repli = computed(() => this.etat() === 'erreur' || this.#economie());
   protected readonly dimensions = computed(() =>
     dimensionsVignette(this.#disponible().largeur, this.#disponible().hauteur, this.apercuCase()),
   );

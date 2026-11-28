@@ -540,7 +540,9 @@
   .ngs-result mark { background: var(--color-cat-blocs-soft); color: inherit; border-radius: 3px; padding: 0 1px; }
 
   /* ---------- Squelette ---------- */
-  .ngs-skeleton { border-radius: var(--radius-chip); background: var(--color-surface-hover); position: relative; overflow: hidden; }
+  .ngs-skeleton { display: block; border-radius: var(--radius-chip); background: var(--color-surface-hover); position: relative; overflow: hidden; }
+  .ngs-skeleton--plein { position: absolute; inset: 0; border-radius: 0; }
+  .ngs-skeleton--ligne { height: 1rem; }
   .ngs-skeleton::after {
     content: ""; position: absolute; inset: 0; transform: translateX(-100%);
     background: linear-gradient(90deg, transparent, var(--color-shimmer), transparent);

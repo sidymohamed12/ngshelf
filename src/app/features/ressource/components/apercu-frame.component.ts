@@ -14,6 +14,7 @@ import {
 import { TEXTES } from '@core/i18n/textes.fr';
 import { TEXTES_FICHE } from '@core/i18n/textes-fiche';
 import { IconeComponent } from '@shared/components/icone/icone.component';
+import { SqueletteComponent } from '@shared/components/squelette/squelette.component';
 import {
   ReglagesEnvoyes,
   lireMessageVersSite,
@@ -50,7 +51,7 @@ export function echelleApercu(disponible: number, largeur: LargeurCadre): number
  */
 @Component({
   selector: 'app-apercu-frame',
-  imports: [IconeComponent],
+  imports: [IconeComponent, SqueletteComponent],
   templateUrl: './apercu-frame.component.html',
 })
 export class ApercuFrameComponent {

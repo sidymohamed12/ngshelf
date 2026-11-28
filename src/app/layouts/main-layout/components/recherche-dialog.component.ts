@@ -18,6 +18,7 @@ import { Resultats, Segment, chercher, segmenter } from '@core/recherche/recherc
 import { RechercheService } from '@core/recherche/recherche.service';
 import { cheminCategorie, cheminFiche } from '@core/registre/chemins';
 import { IconeComponent } from '@shared/components/icone/icone.component';
+import { SqueletteComponent } from '@shared/components/squelette/squelette.component';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
 import { Categorie } from '@shared/models/taxonomie.model';
 import { classeCategorie } from '@shared/utils/taxonomie-affichage';
@@ -94,7 +95,7 @@ const LIGNES_CHARGEMENT = [1, 2, 3, 4] as const;
  */
 @Component({
   selector: 'app-recherche-dialog',
-  imports: [RouterLink, IconeComponent],
+  imports: [RouterLink, IconeComponent, SqueletteComponent],
   templateUrl: './recherche-dialog.component.html',
   host: {
     '(document:keydown)': 'surToucheDocument($event)',

@@ -128,6 +128,24 @@ describe('ApercuVignetteComponent', () => {
     expect(fixture.nativeElement.getAttribute('data-etat')).toBe('chargement');
   });
 
+  it('montre un squelette (jamais l’icône) en attente et pendant le chargement', async () => {
+    demarrer();
+    const hote = fixture.nativeElement as HTMLElement;
+    expect(hote.querySelector('app-squelette')).not.toBeNull();
+    expect(hote.querySelector('.ngs-vignette__icone')).toBeNull();
+    await visible(true);
+    expect(hote.getAttribute('data-etat')).toBe('chargement');
+    expect(hote.querySelector('app-squelette')).not.toBeNull();
+    expect(hote.querySelector('.ngs-vignette__icone')).toBeNull();
+  });
+
+  it('garde l’icône comme repli seulement : échec ou économie de données, sans squelette', async () => {
+    demarrer(true);
+    const hote = fixture.nativeElement as HTMLElement;
+    expect(hote.querySelector('.ngs-vignette__icone')).not.toBeNull();
+    expect(hote.querySelector('app-squelette')).toBeNull();
+  });
+
   it('n’attend pas : une case qui sort avant le délai ne charge rien', async () => {
     demarrer();
     rappel?.([{ isIntersecting: true }]);

@@ -1,5 +1,7 @@
-@if (etat() !== 'pret') {
+@if (repli()) {
   <svg [appIcone]="icone()" class="ngs-vignette__icone"></svg>
+} @else if (etat() !== 'pret') {
+  <app-squelette forme="plein" />
 }
 @if (actif()) {
   <div

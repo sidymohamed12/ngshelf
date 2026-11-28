@@ -22,9 +22,7 @@
     ></iframe>
   </div>
   @if (etat() === 'chargement') {
-    <div class="ngs-skeleton app-apercu-attente" role="status">
-      <span class="sr-only">{{ textes.chargement }}</span>
-    </div>
+    <app-squelette class="app-apercu-attente" [libelle]="textes.chargement" />
   }
   @if (etat() === 'erreur') {
     <div class="ngs-state ngs-state--error" role="alert">

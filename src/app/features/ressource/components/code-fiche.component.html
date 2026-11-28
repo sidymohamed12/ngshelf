@@ -38,9 +38,8 @@
       </button>
     </div>
   } @else if (chargement() === 'chargement') {
-    <div class="ngs-code" role="status">
-      <span class="sr-only">{{ textes.chargement }}</span>
-      <div class="ngs-skeleton h-64" aria-hidden="true"></div>
+    <div class="ngs-code">
+      <app-squelette class="h-64" [libelle]="textes.chargement" />
     </div>
   } @else {
     <div class="ngs-code">

@@ -13,6 +13,7 @@ import { ApercuVignetteComponent } from '@shared/components/apercu-vignette/aper
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { NomIcone } from '@shared/components/icone/icones';
 import { ValeursContrat } from '@shared/livraison/livraison';
+import { SqueletteComponent } from '@shared/components/squelette/squelette.component';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
 import { CLASSES_TAILLE_CASE } from '@shared/utils/taille-case';
 import { ICONE_CATEGORIE, ICONE_SECTEUR, classeCategorie } from '@shared/utils/taxonomie-affichage';
@@ -45,7 +46,7 @@ interface CaseRessource {
  */
 @Component({
   selector: 'app-planche',
-  imports: [RouterLink, IconeComponent, ApercuVignetteComponent],
+  imports: [RouterLink, IconeComponent, ApercuVignetteComponent, SqueletteComponent],
   templateUrl: './planche.component.html',
 })
 export class PlancheComponent {

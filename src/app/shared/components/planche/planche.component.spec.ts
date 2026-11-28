@@ -50,6 +50,8 @@ describe('PlancheComponent', () => {
     const el = afficher(undefined, { chargement: true });
     expect(el.querySelector('[role="status"]')?.textContent).toContain(TEXTES.etats.chargement);
     expect(el.querySelector('ul')).toBeNull();
+    expect(el.querySelectorAll('app-squelette').length).toBeGreaterThan(6);
+    expect(el.querySelector('.ngs-case__stage svg')).toBeNull();
   });
 
   it('affiche une erreur annoncée, avec un bouton qui relance le chargement', () => {

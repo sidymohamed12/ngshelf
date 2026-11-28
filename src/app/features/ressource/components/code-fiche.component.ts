@@ -12,6 +12,7 @@ import {
 import { TEXTES_FICHE } from '@core/i18n/textes-fiche';
 import { PressePapiersService } from '@core/presse-papiers/presse-papiers.service';
 import { IconeComponent } from '@shared/components/icone/icone.component';
+import { SqueletteComponent } from '@shared/components/squelette/squelette.component';
 import { colorer } from '@shared/livraison/colorer';
 import { FichierAffiche, FragmentCode } from '@shared/models/fiche.model';
 import { EtatFiche } from '../services/etat-fiche';
@@ -48,7 +49,7 @@ function echapper(texte: string): string {
 /** Code de la ressource : version Tailwind ou CSS, un onglet par fichier, copie fichier par fichier. */
 @Component({
   selector: 'app-code-fiche',
-  imports: [IconeComponent],
+  imports: [IconeComponent, SqueletteComponent],
   templateUrl: './code-fiche.component.html',
 })
 export class CodeFicheComponent {
