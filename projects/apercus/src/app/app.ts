@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DOCUMENT, DestroyRef, inject, signal } from '@angular/core';
 import {
   NavigationCancel,
   NavigationEnd,
@@ -8,6 +8,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { ApercuService } from './apercu.service';
+import { neutraliserSoumissions } from './navigation-scene';
 import { TEXTES_APERCU } from './textes';
 
 /**
@@ -53,7 +54,11 @@ export class App {
         this.chargement.set(false);
       }
     });
-    inject(DestroyRef).onDestroy(() => abonnement.unsubscribe());
+    const retirerSoumissions = neutraliserSoumissions(inject(DOCUMENT));
+    inject(DestroyRef).onDestroy(() => {
+      abonnement.unsubscribe();
+      retirerSoumissions();
+    });
   }
 
   protected neutraliserLiens(evenement: Event): void {
