@@ -22,13 +22,17 @@ npm ci
 npm start
 ```
 
-Le site est servi sur `http://localhost:4200/` et se recharge à chaque modification.
+`npm start` lance ensemble le site (`http://localhost:4200/`) et l'application d'aperçus (`http://localhost:4201/apercu/`) : sans elle, les cases du catalogue et les fiches n'ont pas d'aperçu vivant. Les deux se rechargent à chaque modification, et Ctrl+C arrête les deux. Si le port 4200 est pris : `PORT_SITE=4210 npm start`. Pour ne lancer que l'un des deux : `npm run start:site` ou `npm run start:apercus`.
+
+Sans le serveur des aperçus, `/apercu/*` répond une page « Aperçus indisponibles » (503, `proxy.conf.mjs`) qui dit quoi lancer ; les cases gardent leur icône et la fiche affiche son état d'erreur.
 
 ## Scripts
 
 | Commande                 | Rôle                                                                  |
 | ------------------------ | --------------------------------------------------------------------- |
-| `npm start`              | serveur de développement                                              |
+| `npm start`              | site (4200) et aperçus (4201) ensemble, dans un seul terminal         |
+| `npm run start:site`     | site seul (relaie `/apercu` vers le port 4201)                        |
+| `npm run start:apercus`  | application d'aperçus seule (`/apercu/`, port 4201)                   |
 | `npm run build`          | build de production avec prérendu, sortie dans `dist/ngshelf/browser` |
 | `npm run build:dev`      | build de développement (sans optimisation, avec sourcemaps)           |
 | `npm run watch`          | build de développement en continu                                     |
@@ -38,7 +42,7 @@ Le site est servi sur `http://localhost:4200/` et se recharge à chaque modifica
 | `npm run format`         | formate le dépôt avec Prettier                                        |
 | `npm run format:check`   | vérifie le formatage sans modifier les fichiers                       |
 
-`registre:build` est lancé automatiquement avant `start`, `build`, `build:dev`, `watch`, `test` et `lint` (scripts `pre…` de npm) : passez par `npm run …`, pas par `ng` directement, sinon les sorties peuvent manquer ou être périmées.
+`registre:build` est lancé automatiquement avant `start`, `start:site`, `start:apercus`, `build`, `build:dev`, `watch`, `test` et `lint` (scripts `pre…` de npm) : passez par `npm run …`, pas par `ng` directement, sinon les sorties peuvent manquer ou être périmées.
 
 ## Registre
 
@@ -54,7 +58,7 @@ Sorties, dans `src/generated/registre/` (non versionnées) : un index par catég
 - L'aperçu est une application Angular séparée (`projects/apercus`, `baseHref /apercu/`) montée dans `<iframe sandbox="allow-scripts">` sans `allow-same-origin` (jamais `srcdoc`). Protocole `postMessage` typé `{ v: 1, type }` dans `src/app/shared/apercu/protocole.ts` ; source ET origine contrôlées des deux côtés. En-têtes `/apercu/*` dans `public/_headers` (non testés sur Cloudflare).
 - `npm run registre:build` assemble les sources de l'aperçu (`projects/apercus/src/generated`, ignoré par git) depuis `registry/` : exactement les fichiers Tailwind livrés, plus `demo/` (scène non livrée), et produit fiches JSON, fragments de code CSS et zips (`src/generated/`).
 - `npm run build` construit le site, les aperçus, puis les assemble dans `dist/ngshelf/browser/apercu`. `npm run verifier:dist` refuse tout script en ligne dans `dist/`.
-- Développement : `npm run start:apercus` (port 4201) en plus de `npm start` ; `proxy.conf.json` relaie `/apercu`.
+- Développement : `npm start` lance le site et les aperçus (cible `serve` du projet `apercus`, port 4201) ; `proxy.conf.mjs` relaie `/apercu` et répond un 503 explicatif si les aperçus ne tournent pas. Les deux serveurs ajoutent `Access-Control-Allow-Origin: *` (option `headers` d'`angular.json`), comme `_headers` en production : l'iframe sandbox a une origine opaque et charge scripts et polices en mode CORS.
 - **Paramètres propres** (ADR 0014) : le champ facultatif `parametres` du `meta.json` (choix, nombre, interrupteur) déclare les inputs réglables d'une ressource, en plus des 12 tokens ; chacun doit figurer dans le tableau `api` de `fiche.json`. La fiche les règle, `ngs-reglages` les transmet (`params`), l'aperçu ne retient que ce que la définition prévoit. Les scènes de `demo/` les lisent par `ApercuService.choix`, `nombre` et `booleen`.
 - **Page d'aperçu autonome** (ADR 0016) : « Ouvrir l'aperçu seul » ouvre `/apercu/<slug>?design=…&mode=…&p.<nom>=…` dans un nouvel onglet ; hors d'une iframe, l'aperçu affiche sa barre (retour à la fiche, design, mode, animations, paramètres).
 - **Vignettes vivantes** (ADR 0015) : chaque case de la planche charge, par `@defer (on viewport)`, une iframe de `/apercu/<slug>?vignette=1` (8 au plus en même temps, détruites hors viewport, jamais en économie de données).
@@ -80,6 +84,7 @@ src/
 └── styles.css      Tailwind, tokens et composants
 registry/           ressources du catalogue : un meta.json par ressource
 scripts/seo/        sitemap, robots.txt et contrôles SEO du build (fonctions pures, testées) ; scripts/dist/seo.ts les lance
+scripts/dev/        lanceur de `npm start` (site et aperçus ensemble)
 scripts/registre/   script Node de build du registre (TypeScript, exécuté tel quel par Node 26) et ses tests
 public/             favicon, icônes, ngshelf-og.png, fonts/, icons/sprite.svg, theme-init.js, robots.txt, _headers
 ```
