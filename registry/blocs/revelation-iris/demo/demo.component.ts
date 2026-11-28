@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { ApercuService } from '@apercus/apercu.service';
+import { imagesDemo } from '@apercus/images-demo';
 import { creerProgressionAuto } from '@apercus/progression-auto';
 import { RevelationIrisComponent } from '../revelation-iris.component';
 
@@ -14,8 +15,8 @@ import { RevelationIrisComponent } from '../revelation-iris.component';
     <div class="piece" style="--largeur-scene: 100%">
       <ngs-revelation-iris
         data-hote
-        image="images/crepuscule.svg"
-        alt="Illustration abstraite : un soleil orangé sur des crêtes violettes."
+        [image]="image.src"
+        [alt]="image.alt"
         surtitre="Carnet de voyage"
         titre="Tout arrive d’un coup"
         indice="Défiler"
@@ -32,6 +33,7 @@ import { RevelationIrisComponent } from '../revelation-iris.component';
   `,
 })
 export class DemoComponent {
+  protected readonly image = imagesDemo('revelation-iris')[0] ?? { src: '', alt: '' };
   protected readonly contexte = inject(ApercuService);
   readonly #auto = creerProgressionAuto();
   protected readonly pilotage = computed(() =>

@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { ApercuService } from '@apercus/apercu.service';
+import { imagesDemo } from '@apercus/images-demo';
 import { creerProgressionAuto } from '@apercus/progression-auto';
 import { MediaExtensibleComponent } from '../media-extensible.component';
 
@@ -14,8 +15,8 @@ import { MediaExtensibleComponent } from '../media-extensible.component';
     <div class="piece" style="--largeur-scene: 100%">
       <ngs-media-extensible
         data-hote
-        src="images/or-chaud.svg"
-        alt="Illustration abstraite : un grand soleil doré sur des terres brunes."
+        [src]="image.src"
+        [alt]="image.alt"
         titre="Casamance, côté rivière"
         indice="Défiler"
         [largeurDepart]="contexte.nombre('largeurDepart', 42)"
@@ -39,6 +40,7 @@ import { MediaExtensibleComponent } from '../media-extensible.component';
   `,
 })
 export class DemoComponent {
+  protected readonly image = imagesDemo('media-extensible')[0] ?? { src: '', alt: '' };
   protected readonly contexte = inject(ApercuService);
   readonly #auto = creerProgressionAuto();
   protected readonly pilotage = computed(() =>

@@ -24,13 +24,17 @@
 # Aperçus isolés des ressources (ADR 0003 et 0010) : l'application d'aperçus est servie sous /apercu/ et
 # montée dans une iframe `sandbox="allow-scripts"` sans `allow-same-origin`, donc d'origine opaque.
 # `!` remplace la CSP du site (deux CSP donneraient leur intersection) ; `sandbox allow-scripts` s'applique
-# aussi quand la page est ouverte hors de l'iframe. Aucune connexion sortante : l'aperçu n'en a pas besoin.
+# aussi quand la page est ouverte hors de l'iframe. Aucune connexion sortante (`connect-src 'none'`).
+# TEMPORAIRE (ADR 0021) : `img-src` admet picsum.photos (qui redirige vers fastly.picsum.photos) et
+# images.unsplash.com, pour les images externes des démonstrations, jusqu'aux images locales. Uniquement
+# ici : la CSP du site (`/*`) n'admet aucun hôte tiers. À retirer avec `IMAGES_EXTERNES_ACTIVES` dans
+# projects/apercus/src/app/images-demo.ts ; `npm run verifier:dist` contrôle la cohérence.
 # `Access-Control-Allow-Origin: *` : une origine opaque charge scripts modules et polices en mode CORS.
 # Rien de secret n'est servi ici. NON TESTÉ sur Cloudflare : à vérifier au premier déploiement.
 /apercu/*
   ! Content-Security-Policy
   ! Referrer-Policy
-  Content-Security-Policy: sandbox allow-scripts; default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'none'
+  Content-Security-Policy: sandbox allow-scripts; default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://picsum.photos https://fastly.picsum.photos https://images.unsplash.com; font-src 'self'; connect-src 'none'; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'none'
   Referrer-Policy: no-referrer
   X-Robots-Tag: noindex, nofollow
   Access-Control-Allow-Origin: *

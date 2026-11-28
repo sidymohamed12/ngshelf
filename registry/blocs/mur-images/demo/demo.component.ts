@@ -1,17 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { ApercuService } from '@apercus/apercu.service';
+import { imagesDemo } from '@apercus/images-demo';
 import { MurImagesComponent } from '../mur-images.component';
 
-const IMAGES: readonly string[] = [
-  'images/aube-ocre.svg',
-  'images/rose-poudre.svg',
-  'images/foret-verte.svg',
-  'images/nuit-bleue.svg',
-  'images/or-chaud.svg',
-  'images/ciel-clair.svg',
-  'images/crepuscule.svg',
-  'images/vert-profond.svg',
-];
+const IMAGES: readonly string[] = imagesDemo('mur-images').map((image) => image.src);
 
 /** Scène de l'aperçu : un atelier de tirages d'art et son mur de paysages (non livrée). */
 @Component({

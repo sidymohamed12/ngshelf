@@ -1,34 +1,22 @@
 import { Component, inject } from '@angular/core';
 import { ApercuService } from '@apercus/apercu.service';
+import { imagesDemo } from '@apercus/images-demo';
 import { ElementGalerieAccordeon, GalerieAccordeonComponent } from '../galerie-accordeon.component';
 
-const ELEMENTS: readonly ElementGalerieAccordeon[] = [
-  {
-    image: 'images/aube-ocre.svg',
-    legende: 'Aube ocre',
-    alt: 'Illustration abstraite : un soleil pâle sur des reliefs ocre.',
-  },
-  {
-    image: 'images/rose-poudre.svg',
-    legende: 'Rose poudré',
-    alt: 'Illustration abstraite : un ciel rose au-dessus de collines framboise.',
-  },
-  {
-    image: 'images/foret-verte.svg',
-    legende: 'Forêt verte',
-    alt: 'Illustration abstraite : une lune claire sur des crêtes vert sombre.',
-  },
-  {
-    image: 'images/nuit-bleue.svg',
-    legende: 'Nuit bleue',
-    alt: 'Illustration abstraite : une lune sur des reliefs bleu nuit.',
-  },
-  {
-    image: 'images/or-chaud.svg',
-    legende: 'Or chaud',
-    alt: 'Illustration abstraite : un grand soleil doré sur des terres brunes.',
-  },
+const IMAGES = imagesDemo('galerie-accordeon');
+const LEGENDES: readonly string[] = [
+  'Aube ocre',
+  'Rose poudré',
+  'Forêt verte',
+  'Nuit bleue',
+  'Or chaud',
 ];
+
+const ELEMENTS: readonly ElementGalerieAccordeon[] = LEGENDES.map((legende, i) => ({
+  image: IMAGES[i]?.src ?? '',
+  legende,
+  alt: IMAGES[i]?.alt ?? legende,
+}));
 
 /** Scène de l'aperçu : cinq illustrations, la troisième ouverte (non livrée). */
 @Component({
