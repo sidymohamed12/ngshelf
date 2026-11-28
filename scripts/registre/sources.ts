@@ -31,6 +31,7 @@ export interface FichierCode {
 export const MARQUEUR_STYLE = '/*STYLE*/';
 const MOTIF_COMPOSANT = /^([a-z0-9-]+)\.component\.ts$/;
 const INDENTATION = '  ';
+const ENCAPSULATION_GLOBALE = 'encapsulation: ViewEncapsulation.None,';
 const CLASSE_ANIMATIONS_COUPEES = "'[class.ngs-sans-animation]': '!animations()'";
 
 /** Nom du composant (`bouton` pour `bouton.component.ts`) : exactement un fichier à la racine. */
@@ -59,7 +60,11 @@ function lignesStyle(
   const feuille = `styleUrl: './${composant}.component.css',`;
   if (variante === 'css') return host ? `${feuille}\n${INDENTATION}${host}` : feuille;
   const keyframes = `tailwind/${composant}.component.css` in fichiers;
-  const suite = keyframes ? `${feuille} // @keyframes seulement` : '';
+  // Les classes Tailwind (`animate-[nom_…]`) sont globales : des @keyframes encapsulés par Angular
+  // seraient renommés (`_ngcontent-…_nom`) et l'animation ne trouverait jamais son nom.
+  const suite = keyframes
+    ? `${ENCAPSULATION_GLOBALE}\n${INDENTATION}${feuille} // @keyframes seulement`
+    : '';
   return [host, suite].filter(Boolean).join(`\n${INDENTATION}`);
 }
 
@@ -80,13 +85,17 @@ export function fichiersVariante(
     new RegExp(`\\n(\\s*)${escapeRegExp(MARQUEUR_STYLE)}\\n`),
     style ? `\n$1${style}\n` : '\n',
   );
+  const code =
+    variante === 'tailwind' && `tailwind/${composant}.component.css` in fichiers
+      ? ajouterImportAngular(ts, 'ViewEncapsulation')
+      : ts;
   const extras = Object.keys(fichiers)
     .filter((chemin) => chemin.endsWith('.ts') && !chemin.includes('/') && chemin !== `${base}.ts`)
     .sort()
     .map((chemin): FichierCode => ({ nom: chemin, langage: 'ts', code: fichiers[chemin] ?? '' }));
   const liste: FichierCode[] = [
     ...extras,
-    { nom: `${base}.ts`, langage: 'ts', code: ts },
+    { nom: `${base}.ts`, langage: 'ts', code },
     { nom: `${base}.html`, langage: 'html', code: fichiers[`${variante}/${base}.html`] ?? '' },
   ];
   const feuille = fichiers[`${variante}/${base}.css`];
@@ -94,6 +103,27 @@ export function fichiersVariante(
     liste.push({ nom: `${base}.css`, langage: langageDe(`${base}.css`), code: feuille });
   }
   return liste.map((f) => ({ ...f, code: f.code.replace(/\s+$/, '') }));
+}
+
+const MOTIF_IMPORT_ANGULAR = /import \{([^}]*)\} from '@angular\/core';/;
+const LARGEUR_LIGNE_IMPORT = 90;
+
+/** Ajoute un nom à l'import de `@angular/core` du composant (sans effet s'il y est déjà). */
+function ajouterImportAngular(ts: string, nom: string): string {
+  const trouve = MOTIF_IMPORT_ANGULAR.exec(ts);
+  if (!trouve) return ts;
+  const noms = (trouve[1] ?? '')
+    .split(',')
+    .map((n) => n.trim())
+    .filter(Boolean);
+  if (noms.includes(nom)) return ts;
+  const tous = [...noms, nom];
+  const ligne = `import { ${tous.join(', ')} } from '@angular/core';`;
+  const import_ =
+    ligne.length <= LARGEUR_LIGNE_IMPORT
+      ? ligne
+      : `import {\n${tous.map((n) => `${INDENTATION}${n},`).join('\n')}\n} from '@angular/core';`;
+  return ts.replace(MOTIF_IMPORT_ANGULAR, import_);
 }
 
 function escapeRegExp(texte: string): string {
