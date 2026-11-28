@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-28). Écart assumé par rapport à la maquette `design/maquette/ressource.html` (trois colonnes : identité, aperçu, réglages), que `designer` devra reporter. Dépend de l'ADR 0018 (pleine largeur).
+proposé (2026-11-28). Décisions 1, 3 et 4 amendées par l'ADR 0020 (bandeau linéaire, barre réduite à la taille et au mode, version du code dans le bloc Code). Écart assumé par rapport à la maquette `design/maquette/ressource.html` (trois colonnes : identité, aperçu, réglages), que `designer` devra reporter. Dépend de l'ADR 0018 (pleine largeur).
 
 ## Contexte
 
