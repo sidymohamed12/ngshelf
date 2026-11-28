@@ -1,0 +1,13 @@
+@for (option of options(); track option.valeur; let i = $index) {
+  <button
+    class="ngs-seg__btn"
+    type="button"
+    role="radio"
+    [attr.aria-checked]="option.valeur === valeur()"
+    [tabindex]="option.valeur === valeur() ? 0 : -1"
+    (click)="choisir(option.valeur)"
+    (keydown)="surTouche($event, i)"
+  >
+    {{ option.libelle }}
+  </button>
+}

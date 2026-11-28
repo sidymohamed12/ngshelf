@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { VIGNETTES_SIMULTANEES_MAX, VignettesService } from '@core/apercu/vignettes.service';
 import { messagePret } from '@shared/apercu/protocole';
+import { ValeursContrat } from '@shared/livraison/livraison';
 import {
   ApercuVignetteComponent,
   DELAI_DEMARRAGE_MS,
@@ -149,6 +150,37 @@ describe('ApercuVignetteComponent', () => {
     );
     fixture.detectChanges();
     expect(fixture.nativeElement.getAttribute('data-etat')).toBe('pret');
+  });
+
+  it('envoie les réglages à l’aperçu prêt, puis à chaque changement, sans recharger l’iframe', async () => {
+    demarrer();
+    await visible(true);
+    const iframe = cadre();
+    const envoyer = vi.fn();
+    Object.defineProperty(iframe?.contentWindow, 'postMessage', {
+      value: envoyer,
+      configurable: true,
+    });
+    const valeurs = { '--ngs-color-action': '#0b6464' } as unknown as ValeursContrat;
+    fixture.componentRef.setInput('reglages', valeurs);
+    fixture.detectChanges();
+    expect(envoyer).not.toHaveBeenCalled();
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        data: messagePret(),
+        origin: 'null',
+        source: iframe?.contentWindow ?? null,
+      }),
+    );
+    fixture.detectChanges();
+    expect(envoyer).toHaveBeenCalledTimes(1);
+    const [message, cible] = envoyer.mock.calls[0] ?? [];
+    expect(cible).toBe('*');
+    expect(message).toMatchObject({ v: 1, type: 'ngs-reglages', vars: valeurs, mode: 'clair' });
+    fixture.componentRef.setInput('reglages', { '--ngs-color-action': '#b4361c' });
+    fixture.detectChanges();
+    expect(envoyer).toHaveBeenCalledTimes(2);
+    expect(cadre()).toBe(iframe);
   });
 
   it('rend sa place et supprime l’iframe quand la case sort du viewport', async () => {
