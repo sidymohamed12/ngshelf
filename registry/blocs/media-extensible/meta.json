@@ -79,7 +79,7 @@
       "defaut": 0.55
     }
   ],
-  "apercuCase": { "largeur": 960, "hauteur": 540 },
+  "rendu": "grand-ecran",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",
