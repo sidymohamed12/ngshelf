@@ -31,11 +31,12 @@
       @if (depot) {
         <a
           class="ngs-btn ngs-btn--ghost ngs-btn--icon ngs-header__github"
-          rel="noopener"
+          target="_blank"
+          rel="noopener noreferrer"
           [href]="depot"
-          [attr.aria-label]="textes.nav.github"
         >
           <svg appIcone="github-logo"></svg>
+          <span class="sr-only">{{ textes.nav.github }} {{ textes.nav.nouvelOnglet }}</span>
         </a>
       }
       <button

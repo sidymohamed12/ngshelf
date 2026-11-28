@@ -55,7 +55,6 @@ export const TEXTES_APROPOS = {
   contribuerTexte: $localize`:@@apropos.contribuer.texte:Une ressource, c’est un dossier : ses fichiers, une démo et une fiche de description. Proposez-la par une demande de fusion sur GitHub ; elle est relue avant d’être publiée.`,
   contribuerCta: $localize`:@@apropos.contribuer.cta:Voir le dépôt sur GitHub`,
   contribuerCta2: $localize`:@@apropos.contribuer.cta2:Lire le guide de contribution`,
-  contribuerProvisoire: $localize`:@@apropos.contribuer.provisoire:Lien provisoire : le dépôt public n’est pas encore ouvert.`,
   contribuerDossier: $localize`:@@apropos.contribuer.dossier:Le dossier d’une ressource`,
   parcours: $localize`:@@apropos.parcours:Parcours d’une contribution`,
   quiH2: $localize`:@@apropos.qui.h2:Qui le développe`,

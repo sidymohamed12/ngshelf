@@ -44,6 +44,7 @@ export class FooterComponent {
   protected readonly textes = TEXTES;
   protected readonly familles = LIENS_FAMILLES;
   protected readonly reseaux = RESEAUX;
+  protected readonly depot = SITE.depot;
   protected readonly portfolio = auteur.portfolio;
   protected readonly nomAuteur = auteur.nom;
 }

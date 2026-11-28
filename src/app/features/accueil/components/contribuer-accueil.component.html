@@ -7,6 +7,14 @@
     <div class="grid gap-6 lg:col-span-5">
       <h2 class="ngs-h2 m-0" id="contribuer-titre">{{ t.contribuerH2 }}</h2>
       <p class="ngs-lead m-0">{{ t.contribuerTexte }}</p>
+      @if (depot) {
+        <div>
+          <a class="ngs-btn" [href]="depot" target="_blank" rel="noopener noreferrer">
+            <svg appIcone="github-logo"></svg><span>{{ t.contribuerCta2 }}</span>
+            <span class="sr-only">{{ nouvelOnglet }}</span>
+          </a>
+        </div>
+      }
     </div>
     <div class="lg:col-span-6 lg:col-start-7">
       <svg

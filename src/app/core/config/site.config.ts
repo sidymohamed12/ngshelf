@@ -45,7 +45,7 @@ export interface SiteConfig {
   readonly nomCourt: string;
   /** Préfixe des tokens (--ngs-*) et des classes (ngs-*), ADR 0006. */
   readonly prefixe: string;
-  /** Dépôt GitHub du projet ; null tant qu'il n'est pas créé (les liens « code source » sont alors masqués). */
+  /** Dépôt GitHub du projet (remote origin) ; null le ferait disparaître du header, du menu et du pied. */
   readonly depot: string | null;
   readonly licence: string;
   /** ADR 0013 : Cloudflare (Pages ou Workers Static Assets, choix au lot 5). */
@@ -60,7 +60,7 @@ export const SITE: SiteConfig = {
   url: null,
   nomCourt: 'Shelf',
   prefixe: 'ngs',
-  depot: null,
+  depot: 'https://github.com/sidymohamed12/ngshelf',
   licence: 'MIT',
   hebergeur: 'cloudflare',
   angular: '22',
