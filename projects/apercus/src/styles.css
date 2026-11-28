@@ -344,3 +344,19 @@ html.ap-autonome .compo {
     position: static;
   }
 }
+
+/* ───── Vignette d'une case de la planche (ADR 0015) : la scène seule, sans interaction ───── */
+
+html.ap-vignette,
+html.ap-vignette body {
+  overflow: hidden;
+}
+
+html.ap-vignette body {
+  padding: 16px;
+}
+
+html.ap-vignette .compo {
+  pointer-events: none;
+  user-select: none;
+}

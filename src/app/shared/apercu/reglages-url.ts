@@ -46,6 +46,8 @@ export interface EtatApercuUrl {
   readonly mode: ModeApercu;
   readonly animations: boolean;
   readonly reglages: ReglagesVisiteur;
+  /** Aperçu d'une case de la planche (ADR 0015) : sans barre, sans interaction, calé sur la case. */
+  readonly vignette: boolean;
 }
 
 function estPolice(valeur: string | null): valeur is PoliceReglee {
@@ -80,6 +82,7 @@ export function lireRechercheApercu(recherche: string): EtatApercuUrl {
     design: design !== null && MOTIF_DESIGN.test(design) ? design : undefined,
     mode: url.get('mode') === 'sombre' ? 'sombre' : 'clair',
     animations: url.get('animations') !== '0',
+    vignette: url.get('vignette') === '1',
     reglages: sansIndefinis({
       couleur: couleur !== null && MOTIF_COULEUR.test(couleur) ? couleur : undefined,
       rayon: lireEntier(url.get('rayon')),
@@ -90,7 +93,11 @@ export function lireRechercheApercu(recherche: string): EtatApercuUrl {
 }
 
 /** Écrit l'état d'une fiche dans une chaîne de recherche ; seul ce qui diffère du départ est écrit. */
-export function ecrireRechercheApercu(etat: EtatApercuUrl, vers: URLSearchParams): void {
+export function ecrireRechercheApercu(
+  etat: Omit<EtatApercuUrl, 'vignette'> & { readonly vignette?: boolean },
+  vers: URLSearchParams,
+): void {
+  if (etat.vignette) vers.set('vignette', '1');
   if (etat.design !== undefined) vers.set('design', etat.design);
   if (etat.mode === 'sombre') vers.set('mode', 'sombre');
   if (!etat.animations) vers.set('animations', '0');

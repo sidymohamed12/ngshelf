@@ -6,8 +6,14 @@ describe('lireRechercheApercu', () => {
       design: undefined,
       mode: 'clair',
       animations: true,
+      vignette: false,
       reglages: {},
     });
+  });
+
+  it('reconnaît une vignette de planche', () => {
+    expect(lireRechercheApercu('?vignette=1').vignette).toBe(true);
+    expect(lireRechercheApercu('?vignette=oui').vignette).toBe(false);
   });
 
   it('lit le design, le mode, les animations et les réglages', () => {
@@ -19,6 +25,7 @@ describe('lireRechercheApercu', () => {
       design: 'fleuve',
       mode: 'sombre',
       animations: false,
+      vignette: false,
       reglages: { couleur: '#1f4fd1', rayon: 12, densite: 1.2, police: 'serif' },
     });
   });
@@ -55,6 +62,7 @@ describe('ecrireRechercheApercu', () => {
 
   it('fait l’aller-retour avec la lecture', () => {
     const etat = {
+      vignette: false,
       design: 'fleuve',
       mode: 'sombre' as const,
       animations: false,

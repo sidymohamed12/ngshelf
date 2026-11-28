@@ -109,6 +109,13 @@ describe('construireSorties', () => {
     expect(parSlug('abeille')).toMatchObject({ animee: false, tailleCase: 'normale' });
   });
 
+  it('reporte le premier design mis en avant dans l’index, et seulement s’il existe', () => {
+    const avec = ressource({ slug: 'vedette', designsMisEnAvant: ['fleuve', 'planche'] });
+    const index = construireSorties([avec, ...METAS]).index.composant;
+    expect(index.find((e) => e.slug === 'vedette')?.designMisEnAvant).toBe('fleuve');
+    expect('designMisEnAvant' in (index.find((e) => e.slug === 'zebre') ?? {})).toBe(false);
+  });
+
   it('ne compte pas comme réglable une ressource hors contrat', () => {
     const horsContrat = ressource({ slug: 'libre', contratTokens: null });
     expect(construireSorties([horsContrat, ...METAS]).compteurs.options.reglables).toBe(4);

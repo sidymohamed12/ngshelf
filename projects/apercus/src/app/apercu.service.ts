@@ -35,6 +35,7 @@ import { ORIGINES_SITE } from './origines';
 
 const CLASSE_SOMBRE = 'dark';
 const CLASSE_AUTONOME = 'ap-autonome';
+const CLASSE_VIGNETTE = 'ap-vignette';
 const CLASSE_SANS_ANIMATION = 'ngs-sans-animation';
 const SELECTEUR_HOTES = '[data-hote]';
 /** Délai après lequel une sortie sans animation en cours est considérée comme terminée. */
@@ -60,6 +61,7 @@ export class ApercuService {
   readonly #mouvementReduit = signal(false);
   readonly #slug = signal<string | null>(null);
   readonly #autonome = signal(false);
+  readonly #vignette = signal(false);
   readonly #design = signal<string | undefined>(undefined);
   readonly #reglagesVisiteur = signal<ReglagesVisiteur>({});
   readonly #definitionsSignal = signal<readonly ParametreReglable[]>([]);
@@ -72,6 +74,8 @@ export class ApercuService {
 
   /** Vrai quand la page est ouverte seule (nouvel onglet), faux dans l'iframe de la fiche ou d'une case. */
   readonly autonome = this.#autonome.asReadonly();
+  /** Vrai pour l'aperçu d'une case de la planche : aucune interaction, aucun message de hauteur. */
+  readonly vignette = this.#vignette.asReadonly();
   /** Titre et chemin de la fiche de la ressource montrée (null avant la route ou pour un slug inconnu). */
   readonly info = computed(() => INFOS_APERCUS[this.#slug() ?? ''] ?? null);
   readonly definitions = this.#definitionsSignal.asReadonly();
@@ -149,9 +153,12 @@ export class ApercuService {
   #demarrer(): void {
     const fenetre = this.#document.defaultView;
     if (!fenetre) return;
-    this.#autonome.set(fenetre.parent === fenetre);
-    this.#document.documentElement.classList.toggle(CLASSE_AUTONOME, fenetre.parent === fenetre);
     const initial = lireRechercheApercu(fenetre.location.search);
+    const autonome = fenetre.parent === fenetre && !initial.vignette;
+    this.#autonome.set(autonome);
+    this.#document.documentElement.classList.toggle(CLASSE_AUTONOME, autonome);
+    this.#vignette.set(initial.vignette);
+    this.#document.documentElement.classList.toggle(CLASSE_VIGNETTE, initial.vignette);
     const reduit = fenetre.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     this.#mouvementReduit.set(reduit);
     this.#appliquerMode(initial.mode);
@@ -172,7 +179,7 @@ export class ApercuService {
     };
     fenetre.addEventListener('message', surMessage);
     this.#destroyRef.onDestroy(() => fenetre.removeEventListener('message', surMessage));
-    this.#suivreHauteur(fenetre);
+    if (!initial.vignette) this.#suivreHauteur(fenetre);
     this.#envoyer(fenetre, messagePret());
   }
 
