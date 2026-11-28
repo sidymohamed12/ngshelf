@@ -33,7 +33,7 @@ describe('fiche : états sans données', () => {
   });
 });
 
-describe('fiche : barre de réglages au-dessus de l’aperçu (ADR 0019)', () => {
+describe('fiche : disposition (ADR 0019 et 0020)', () => {
   const jeu = {
     '--ngs-color-action': '#0b6464',
     '--ngs-color-on-action': '#ffffff',
@@ -77,33 +77,60 @@ describe('fiche : barre de réglages au-dessus de l’aperçu (ADR 0019)', () =>
     return creer({ etat: 'ok', fiche });
   }
 
-  it('place la barre dans la carte de l’aperçu, avant le cadre, avec taille, mode, design, animations et version du code', () => {
+  it('place la barre dans la carte de l’aperçu, avant le cadre, avec la taille et le mode seulement', () => {
     const el = page();
     const barre = el.querySelector('.ngs-preview .fiche-barre');
     expect(barre).not.toBeNull();
     const groupes = [...(barre?.querySelectorAll('[role="radiogroup"]') ?? [])].map(
       (g) => g.getAttribute('aria-label') ?? g.getAttribute('aria-labelledby'),
     );
-    expect(groupes).toHaveLength(4);
-    expect(barre?.querySelector('input[type="checkbox"]')).not.toBeNull();
+    expect(groupes).toHaveLength(2);
+    expect(barre?.querySelector('input[type="checkbox"]')).toBeNull();
     expect(barre?.compareDocumentPosition(el.querySelector('app-apercu-frame') as Node)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
   });
 
-  it('sort l’identité de la colonne de gauche : le titre est au-dessus de la ligne aperçu + panneau', () => {
+  it('ne duplique aucun réglage : design et animations sont dans le panneau seul, une fois', () => {
     const el = page();
-    const corps = el.querySelector('.fiche-corps');
-    expect(el.querySelector('.fiche-identite')?.closest('.fiche-corps')).toBeNull();
-    expect(corps?.querySelector('.ngs-preview')).not.toBeNull();
+    const reglages = [...el.querySelectorAll('summary > span:first-child')].map((s) =>
+      s.textContent?.trim(),
+    );
+    expect(reglages.filter((r) => r === 'Design')).toHaveLength(1);
+    expect(reglages.filter((r) => r === 'Animations')).toHaveLength(1);
+    expect(el.querySelectorAll('input[type="checkbox"]').length).toBeLessThanOrEqual(1);
+    expect(el.querySelector('.fiche-barre [aria-labelledby="barre-design"]')).toBeNull();
   });
 
-  it('garde le panneau de réglages à droite de l’aperçu, avec ses groupes repliables', () => {
+  it('range la version du code (Tailwind, CSS) dans l’en-tête du bloc Code, pas dans la barre', () => {
+    const el = page();
+    const entete = el.querySelector('.code-entete');
+    const boutons = [...(entete?.querySelectorAll('[role="radio"]') ?? [])].map((b) =>
+      b.textContent?.trim(),
+    );
+    expect(boutons).toEqual(['Tailwind', 'CSS']);
+    expect(el.querySelector('.fiche-barre')?.textContent).not.toContain('Tailwind');
+  });
+
+  it('met l’identité en bandeau linéaire : titre, actions sur la même ligne, fiche technique en dessous', () => {
+    const el = page();
+    const identite = el.querySelector('app-fiche-identite .fiche-identite');
+    expect(identite?.closest('.fiche-corps')).toBeNull();
+    const tete = identite?.querySelector('.fiche-identite__tete');
+    expect(tete?.querySelector('h1')).not.toBeNull();
+    expect(tete?.querySelectorAll('.fiche-identite__actions button')).toHaveLength(2);
+    expect(identite?.querySelectorAll('.fiche-meta > div')).toHaveLength(5);
+    expect(tete?.compareDocumentPosition(identite?.querySelector('.fiche-meta') as Node)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+  });
+
+  it('garde le panneau de réglages à droite de l’aperçu, à hauteur égale, avec ses groupes repliables', () => {
     const el = page();
     const corps = el.querySelector('.fiche-corps');
     const enfants = [...(corps?.children ?? [])].map((c) => c.tagName.toLowerCase());
     expect(enfants[0]).toBe('section');
-    expect(enfants.at(-1)).toBe('app-reglages-fiche');
+    expect(corps?.lastElementChild?.classList).toContain('fiche-corps__reglages');
     expect(corps?.querySelectorAll('aside details.ngs-reglage').length).toBeGreaterThanOrEqual(6);
   });
 

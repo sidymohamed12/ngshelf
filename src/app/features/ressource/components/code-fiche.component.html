@@ -1,6 +1,29 @@
-<section class="grid content-start gap-5 min-w-0" aria-labelledby="code-titre">
+<section class="code-fiche" aria-labelledby="code-titre">
   <div class="code-entete">
     <h2 class="ngs-h3 m-0" id="code-titre">{{ textes.titre }}</h2>
+    <div class="code-entete__variante">
+      <span class="ngs-label ngs-muted" id="code-variante">{{ textes.variante }}</span>
+      <div class="ngs-seg" role="radiogroup" aria-labelledby="code-variante">
+        <button
+          class="ngs-seg__btn"
+          type="button"
+          role="radio"
+          [attr.aria-checked]="etat.variante() === 'tailwind'"
+          (click)="etat.choisirVariante('tailwind')"
+        >
+          {{ textes.tailwind }}
+        </button>
+        <button
+          class="ngs-seg__btn"
+          type="button"
+          role="radio"
+          [attr.aria-checked]="etat.variante() === 'css'"
+          (click)="etat.choisirVariante('css')"
+        >
+          {{ textes.css }}
+        </button>
+      </div>
+    </div>
   </div>
   <p class="m-0 ngs-small ngs-muted">{{ aide() }}</p>
 

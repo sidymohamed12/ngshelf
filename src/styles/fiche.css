@@ -26,22 +26,96 @@
 }
 
 /*
-  Haut de la fiche (ADR 0019) : un bandeau d'identité sur toute la largeur (titre, description, copie,
-  téléchargement, fiche technique), puis l'aperçu avec sa barre de réglages fréquents et, à droite, le panneau
-  de réglages par tokens, inchangé. L'aperçu s'étire jusqu'au bas du panneau.
+  Haut de la fiche (ADR 0020). Bandeau d'identité linéaire, toute la largeur : badges et titre, actions sur
+  la ligne du titre, description, fiche technique en une rangée. Puis l'aperçu et le panneau de réglages à
+  hauteur égale (celle de l'aperçu), le panneau défilant dans son cadre : plus de zone vide sous l'aperçu.
 */
-.fiche-haut {
+.fiche-identite {
   display: grid;
-  gap: 1.5rem;
+  gap: 1rem;
 }
+.fiche-identite__tete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+}
+.fiche-identite__actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+}
+.fiche-identite__actions .ngs-btn {
+  justify-content: center;
+}
+@media (min-width: 40rem) {
+  .fiche-identite__actions {
+    display: flex;
+    width: auto;
+  }
+}
+.fiche-identite__description {
+  max-width: 64ch;
+}
+.fiche-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin: 0;
+  padding-block: 0.75rem;
+  border-block: 1px solid var(--color-border);
+  font-size: var(--text-small);
+}
+.fiche-meta > div {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+}
+.fiche-meta dt {
+  color: var(--color-text-muted);
+}
+.fiche-meta dd {
+  margin: 0;
+  font-weight: 560;
+}
+@media (max-width: 39.99rem) {
+  .fiche-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 1rem;
+  }
+  .fiche-meta > div {
+    display: grid;
+    gap: 0;
+  }
+}
+
 .fiche-corps {
   display: grid;
   gap: 1.5rem;
   align-items: stretch;
 }
+.fiche-corps__reglages {
+  position: relative;
+  min-width: 0;
+}
 @media (min-width: 64rem) {
   .fiche-corps {
     grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  }
+  /* Le panneau ne compte pas dans la hauteur de la rangée : il remplit celle de l'aperçu et défile. */
+  .fiche-corps__reglages > app-reglages-fiche {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .fiche-corps__reglages .ngs-panel {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
 }
 @media (min-width: 80rem) {
@@ -49,36 +123,10 @@
     grid-template-columns: minmax(0, 9fr) minmax(0, 3fr);
   }
 }
-.fiche-identite__corps {
-  display: grid;
-  gap: 1.25rem 3rem;
-  align-content: start;
-}
-@media (min-width: 64rem) {
-  .fiche-identite__corps {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
-    align-items: start;
-  }
-}
 
-/* Barre de réglages fréquents de l'aperçu : taille, mode, design, animations, version du code. */
+/* Barre de l'aperçu : taille et mode à gauche, rejouer et « Ouvrir l'aperçu seul » à droite. */
 .fiche-barre {
   gap: 0.5rem 1rem;
-}
-.fiche-barre__groupe {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-  max-width: 100%;
-}
-.fiche-barre__groupe .ngs-seg {
-  max-width: 100%;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.fiche-barre__animations {
-  position: relative;
 }
 .fiche-barre__fin {
   display: flex;
@@ -92,10 +140,18 @@
     margin-left: 0;
   }
 }
+app-barre-apercu {
+  display: block;
+}
 
 /* Aperçu : le cadre garde sa largeur de test et rétrécit (transform) pour tenir dans la scène. */
 .app-apercu {
   min-height: 34rem;
+}
+@media (min-width: 64rem) {
+  .app-apercu {
+    min-height: 36rem;
+  }
 }
 .app-apercu-scene {
   position: relative;
@@ -149,6 +205,11 @@
   font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
+.code-entete__variante {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .code-entete {
   display: flex;
   flex-wrap: wrap;
@@ -161,5 +222,51 @@
 @media (prefers-reduced-motion: no-preference) {
   .app-apercu {
     view-transition-name: apercu-ressource;
+  }
+}
+
+/*
+  Bloc Code : en une colonne il a sa hauteur naturelle ; à côté de Utilisation / Installation (à partir de
+  1024 px) il prend la hauteur de cette colonne et le code défile dans son cadre, sans vide sous lui.
+*/
+.fiche-code {
+  min-width: 0;
+}
+.code-fiche {
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+  min-width: 0;
+}
+@media (min-width: 64rem) {
+  .fiche-code {
+    position: relative;
+    min-height: 30rem;
+  }
+  .fiche-code > app-code-fiche {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .code-fiche {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .code-fiche .ngs-code {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .code-fiche .ngs-code [role='tabpanel']:not([hidden]) {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .code-fiche .ngs-code pre {
+    flex: 1;
+    max-height: none;
+    min-width: 0;
   }
 }

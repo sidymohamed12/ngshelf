@@ -56,7 +56,7 @@ export const TEXTES_FICHE = {
     rejouerEntree: $localize`:@@ressource.rejouer.entree:Rejouer l’entrée`,
     rejouerSortie: $localize`:@@ressource.rejouer.sortie:Rejouer la sortie`,
   },
-  /** Barre d'outils au-dessus de l'aperçu : taille, mode, design, animations, version du code. */
+  /** Barre d'outils au-dessus de l'aperçu : taille et mode (le reste est dans le panneau de réglages). */
   barre: {
     titre: $localize`:@@ressource.barre:Réglages fréquents de l’aperçu`,
   },

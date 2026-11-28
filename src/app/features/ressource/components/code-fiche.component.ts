@@ -93,7 +93,7 @@ export class CodeFicheComponent {
   );
 
   constructor() {
-    // La variante se choisit dans la barre de l'aperçu : on revient au premier onglet du nouveau code.
+    // La variante se choisit dans l'en-tête de ce bloc : on revient au premier onglet du nouveau code.
     effect(() => {
       this.etat.variante();
       untracked(() => this.actif.set(0));
