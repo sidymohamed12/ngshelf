@@ -1,11 +1,13 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import {
+  RouteReuseStrategy,
   TitleStrategy,
   provideRouter,
   withComponentInputBinding,
   withInMemoryScrolling,
   withViewTransitions,
 } from '@angular/router';
+import { ReutilisationRouteStrategy } from '@core/routage/reutilisation-route.strategy';
 import { surTransitionCreee } from '@core/motion/transitions';
 import { TitreSeoStrategy } from '@core/seo/titre-seo.strategy';
 import { routes } from './app.routes';
@@ -16,6 +18,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     // Même titre que le routeur, puis le SEO de la page (description, Open Graph, JSON-LD).
     { provide: TitleStrategy, useExisting: TitreSeoStrategy },
+    // La fiche d'une ressource est recréée d'une ressource à l'autre (voir la stratégie).
+    { provide: RouteReuseStrategy, useExisting: ReutilisationRouteStrategy },
     provideRouter(
       routes,
       withComponentInputBinding(),

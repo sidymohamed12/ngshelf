@@ -14,6 +14,7 @@ import { LIBELLES_CATEGORIE, LIBELLES_SECTEUR, LIBELLES_TYPE, TEXTES } from '@co
 import { SEGMENT_SECTEURS } from '@core/registre/chemins';
 import { FicheService } from '@features/ressource/services/fiche.service';
 import { ficheResolver } from '@features/ressource/services/ressource.resolver';
+import { CLE_RECREER_SI_PARAMS } from '@core/routage/reutilisation-route.strategy';
 import { CLE_SEO } from '@core/seo/page-seo';
 import { ficheVitrineResolver } from '@shared/vitrine/donnees-vitrine';
 import { donneesVitrineResolver } from '@shared/vitrine/donnees-vitrine';
@@ -108,7 +109,7 @@ export const routes: Routes = [
       {
         path: ':categorie/:type/:slug',
         title: titreFiche,
-        data: { [CLE_SEO]: seoFiche },
+        data: { [CLE_SEO]: seoFiche, [CLE_RECREER_SI_PARAMS]: true },
         resolve: { donnees: ficheResolver },
         loadComponent: () =>
           import('@features/ressource/pages/ressource.component').then((m) => m.RessourceComponent),
