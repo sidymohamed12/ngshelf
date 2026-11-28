@@ -17,8 +17,9 @@ import { VignettesService } from '@core/apercu/vignettes.service';
 import { TEXTES } from '@core/i18n/textes.fr';
 import { MotionService } from '@core/motion/motion.service';
 import { ThemeService } from '@core/theme/theme.service';
-import { lireMessageVersSite, vientDeLApercu } from '@shared/apercu/protocole';
+import { lireMessageVersSite, messageReglages, vientDeLApercu } from '@shared/apercu/protocole';
 import { ecrireRechercheApercu } from '@shared/apercu/reglages-url';
+import { ValeursContrat } from '@shared/livraison/livraison';
 import { IconeComponent } from '../icone/icone.component';
 import { NomIcone } from '../icone/icones';
 
@@ -89,6 +90,11 @@ export class ApercuVignetteComponent {
   readonly icone = input.required<NomIcone>();
   /** Design mis en avant par la ressource ; absent = Planche. */
   readonly design = input<string>();
+  /**
+   * Valeurs des 12 tokens poussées à l'aperçu prêt par `ngs-reglages` (ADR 0010), sans recharger l'iframe :
+   * l'habillage de l'accueil et les témoins du contrat. Absentes, l'aperçu garde le design de l'adresse.
+   */
+  readonly reglages = input<ValeursContrat>();
 
   protected readonly etat = signal<EtatVignette>('veille');
   protected readonly textes = TEXTES.vignette;
@@ -141,6 +147,8 @@ export class ApercuVignetteComponent {
     });
     // L'adresse change (mode du site) : l'iframe se recharge.
     afterRenderEffect(() => this.#charger());
+    // L'aperçu est prêt, ou les réglages changent : on les lui envoie.
+    afterRenderEffect(() => this.#pousserReglages());
     this.#destroyRef.onDestroy(() => this.#liberer());
   }
 
@@ -176,6 +184,17 @@ export class ApercuVignetteComponent {
     this.#minuteurEchec = setTimeout(() => this.#echouer(), DELAI_VIGNETTE_MS);
     // Affecter src impérativement : un [src] lié à une iframe est refusé par l'assainisseur d'Angular.
     iframe.src = url;
+  }
+
+  #pousserReglages(): void {
+    const vars = this.reglages();
+    const fenetre = this.iframe()?.nativeElement.contentWindow;
+    if (!vars || !fenetre || this.etat() !== 'pret') return;
+    // Origine opaque (sandbox sans allow-same-origin) : '*' est le seul targetOrigin possible, rien de secret.
+    fenetre.postMessage(
+      messageReglages({ vars, mode: this.#mode(), animations: !this.#mouvementReduit() }),
+      '*',
+    );
   }
 
   #echouer(): void {

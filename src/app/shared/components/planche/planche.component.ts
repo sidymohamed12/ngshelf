@@ -12,6 +12,7 @@ import { cheminFiche } from '@core/registre/chemins';
 import { ApercuVignetteComponent } from '@shared/components/apercu-vignette/apercu-vignette.component';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { NomIcone } from '@shared/components/icone/icones';
+import { ValeursContrat } from '@shared/livraison/livraison';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
 import { CLASSES_TAILLE_CASE } from '@shared/utils/taille-case';
 import { ICONE_CATEGORIE, ICONE_SECTEUR, classeCategorie } from '@shared/utils/taxonomie-affichage';
@@ -48,6 +49,10 @@ interface CaseRessource {
 export class PlancheComponent {
   /** Ressources à afficher ; `undefined` tant qu'elles ne sont pas chargées. */
   readonly entrees = input<readonly EntreeIndex[] | undefined>();
+  /** Titre masqué « Ressources » : à retirer quand la planche est dans une section qui a déjà son titre. */
+  readonly avecTitre = input(true);
+  /** Réglages de tokens par slug (habillage de l'accueil), poussés aux aperçus sans les recharger. */
+  readonly reglages = input<Readonly<Record<string, ValeursContrat>>>({});
   readonly chargement = input(false);
   readonly erreur = input(false);
   /** Grille des pages à colonne de filtres : une colonne de moins aux mêmes largeurs d'écran. */

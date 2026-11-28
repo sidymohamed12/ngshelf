@@ -39,7 +39,9 @@
     }
   </div>
 } @else {
-  <h2 class="sr-only">{{ textes.titre }}</h2>
+  @if (avecTitre()) {
+    <h2 class="sr-only">{{ textes.titre }}</h2>
+  }
   <ul class="ngs-planche m-0 list-none p-0" [class.catalogue-grille]="avecFacettes()">
     @for (ressource of cases(); track ressource.entree.slug) {
       <li class="ngs-case" [class]="ressource.classes" [attr.data-slug]="ressource.entree.slug">
@@ -51,6 +53,7 @@
                 [titre]="ressource.entree.titre.fr"
                 [icone]="ressource.icone"
                 [design]="ressource.entree.designMisEnAvant"
+                [reglages]="reglages()[ressource.entree.slug]"
               />
             } @placeholder {
               <svg [appIcone]="ressource.icone" class="size-14 text-(--cat)"></svg>

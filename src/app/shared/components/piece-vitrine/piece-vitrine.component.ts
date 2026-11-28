@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { LIBELLES_TYPE } from '@core/i18n/textes.fr';
 import { ApercuVignetteComponent } from '@shared/components/apercu-vignette/apercu-vignette.component';
 import { IconeComponent } from '@shared/components/icone/icone.component';
+import { ValeursContrat } from '@shared/livraison/livraison';
 import { CategorieTypee, SEGMENT_CATEGORIE, TypeRessource } from '@shared/models/taxonomie.model';
 import { ICONE_CATEGORIE, classeCategorie } from '@shared/utils/taxonomie-affichage';
 
@@ -28,6 +29,8 @@ export class PieceVitrineComponent {
   readonly piece = input.required<PieceVitrine>();
   /** Design montré dans la vignette ; absent = Planche. */
   readonly design = input<string>();
+  /** Valeurs de tokens poussées à l'aperçu prêt (habillage), sans recharger l'iframe. */
+  readonly reglages = input<ValeursContrat>();
   /** Rapport largeur / hauteur de la scène (ex. « 16 / 9 »). */
   readonly ratio = input('16 / 9');
   readonly coin = input<'gauche' | 'droite'>('gauche');
