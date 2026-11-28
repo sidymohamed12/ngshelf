@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { readFileSync } from 'node:fs';
 import { TEXTES_FICHE } from '@core/i18n/textes-fiche';
 import { FicheRessource } from '@shared/models/fiche.model';
 import { EtatFiche } from '../services/etat-fiche';
@@ -113,5 +114,23 @@ describe('aperçu agrandi (fenêtre modale, ADR 0022)', () => {
     await fixture.whenStable();
     dialogue().click();
     expect(fixture.componentInstance.ouvert()).toBe(false);
+  });
+});
+
+describe('taille de la fenêtre agrandie (ADR 0022)', () => {
+  const tokens = readFileSync('src/styles/tokens.css', 'utf8');
+  const fiche = readFileSync('src/styles/fiche.css', 'utf8');
+
+  it('prend 90 % de la largeur et de la hauteur de la fenêtre, avec un plafond', () => {
+    expect(tokens).toMatch(/--fenetre-apercu-largeur:\s*min\(90vw,\s*[\d.]+rem\)/);
+    expect(tokens).toMatch(/--fenetre-apercu-hauteur:\s*min\(90dvh,\s*[\d.]+rem\)/);
+  });
+
+  it('le dialogue lit ces tokens, sans dimension en dur et centré', () => {
+    const regle = /\.apercu-agrandi\s*\{([^}]*)\}/.exec(fiche)?.[1] ?? '';
+    expect(regle).toContain('width: var(--fenetre-apercu-largeur)');
+    expect(regle).toContain('height: var(--fenetre-apercu-hauteur)');
+    expect(regle).toContain('margin: auto');
+    expect(regle).not.toMatch(/100vw|100dvh/);
   });
 });

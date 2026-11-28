@@ -184,6 +184,9 @@
   --radius-case: 20px;
   --radius-panel: 20px;
   --radius-full: 999px;
+  /* Fenêtre « Aperçu agrandi » (ADR 0022) : 90 % de la fenêtre en largeur et en hauteur, centrée (marges égales de 5 %), plafonnée sur un très grand écran. */
+  --fenetre-apercu-largeur: min(90vw, 105rem);
+  --fenetre-apercu-hauteur: min(90dvh, 80rem);
 
   /* ---------- Ombres (2 niveaux, décalées et douces) ---------- */
   --shadow-raise: 0 1px 2px rgb(11 11 12 / 0.06), 0 6px 16px -6px rgb(11 11 12 / 0.1);

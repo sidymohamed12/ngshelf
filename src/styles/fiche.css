@@ -271,11 +271,11 @@ app-barre-apercu {
   }
 }
 
-/* Aperçu agrandi (ADR 0022) : <dialog> natif quasi plein écran, aperçu à sa pleine taille. */
+/* Aperçu agrandi (ADR 0022) : <dialog> natif centré à 90 % de la fenêtre, aperçu à sa pleine taille. */
 .apercu-agrandi {
   box-sizing: border-box;
-  width: min(100vw - 1.5rem, 120rem);
-  height: min(100dvh - 1.5rem, 90rem);
+  width: var(--fenetre-apercu-largeur);
+  height: var(--fenetre-apercu-hauteur);
   max-width: none;
   max-height: none;
   margin: auto;

@@ -14,12 +14,13 @@ Sidy a essayé « Ouvrir l'aperçu seul » et n'en veut pas : pas de nouvelle pa
 2. **Même iframe, mêmes réglages.** La fenêtre contient un `app-apercu-frame` (iframe `sandbox="allow-scripts"`, protocole `ngs-reglages` inchangé) alimenté par l'état de la fiche (`EtatFiche.messageApercu()` : design, mode, animations, paramètres propres) et la largeur choisie (390, 768, 1280 ou adaptée). Elle ne remplace pas l'aperçu de la fiche : il n'existe qu'une iframe de plus, créée à l'ouverture et détruite à la fermeture. L'en-tête rappelle le design et le mode.
 3. **Échap dans l'aperçu.** Le focus est alors dans l'iframe : l'aperçu envoie le message `ngs-manipulation { actif: false, echap: true }` (déjà défini par l'ADR 0017) quand Échap n'a pas été consommé ; la fenêtre se ferme. Hors de la fenêtre, le message est ignoré.
 4. **Retraits.** Le lien `target="_blank"` « Ouvrir l'aperçu seul », `BarreAutonome`, l'état `autonome` et ses méthodes (`choisirDesign`, `choisirMode`, `choisirAnimations`, `reglerParametre`, `reinitialiser`), les styles `ap-barre`, `ap-autonome`, `ap-squelette` et les textes associés. **Conservés** : la route `/apercu/<slug>` (hôte d'iframe), la lecture de `?design=…&mode=…&animations=…&p.<nom>=…` (utilisée par les cases), l'état d'erreur et l'aperçu introuvable.
-5. **Mouvement réduit.** L'ouverture ne s'anime pas quand le système demande moins de mouvement.
+5. **Taille.** La fenêtre est centrée et prend 90 % de la largeur et de la hauteur de la fenêtre (marges égales de 5 % de chaque côté, `--fenetre-apercu-largeur` et `--fenetre-apercu-hauteur` dans `tokens.css`), avec un plafond de 105 rem × 80 rem sur un très grand écran. Elle prenait d'abord toute la fenêtre à 0,75 rem près (96 à 98 %, plafond 120 rem × 90 rem) : Sidy l'a trouvée trop grande (2026-11-28).
+6. **Mouvement réduit.** L'ouverture ne s'anime pas quand le système demande moins de mouvement.
 
 ## Conséquences
 
 - Budget de l'application d'aperçus : de 399 à 389 kB (la barre et ses textes disparaissent), l'avertissement de 400 kB n'est plus frôlé. Site : environ +1 kB (textes), la fenêtre est dans le chunk lazy de la fiche.
-- Un aperçu en plein viewport réel (défilement de la page entière d'un hero extensible) n'est plus testable dans un onglet à part ; la fenêtre en donne l'essentiel (jusqu'à 120 rem de large).
+- Un aperçu en plein viewport réel (défilement de la page entière d'un hero extensible) n'est plus testable dans un onglet à part ; la fenêtre en donne l'essentiel (90 % de la largeur et de la hauteur de la fenêtre, plafonnés à 105 rem × 80 rem).
 - Non vérifié : Safari et Firefox (aucun moteur disponible dans l'environnement de test).
 
 ## Sources
