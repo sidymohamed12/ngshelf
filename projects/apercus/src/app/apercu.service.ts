@@ -56,6 +56,8 @@ export class ApercuService {
   readonly #animations = signal(true);
   readonly #mode = signal<ModeApercu>('clair');
   #definitions: readonly ParametreReglable[] = [];
+  /** Vrai une fois l'URL lue (après le premier rendu) : une route qui s'ouvre ensuite relit l'URL elle-même. */
+  #demarre = false;
   readonly #parametres = signal<ValeursParametres>({});
   readonly #titre = inject(Title);
   readonly #mouvementReduit = signal(false);
@@ -93,7 +95,14 @@ export class ApercuService {
   ouvrir(slug: string): void {
     this.#definitions = PARAMETRES_APERCUS[slug] ?? [];
     this.#definitionsSignal.set(this.#definitions);
-    this.#parametres.set(parametresParDefaut(this.#definitions));
+    this.#parametres.set(
+      this.#demarre
+        ? parametresDepuisRecherche(
+            this.#definitions,
+            this.#document.defaultView?.location.search ?? '',
+          )
+        : parametresParDefaut(this.#definitions),
+    );
     this.#slug.set(slug);
     const info = INFOS_APERCUS[slug];
     if (info) this.#titre.setTitle(`Aperçu : ${info.titre} | NgShelf`);
@@ -171,6 +180,7 @@ export class ApercuService {
       this.#poserVariables();
     }
     this.#parametres.set(parametresDepuisRecherche(this.#definitions, fenetre.location.search));
+    this.#demarre = true;
     const surMessage = (evenement: MessageEvent<unknown>): void => {
       if (!vientDuSite(evenement, fenetre.parent, ORIGINES_SITE)) return;
       const message = lireMessageVersApercu(evenement.data);
