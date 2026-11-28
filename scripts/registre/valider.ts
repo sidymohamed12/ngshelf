@@ -6,6 +6,7 @@ import { MOMENTS } from '../../src/app/shared/models/motion.model.ts';
 import {
   BORNES_APERCU_CASE,
   CATEGORIES,
+  RENDUS_APERCU,
   SECTEURS,
   SEGMENT_CATEGORIE,
   TYPES_PAR_CATEGORIE,
@@ -80,6 +81,7 @@ const CLES_RESSOURCE = [
   'motion',
   'parametres',
   'apercuCase',
+  'rendu',
   'modifieLe',
   'anciensChemins',
 ];
@@ -274,9 +276,21 @@ function validerApercuCase(valeur: unknown, rapport: Rapport): void {
   }
 }
 
+function validerRendu(meta: Objet, rapport: Rapport): void {
+  if (!inclus(RENDUS_APERCU, meta['rendu'])) {
+    rapport.signaler(`« rendu » doit valoir l'une de ces valeurs : ${RENDUS_APERCU.join(', ')}`);
+  }
+  if (meta['apercuCase'] !== undefined) {
+    rapport.signaler(
+      '« rendu » et « apercuCase » sont exclusifs : le rendu fixe la taille de l’aperçu',
+    );
+  }
+}
+
 function validerOptionsPlanche(meta: Objet, rapport: Rapport): void {
   validerMotion(meta, rapport);
   if (meta['apercuCase'] !== undefined) validerApercuCase(meta['apercuCase'], rapport);
+  if (meta['rendu'] !== undefined) validerRendu(meta, rapport);
 }
 
 function validerDependances(valeur: unknown, rapport: Rapport): void {

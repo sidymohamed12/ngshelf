@@ -10,6 +10,7 @@ import {
   dimensionsVignette,
   urlVignette,
 } from './apercu-vignette.component';
+import { DIMENSIONS_RENDU } from '@shared/models/taxonomie.model';
 
 describe('urlVignette', () => {
   it('demande la vignette, clair et animée par défaut', () => {
@@ -66,6 +67,15 @@ describe('dimensionsVignette', () => {
     expect(d.gauche).toBe(84);
     expect(d.largeur * d.echelle).toBeLessThanOrEqual(480);
     expect(d.hauteur * d.echelle).toBeLessThanOrEqual(360);
+  });
+
+  it('rendu grand écran : 1440 × 1080 dans une case 4 / 3, tout le cadre est occupé sans bande', () => {
+    const d = dimensionsVignette(337, 253, DIMENSIONS_RENDU['grand-ecran']);
+    expect(d.largeur).toBe(1440);
+    expect(d.hauteur).toBe(1080);
+    expect(d.echelle).toBeCloseTo(337 / 1440);
+    expect(d.gauche).toBe(0);
+    expect(d.haut).toBeLessThanOrEqual(1);
   });
 
   it('renvoie des dimensions nulles tant que la case n’est pas mesurée', () => {

@@ -133,6 +133,19 @@ describe('validerRegistre', () => {
     ]);
   });
 
+  it('accepte le rendu grand écran de l’aperçu (ADR 0027)', () => {
+    expect(valider(ressource({ rendu: 'grand-ecran' }))).toEqual([]);
+  });
+
+  it('refuse un rendu inconnu, ou combiné à une taille de rendu déclarée', () => {
+    expect(valider(ressource({ rendu: 'tablette' }))).toEqual([
+      expect.stringContaining("« rendu » doit valoir l'une de ces valeurs : grand-ecran"),
+    ]);
+    expect(
+      valider(ressource({ rendu: 'grand-ecran', apercuCase: { largeur: 960, hauteur: 540 } })),
+    ).toEqual([expect.stringContaining('« rendu » et « apercuCase » sont exclusifs')]);
+  });
+
   it('refuse l’ancienne taille de case, supprimée avec la planche uniforme (ADR 0026)', () => {
     expect(valider(ressource({ tailleCase: 'large' }))).toEqual([
       expect.stringContaining('champ inconnu « tailleCase »'),

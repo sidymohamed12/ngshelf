@@ -1,5 +1,6 @@
 import type { Compteurs, EntreeIndex } from '../../src/app/shared/models/index-catalogue.model.ts';
 import type { MetaRegistre } from './valider.ts';
+import { DIMENSIONS_RENDU } from '../../src/app/shared/models/taxonomie.model.ts';
 import type {
   Categorie,
   Secteur,
@@ -28,7 +29,8 @@ function designMisEnAvant(meta: MetaRegistre): Pick<EntreeIndex, 'designMisEnAva
 }
 
 function apercuCase(meta: MetaRegistre): Pick<EntreeIndex, 'apercuCase'> {
-  const dimensions = meta.categorie === 'design' ? undefined : meta.apercuCase;
+  if (meta.categorie === 'design') return {};
+  const dimensions = meta.rendu === undefined ? meta.apercuCase : DIMENSIONS_RENDU[meta.rendu];
   return dimensions === undefined ? {} : { apercuCase: dimensions };
 }
 

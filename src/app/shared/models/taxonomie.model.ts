@@ -113,3 +113,20 @@ export interface ApercuCase {
 }
 /** Bornes acceptées pour `apercuCase` : au-dessous, un aperçu illisible ; au-dessus, une case démesurée. */
 export const BORNES_APERCU_CASE = { min: 240, max: 1600 } as const;
+
+/**
+ * Rendus nommés de l'aperçu d'une case (ADR 0027). `grand-ecran` : les ressources larges (galeries, heros,
+ * blocs pleine largeur) sont rendues comme sur un écran de bureau, pour qu'on voie leur disposition large
+ * complète, puis mises à l'échelle pour tenir dans la case.
+ */
+export const RENDUS_APERCU = ['grand-ecran'] as const;
+export type RenduApercu = (typeof RENDUS_APERCU)[number];
+
+/**
+ * Taille de l'iframe de chaque rendu nommé. Grand écran : 1440 px de large (seuil des grands écrans du
+ * site) et 1080 px de haut, soit le rapport 4 / 3 de la zone d'aperçu des cases (`--ratio-case`, ADR 0026) :
+ * la composition remplit la case sans bande, et un bloc plus bas que 1080 px y est centré.
+ */
+export const DIMENSIONS_RENDU: Readonly<Record<RenduApercu, ApercuCase>> = {
+  'grand-ecran': { largeur: 1440, hauteur: 1080 },
+};

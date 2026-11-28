@@ -114,6 +114,20 @@ describe('construireSorties', () => {
     expect('designMisEnAvant' in (index.find((e) => e.slug === 'zebre') ?? {})).toBe(false);
   });
 
+  it('dérive la taille de l’aperçu du rendu grand écran, sans champ rendu dans l’index (ADR 0027)', () => {
+    const large = ressource({ slug: 'large', rendu: 'grand-ecran' });
+    const fixe = ressource({ slug: 'fixe', apercuCase: { largeur: 520, hauteur: 454 } });
+    const index = construireSorties([large, fixe, ...METAS]).index.composant;
+    const entree = index.find((e) => e.slug === 'large');
+    expect(entree?.apercuCase).toEqual({ largeur: 1440, hauteur: 1080 });
+    expect('rendu' in (entree ?? {})).toBe(false);
+    expect(index.find((e) => e.slug === 'fixe')?.apercuCase).toEqual({
+      largeur: 520,
+      hauteur: 454,
+    });
+    expect(index.find((e) => e.slug === 'zebre')?.apercuCase).toBeUndefined();
+  });
+
   it('ne compte pas comme réglable une ressource hors contrat', () => {
     const horsContrat = ressource({ slug: 'libre', contratTokens: null });
     expect(construireSorties([horsContrat, ...METAS]).compteurs.options.reglables).toBe(4);

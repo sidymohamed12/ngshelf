@@ -1,4 +1,4 @@
-import { ApercuCase, CategorieTypee, Secteur, TypeRessource } from './taxonomie.model';
+import { ApercuCase, CategorieTypee, RenduApercu, Secteur, TypeRessource } from './taxonomie.model';
 import { Motion } from './motion.model';
 import { ParametreReglable } from './parametre.model';
 import { Texte } from './texte.model';
@@ -47,6 +47,11 @@ export interface MetaRessource {
   readonly motion: Motion | null;
   /** Dimensions de rendu de l'aperçu de la case (ADR 0023) : mis à l'échelle pour tenir en entier dans la zone commune (ADR 0026). */
   readonly apercuCase?: ApercuCase;
+  /**
+   * Rendu nommé de l'aperçu de la case (ADR 0027), à la place d'`apercuCase` : `grand-ecran` pour les blocs
+   * larges. L'index en dérive `apercuCase` ; les deux champs ensemble sont refusés.
+   */
+  readonly rendu?: RenduApercu;
   /**
    * Paramètres propres réglables dans la fiche (ADR 0014), en plus des 12 tokens : chacun est un input
    * du composant, documenté dans le tableau « Paramètres » de `fiche.json`.
