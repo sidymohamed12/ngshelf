@@ -1,0 +1,153 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-family: var(--ngs-font-family, system-ui, sans-serif);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+/*
+  Toute la mise en scène est lue dans --ngs-p, la progression de 0 à 1 que le composant mesure. Chaque
+  phase est une rampe bornée adoucie (3t² − 2t³) : l'expansion du cadre, la sortie du titre, la disparition
+  de l'indice, l'entrée du contenu.
+*/
+.extensible {
+  --ngs-p: 0;
+  --e: calc(var(--ngs-p) * var(--ngs-p) * (3 - 2 * var(--ngs-p)));
+  --ix: calc((100 - var(--ngs-lg)) / 2 * (1 - var(--e)) * 1%);
+  --iy: calc((100 - var(--ngs-ht)) / 2 * (1 - var(--e)) * 1%);
+  --sortie: clamp(0, (var(--ngs-p) - 0.4) / 0.48, 1);
+  --sortie-e: calc(var(--sortie) * var(--sortie) * (3 - 2 * var(--sortie)));
+  --parti: clamp(0, var(--ngs-p) / 0.12, 1);
+  --parti-e: calc(var(--parti) * var(--parti) * (3 - 2 * var(--parti)));
+  --entree: clamp(0, (var(--ngs-p) - 0.68) / 0.32, 1);
+  --entree-e: calc(var(--entree) * var(--entree) * (3 - 2 * var(--entree)));
+  --zoom-eff: var(--ngs-zoom);
+  --decal-t: -28px;
+  --decal-c: 18px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.extensible[data-defilement='conteneur'] {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  container-type: size;
+  scrollbar-width: none;
+}
+.extensible__piste {
+  position: relative;
+  width: 100%;
+  height: calc(100svh * (1 + var(--ngs-defil) + var(--ngs-pause)));
+}
+.extensible[data-defilement='conteneur'] .extensible__piste {
+  height: calc(100cqh * (1 + var(--ngs-defil) + var(--ngs-pause)));
+}
+.extensible__scene {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  container-type: inline-size;
+  background: var(--ngs-color-surface, #ffffff);
+}
+.extensible[data-defilement='conteneur'] .extensible__scene {
+  height: 100cqh;
+}
+.extensible__cadre {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(var(--iy) var(--ix) round calc(var(--ngs-radius, 10px) * 2.4 * (1 - var(--e))));
+}
+.extensible__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  transform: scale(calc(var(--zoom-eff) + (1 - var(--zoom-eff)) * var(--e)));
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform;
+}
+/* Le voile rend le contenu lisible sur l'image : la couleur du texte, jamais un noir écrit en dur. */
+.extensible__voile {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--ngs-color-text, #0b0b0c) 75%, transparent),
+    color-mix(in srgb, var(--ngs-color-text, #0b0b0c) 10%, transparent) 45%,
+    color-mix(in srgb, var(--ngs-color-text, #0b0b0c) 35%, transparent)
+  );
+  opacity: calc(var(--ngs-voile) * var(--e));
+}
+.extensible__contenu {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6%;
+  color: var(--ngs-color-surface, #ffffff);
+  text-align: center;
+  opacity: var(--entree-e);
+  transform: translateY(calc(var(--decal-c) * (1 - var(--entree-e))));
+}
+.extensible__titre {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  margin: 0;
+  padding: 0 6%;
+  place-items: center;
+  text-align: center;
+  pointer-events: none;
+  opacity: calc(1 - var(--sortie-e));
+  transform: translateY(calc(var(--decal-t) * var(--sortie-e)))
+    scale(calc(1 + 0.06 * var(--sortie-e)));
+}
+.extensible__plaque {
+  padding: 0.4em 0.7em;
+  border-radius: var(--ngs-radius, 10px);
+  background: color-mix(in srgb, var(--ngs-color-surface, #ffffff) 88%, transparent);
+  color: var(--ngs-color-text, #0b0b0c);
+  font-size: clamp(1.25rem, 7.5cqi, 5.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.extensible__indice {
+  position: absolute;
+  inset: auto 0 1.25rem;
+  margin: 0;
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  text-align: center;
+  pointer-events: none;
+  opacity: calc(1 - var(--parti-e));
+  transform: translateY(calc(8px * var(--parti-e)));
+}
+/* Mouvement réduit ou animations coupées : l'expansion suit toujours le défilement, sans zoom ni glissement. */
+@media (prefers-reduced-motion: reduce) {
+  .extensible {
+    --zoom-eff: 1;
+    --decal-t: 0px;
+    --decal-c: 0px;
+  }
+}
+:host(.ngs-sans-animation) .extensible {
+  --zoom-eff: 1;
+  --decal-t: 0px;
+  --decal-c: 0px;
+}

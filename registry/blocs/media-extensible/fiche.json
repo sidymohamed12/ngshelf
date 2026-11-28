@@ -1,0 +1,89 @@
+{
+  "usage": "<ngs-media-extensible\n  src=\"/images/casamance.webp\"\n  alt=\"Une pirogue sur la rivière au lever du jour.\"\n  titre=\"Casamance, côté rivière\"\n  indice=\"Défiler\"\n>\n  <p>Quatre jours entre mangrove et villages, au rythme des marées.</p>\n  <a href=\"/sejours\">Voir les séjours</a>\n</ngs-media-extensible>",
+  "api": [
+    {
+      "nom": "src",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Adresse de l’image, ou de la vidéo avec typeMedia=\"video\"."
+    },
+    {
+      "nom": "typeMedia",
+      "type": "input<'image' | 'video'>()",
+      "defaut": "'image'",
+      "role": "Une vidéo est lue en boucle, muette, sauf en mouvement réduit."
+    },
+    {
+      "nom": "poster / alt",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Image d’attente d’une vidéo ; texte alternatif de l’image (nom accessible de la vidéo). Vide si le média est décoratif."
+    },
+    {
+      "nom": "titre / niveauTitre / indice",
+      "type": "input<string> / input<1 | 2>()",
+      "defaut": "'' / 2 / ''",
+      "role": "Titre sur une plaque (h2 par défaut, h1 si le bloc ouvre la page) et indice sous le cadre. Vides : masqués."
+    },
+    {
+      "nom": "defilement",
+      "type": "input<'fenetre' | 'conteneur'>()",
+      "defaut": "'fenetre'",
+      "role": "« fenetre » : la page défile. « conteneur » : le composant défile dans la hauteur que son parent lui donne."
+    },
+    {
+      "nom": "largeurDepart / hauteurDepart",
+      "type": "input<number>()",
+      "defaut": "42 / 58",
+      "role": "Taille du cadre au départ, en pourcentage de l’écran."
+    },
+    {
+      "nom": "zoomDepart",
+      "type": "input<number>()",
+      "defaut": "1.35",
+      "role": "Zoom de l’image au départ (1 = aucun) ; il revient à 1 à la fin."
+    },
+    {
+      "nom": "voile",
+      "type": "input<number>()",
+      "defaut": "0.55",
+      "role": "Opacité maximale du voile qui rend le contenu lisible sur l’image (0 à 1)."
+    },
+    {
+      "nom": "distance / maintien",
+      "type": "input<number>()",
+      "defaut": "1.2 / 0.35",
+      "role": "Distance de défilement de l’expansion, puis du maintien en plein écran, en hauteurs d’écran."
+    },
+    {
+      "nom": "lissage",
+      "type": "input<number>()",
+      "defaut": "0.1",
+      "role": "Lissage de la progression (0 = elle suit le défilement sans délai)."
+    },
+    {
+      "nom": "pilotage",
+      "type": "input<'defilement' | 'manuel'>()",
+      "defaut": "'defilement'",
+      "role": "« manuel » : la progression vaut `progression` au lieu de suivre le défilement (aperçu, capture, démonstration)."
+    },
+    {
+      "nom": "progression",
+      "type": "input<number>()",
+      "defaut": "0",
+      "role": "Progression de 0 à 1 quand le pilotage est manuel."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : pas de lissage ni de zoom ni de glissement (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système). L’expansion suit toujours le défilement."
+    },
+    {
+      "nom": "contenu projeté",
+      "type": "<ng-content />",
+      "defaut": "—",
+      "role": "Texte et actions affichés sur l’image en fin de course ; ils ne reçoivent le focus qu’une fois visibles."
+    }
+  ]
+}

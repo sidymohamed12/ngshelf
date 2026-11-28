@@ -1,0 +1,83 @@
+<div
+  #racine
+  class="group/ext relative size-full [--decal-c:18px] [--decal-t:-28px] [--e:calc(var(--ngs-p)*var(--ngs-p)*(3_-_2*var(--ngs-p)))] [--entree-e:calc(var(--entree)*var(--entree)*(3_-_2*var(--entree)))] [--entree:clamp(0,(var(--ngs-p)_-_.68)/.32,1)] [--ix:calc((100_-_var(--ngs-lg))/2*(1_-_var(--e))*1%)] [--iy:calc((100_-_var(--ngs-ht))/2*(1_-_var(--e))*1%)] [--ngs-p:0] [--parti-e:calc(var(--parti)*var(--parti)*(3_-_2*var(--parti)))] [--parti:clamp(0,var(--ngs-p)/.12,1)] [--sortie-e:calc(var(--sortie)*var(--sortie)*(3_-_2*var(--sortie)))] [--sortie:clamp(0,(var(--ngs-p)_-_.4)/.48,1)] [--zoom-eff:var(--ngs-zoom)] in-[.ngs-sans-animation]:[--decal-c:0px] in-[.ngs-sans-animation]:[--decal-t:0px] in-[.ngs-sans-animation]:[--zoom-eff:1] motion-reduce:[--decal-c:0px] motion-reduce:[--decal-t:0px] motion-reduce:[--zoom-eff:1] data-[defilement=conteneur]:overflow-x-hidden data-[defilement=conteneur]:overflow-y-auto data-[defilement=conteneur]:overscroll-contain data-[defilement=conteneur]:[container-type:size] data-[defilement=conteneur]:[scrollbar-width:none]"
+  [attr.data-defilement]="defilement()"
+  [style.--ngs-defil]="distance()"
+  [style.--ngs-pause]="maintien()"
+  [style.--ngs-lg]="largeurDepart()"
+  [style.--ngs-ht]="hauteurDepart()"
+  [style.--ngs-zoom]="zoomDepart()"
+  [style.--ngs-voile]="voile()"
+>
+  <div
+    #piste
+    class="relative h-[calc(100svh*(1_+_var(--ngs-defil)_+_var(--ngs-pause)))] w-full group-data-[defilement=conteneur]/ext:h-[calc(100cqh*(1_+_var(--ngs-defil)_+_var(--ngs-pause)))]"
+  >
+    <div
+      #scene
+      class="sticky top-0 h-svh w-full overflow-hidden bg-ngs-surface [container-type:inline-size] group-data-[defilement=conteneur]/ext:h-[100cqh]"
+    >
+      <div
+        class="absolute inset-0 [clip-path:inset(var(--iy)_var(--ix)_round_calc(var(--ngs-radius)*2.4*(1_-_var(--e))))]"
+      >
+        @if (typeMedia() === 'video') {
+          <video
+            class="absolute inset-0 size-full origin-center [transform:scale(calc(var(--zoom-eff)_+_(1_-_var(--zoom-eff))*var(--e)))] object-cover will-change-transform"
+            [src]="src()"
+            [poster]="poster()"
+            [attr.aria-label]="alt() || null"
+            autoplay
+            muted
+            loop
+            playsinline
+          ></video>
+        } @else {
+          <img
+            class="absolute inset-0 size-full origin-center [-webkit-user-drag:none] [transform:scale(calc(var(--zoom-eff)_+_(1_-_var(--zoom-eff))*var(--e)))] object-cover select-none will-change-transform"
+            [src]="src()"
+            [alt]="alt()"
+            draggable="false"
+          />
+        }
+        <div
+          class="pointer-events-none absolute inset-0 [background:linear-gradient(to_top,color-mix(in_srgb,var(--color-ngs-text)_75%,transparent),color-mix(in_srgb,var(--color-ngs-text)_10%,transparent)_45%,color-mix(in_srgb,var(--color-ngs-text)_35%,transparent))] opacity-[calc(var(--ngs-voile)*var(--e))]"
+        ></div>
+        <div
+          class="absolute inset-0 flex flex-col items-center justify-center p-[6%] text-center text-ngs-surface opacity-(--entree-e) [transform:translateY(calc(var(--decal-c)*(1_-_var(--entree-e))))]"
+          [attr.inert]="contenuVisible() ? null : ''"
+        >
+          <ng-content />
+        </div>
+      </div>
+      @if (titre()) {
+        @if (niveauTitre() === 1) {
+          <h1
+            class="pointer-events-none absolute inset-0 m-0 grid place-items-center px-[6%] text-center opacity-[calc(1_-_var(--sortie-e))] [transform:translateY(calc(var(--decal-t)*var(--sortie-e)))_scale(calc(1_+_.06*var(--sortie-e)))]"
+          >
+            <span
+              class="rounded-ngs bg-[color-mix(in_srgb,var(--color-ngs-surface)_88%,transparent)] px-[.7em] py-[.4em] text-[clamp(1.25rem,7.5cqi,5.25rem)] leading-none font-bold tracking-[-.03em] text-ngs-text"
+              >{{ titre() }}</span
+            >
+          </h1>
+        } @else {
+          <h2
+            class="pointer-events-none absolute inset-0 m-0 grid place-items-center px-[6%] text-center opacity-[calc(1_-_var(--sortie-e))] [transform:translateY(calc(var(--decal-t)*var(--sortie-e)))_scale(calc(1_+_.06*var(--sortie-e)))]"
+          >
+            <span
+              class="rounded-ngs bg-[color-mix(in_srgb,var(--color-ngs-surface)_88%,transparent)] px-[.7em] py-[.4em] text-[clamp(1.25rem,7.5cqi,5.25rem)] leading-none font-bold tracking-[-.03em] text-ngs-text"
+              >{{ titre() }}</span
+            >
+          </h2>
+        }
+      }
+      @if (indice()) {
+        <p
+          class="pointer-events-none absolute inset-x-0 bottom-5 m-0 text-center text-[.8125rem] tracking-[.02em] text-ngs-text-muted opacity-[calc(1_-_var(--parti-e))] [transform:translateY(calc(8px*var(--parti-e)))]"
+          aria-hidden="true"
+        >
+          {{ indice() }}
+        </p>
+      }
+    </div>
+  </div>
+</div>
