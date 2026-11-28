@@ -1,0 +1,47 @@
+<ul
+  #liste
+  class="galerie"
+  [attr.aria-label]="libelle()"
+  [attr.data-orientation]="orientationEffective()"
+  [attr.data-gris]="nuancesDeGris()"
+  [style.--ngs-hauteur]="hauteur()"
+  [style.--ngs-ratio]="ratio()"
+  [style.--ngs-parallaxe]="parallaxe()"
+>
+  @for (panneau of panneaux(); track $index; let i = $index) {
+    <li
+      class="galerie__element"
+      [attr.data-actif]="panneau.ouvert"
+      [style.flex-grow]="panneau.croissance"
+      [style.--ngs-incl]="panneau.inclinaison"
+      [style.--ngs-derive]="panneau.derive"
+    >
+      <button
+        class="galerie__panneau"
+        type="button"
+        [attr.aria-expanded]="panneau.ouvert"
+        [attr.tabindex]="panneau.ouvert ? 0 : -1"
+        (click)="ouvrir(i)"
+        (pointerenter)="survoler(i)"
+        (focus)="ouvrir(i)"
+        (keydown)="touche($event)"
+      >
+        <span class="galerie__media">
+          <img
+            class="galerie__image"
+            [src]="panneau.element.image"
+            [alt]="panneau.element.alt ?? panneau.element.legende ?? ''"
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+          />
+        </span>
+        @if (legendes() && panneau.element.legende) {
+          <span class="galerie__legende">
+            <span class="galerie__texte">{{ panneau.element.legende }}</span>
+          </span>
+        }
+      </button>
+    </li>
+  }
+</ul>

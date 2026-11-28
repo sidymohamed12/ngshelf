@@ -1,0 +1,77 @@
+{
+  "usage": "<ngs-galerie-accordeon\n  libelle=\"Quatre ambiances\"\n  [elements]=\"elements\"\n  [indexInitial]=\"1\"\n  orientation=\"horizontal\"\n  [hauteur]=\"460\"\n/>\n\n// elements : { image, legende?, alt? }[]\nelements = [\n  { image: '/images/dunes.webp', legende: 'Dunes', alt: 'Dunes au coucher du soleil.' },\n];",
+  "api": [
+    {
+      "nom": "elements",
+      "type": "input.required<readonly ElementGalerieAccordeon[]>()",
+      "defaut": "—",
+      "role": "Les images : image (adresse), legende et alt facultatifs. Sans alt, la légende sert de texte alternatif."
+    },
+    {
+      "nom": "libelle",
+      "type": "input<string>()",
+      "defaut": "'Galerie d’images'",
+      "role": "Nom accessible du groupe d’images."
+    },
+    {
+      "nom": "indexInitial",
+      "type": "input<number>()",
+      "defaut": "2",
+      "role": "Panneau ouvert au départ (0 pour le premier)."
+    },
+    {
+      "nom": "orientation",
+      "type": "input<'horizontal' | 'vertical'>()",
+      "defaut": "'horizontal'",
+      "role": "Sens de la rangée. Sous 520 px de large, la galerie s’empile quelle que soit l’orientation."
+    },
+    {
+      "nom": "declencheur",
+      "type": "input<'survol' | 'clic'>()",
+      "defaut": "'survol'",
+      "role": "Ouverture au survol ou au clic seulement. Le clic, le focus et les flèches ouvrent toujours un panneau."
+    },
+    {
+      "nom": "hauteur",
+      "type": "input<number>()",
+      "defaut": "460",
+      "role": "Hauteur de la rangée en pixels (colonne : ×1,6)."
+    },
+    {
+      "nom": "ratioOuverture",
+      "type": "input<number>()",
+      "defaut": "0.52",
+      "role": "Part de la rangée prise par le panneau ouvert, bornée entre 0,2 et 0,9."
+    },
+    {
+      "nom": "inclinaison",
+      "type": "input<number>()",
+      "defaut": "8",
+      "role": "Inclinaison des panneaux fermés, en degrés."
+    },
+    {
+      "nom": "parallaxe",
+      "type": "input<number>()",
+      "defaut": "0.5",
+      "role": "Décalage de l’image dans les panneaux fermés (0 = aucun, 1 = fort)."
+    },
+    {
+      "nom": "legendes",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Affiche la légende du panneau ouvert."
+    },
+    {
+      "nom": "nuancesDeGris",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Panneaux fermés en nuances de gris (ils restent assombris)."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : les panneaux changent sans transition (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

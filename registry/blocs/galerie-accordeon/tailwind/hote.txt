@@ -1,0 +1,1 @@
+block w-full font-ngs text-ngs-text @container

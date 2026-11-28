@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "slug": "galerie-accordeon",
+  "categorie": "bloc",
+  "type": "galerie",
+  "titre": {
+    "fr": "Galerie en accordéon"
+  },
+  "description": {
+    "fr": "Une rangée d'images dont une s'ouvre au survol, au clic ou au clavier : les autres se referment en s'inclinant, en nuances de gris."
+  },
+  "secteurs": ["voyage", "creatif"],
+  "tags": ["galerie", "images", "accordéon", "survol", "portfolio"],
+  "contratTokens": 1,
+  "designsMisEnAvant": ["fleuve"],
+  "motion": {
+    "resume": {
+      "fr": "Le panneau ouvert s'élargit, les autres se referment en s'inclinant, leur image glisse et passe en nuances de gris ; la légende du panneau ouvert glisse en place."
+    },
+    "moments": ["changement", "survol"],
+    "technique": "transitions CSS sur flex-grow, transform, translate et filter (aucune bibliothèque d'animation)"
+  },
+  "parametres": [
+    {
+      "nom": "orientation",
+      "genre": "choix",
+      "libelle": { "fr": "Orientation" },
+      "options": [
+        { "valeur": "horizontal", "libelle": { "fr": "Horizontale" } },
+        { "valeur": "vertical", "libelle": { "fr": "Verticale" } }
+      ],
+      "defaut": "horizontal"
+    },
+    {
+      "nom": "declencheur",
+      "genre": "choix",
+      "libelle": { "fr": "Ouverture" },
+      "options": [
+        { "valeur": "survol", "libelle": { "fr": "Au survol" } },
+        { "valeur": "clic", "libelle": { "fr": "Au clic" } }
+      ],
+      "defaut": "survol"
+    },
+    {
+      "nom": "hauteur",
+      "genre": "nombre",
+      "libelle": { "fr": "Hauteur" },
+      "min": 280,
+      "max": 640,
+      "pas": 20,
+      "unite": "px",
+      "defaut": 460
+    },
+    {
+      "nom": "ratioOuverture",
+      "genre": "nombre",
+      "libelle": { "fr": "Part du panneau ouvert" },
+      "min": 0.3,
+      "max": 0.8,
+      "pas": 0.05,
+      "defaut": 0.52
+    },
+    {
+      "nom": "inclinaison",
+      "genre": "nombre",
+      "libelle": { "fr": "Inclinaison des panneaux fermés" },
+      "min": 0,
+      "max": 20,
+      "pas": 1,
+      "unite": "°",
+      "defaut": 8
+    },
+    {
+      "nom": "parallaxe",
+      "genre": "nombre",
+      "libelle": { "fr": "Décalage de l'image" },
+      "min": 0,
+      "max": 1,
+      "pas": 0.1,
+      "defaut": 0.5
+    },
+    {
+      "nom": "legendes",
+      "genre": "interrupteur",
+      "libelle": { "fr": "Légendes" },
+      "defaut": true
+    },
+    {
+      "nom": "nuancesDeGris",
+      "genre": "interrupteur",
+      "libelle": { "fr": "Panneaux fermés en gris" },
+      "defaut": true
+    }
+  ],
+  "tailleCase": "large",
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-28",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}
