@@ -302,28 +302,58 @@
   .ngs-vignette { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; }
   .ngs-vignette > .ngs-vignette__icone { width: 3.5rem; height: 3.5rem; color: var(--cat); }
   .ngs-vignette__cadre { position: absolute; inset: 0 auto auto 0; transform-origin: 0 0; opacity: 0; }
-  .ngs-vignette__cadre iframe { display: block; width: 100%; height: 100%; border: 0; background: transparent; pointer-events: none; }
+  .ngs-vignette__cadre iframe { display: block; width: 100%; height: 100%; border: 0; background: transparent; }
+  /* Vitrines d'accueil : l'aperçu y est un décor, il ne prend ni pointeur ni focus. Dans la planche (--interactif), il est manipulable (ADR 0017). */
+  .ngs-vignette:not(.ngs-vignette--interactif) iframe { pointer-events: none; }
+  /* Bouton « Manipuler l'aperçu » : seul arrêt de tabulation ajouté par l'aperçu ; invisible tant qu'on ne survole ni ne le focalise. */
+  .ngs-vignette__outils {
+    position: absolute; left: 0.5rem; bottom: 0.5rem; z-index: 3; display: flex; align-items: center; gap: 0.5rem;
+    opacity: 0; transition: opacity var(--duration-out) var(--ease-out);
+  }
+  .ngs-vignette__manip, .ngs-vignette__indice {
+    display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2rem; padding: 0 0.7rem;
+    border: 1px solid var(--color-border-strong); border-radius: var(--radius-chip);
+    background: var(--color-canvas); color: var(--color-text); box-shadow: var(--shadow-raise);
+    font: inherit; font-size: 0.8125rem; font-weight: 580; line-height: 1;
+  }
+  .ngs-vignette__manip { cursor: pointer; }
+  .ngs-vignette__indice { color: var(--color-text-muted, var(--color-text)); pointer-events: none; }
+  .ngs-case__stage:hover .ngs-vignette__outils, .ngs-vignette__outils:focus-within,
+  .ngs-vignette--actif .ngs-vignette__outils { opacity: 1; }
+  .ngs-vignette--actif .ngs-vignette__manip { border-color: var(--color-focus); }
+  /* Main prise : un cadre signale que la molette et le clavier agissent dans l'aperçu. */
+  .ngs-case__stage:has(.ngs-vignette--actif)::after {
+    content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    border: 2px solid var(--color-focus); border-radius: inherit;
+  }
+  /* Écran tactile : pas de survol, l'indication reste visible mais discrète. */
+  @media (hover: none) { .ngs-vignette__outils { opacity: 0.85; } }
   .ngs-vignette[data-etat="pret"] .ngs-vignette__cadre { opacity: 1; }
   @media (prefers-reduced-motion: no-preference) {
     .ngs-vignette__cadre { transition: opacity var(--duration-out) var(--ease-out); }
   }
   .ngs-case__foot {
-    display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.875rem 0.75rem 1rem;
+    position: relative; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.875rem 0.75rem 1rem;
     border-top: 1px solid var(--color-border); background: var(--color-canvas);
     border-radius: 0 0 calc(var(--radius-case) - 1px) calc(var(--radius-case) - 1px);
   }
   .ngs-case__title { font-weight: 620; font-size: 1rem; line-height: 1.25; margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  /* Le lien de la fiche couvre le PIED de la case (titre, badges, « Voir la fiche ») et non la scène : l'aperçu
+     de la scène est manipulable (ADR 0017), il ne peut donc pas être sous un lien. */
   .ngs-case__link { color: inherit; text-decoration: none; }
-  .ngs-case__link::after { content: ""; position: absolute; inset: auto 0 0 0; height: 3.75rem; z-index: 1; border-radius: 0 0 var(--radius-case) var(--radius-case); }
+  .ngs-case__link::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: 0 0 calc(var(--radius-case) - 1px) calc(var(--radius-case) - 1px); }
+  .ngs-case__link:focus-visible { outline: none; }
+  .ngs-case__link:focus-visible::after { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+  /* Repère visuel du lien (le clic passe au lien étiré : pointer-events none). */
   .ngs-case__open {
-    margin-left: auto; position: relative; z-index: 2;
-    display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-button);
-    color: var(--color-text); transition: background-color var(--duration-out) var(--ease-out);
+    margin-left: auto; position: relative; flex: none; pointer-events: none;
+    display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0 0.75rem; border-radius: var(--radius-button);
+    font-size: 0.875rem; font-weight: 600; color: var(--color-text); transition: background-color var(--duration-out) var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
-    .ngs-case:hover { translate: 0 -2px; border-color: var(--color-border-hover); box-shadow: var(--shadow-raise); transition-duration: var(--duration-in); }
-    .ngs-case:hover .ngs-case__open { background: var(--color-surface); }
-    .ngs-case:hover .ngs-case__open .ngs-icon { transform: translateX(3px); }
+    .ngs-case:has(.ngs-case__link:hover) { translate: 0 -2px; border-color: var(--color-border-hover); box-shadow: var(--shadow-raise); transition-duration: var(--duration-in); }
+    .ngs-case:has(.ngs-case__link:hover) .ngs-case__open { background: var(--color-surface); }
+    .ngs-case:has(.ngs-case__link:hover) .ngs-case__open .ngs-icon { transform: translateX(3px); }
   }
   .ngs-case__open .ngs-icon { transition: transform var(--duration-out) var(--ease-out); }
   .ngs-case--wide { grid-column: span 2; }
