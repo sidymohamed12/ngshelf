@@ -1,0 +1,46 @@
+<section
+  class="ngs-container accueil-section accueil-section--fin"
+  aria-labelledby="contribuer-titre"
+  id="contribuer"
+>
+  <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
+    <div class="grid gap-6 lg:col-span-5">
+      <h2 class="ngs-h2 m-0" id="contribuer-titre">{{ t.contribuerH2 }}</h2>
+      <p class="ngs-lead m-0">{{ t.contribuerTexte }}</p>
+    </div>
+    <div class="lg:col-span-6 lg:col-start-7">
+      <svg
+        class="trace h-auto w-full"
+        viewBox="0 0 560 300"
+        role="img"
+        aria-labelledby="trace-titre"
+        data-trace
+      >
+        <title id="trace-titre">{{ t.contribuerTrace }}</title>
+        <path
+          d="M40 240 C 140 240, 140 60, 240 60 S 340 240, 420 160 S 500 60, 520 60"
+          data-trace-chemin
+        />
+        <g data-trace-noeud>
+          <circle cx="40" cy="240" r="9" />
+          <text x="40" y="276" text-anchor="start">{{ t.contribuerEtape1 }}</text>
+        </g>
+        <g data-trace-noeud>
+          <circle cx="240" cy="60" r="9" />
+          <text x="240" y="32" text-anchor="middle">{{ t.contribuerEtape2 }}</text>
+        </g>
+        <g data-trace-noeud>
+          <circle cx="420" cy="160" r="9" />
+          <text x="420" y="196" text-anchor="middle">{{ t.contribuerEtape3 }}</text>
+        </g>
+        <g data-trace-noeud>
+          <circle cx="520" cy="60" r="9" />
+          <text x="520" y="32" text-anchor="end">{{ t.contribuerEtape4 }}</text>
+          <text class="trace__sous" x="520" y="96" text-anchor="end">
+            {{ t.contribuerEtape4Sous }}
+          </text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>

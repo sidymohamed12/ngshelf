@@ -1,0 +1,68 @@
+<section class="familles" aria-labelledby="familles-titre" data-familles>
+  <div class="ngs-container mb-10 grid gap-4 lg:mb-14 lg:grid-cols-12">
+    <h2 class="ngs-h2 m-0 lg:col-span-6" id="familles-titre">{{ t.famillesH2 }}</h2>
+    <p class="ngs-lead m-0 self-end lg:col-span-5 lg:col-start-8">{{ t.famillesLead }}</p>
+  </div>
+  <div class="familles__piste" data-piste>
+    @for (famille of familles(); track famille.categorie) {
+      <article
+        class="famille"
+        [class]="famille.classe"
+        [attr.aria-labelledby]="'famille-' + famille.categorie"
+      >
+        <div class="famille__texte grid content-end gap-4">
+          <h3 class="famille__nom" [id]="'famille-' + famille.categorie">{{ famille.nom }}</h3>
+          <p class="famille__compte">{{ famille.compte }}</p>
+          <p class="famille__lead ngs-lead m-0 max-w-[32ch]">{{ famille.texte }}</p>
+          @if (famille.lien; as lien) {
+            <a
+              class="ngs-link ngs-link--rest inline-flex items-center gap-2 justify-self-start"
+              [routerLink]="lien.chemin"
+            >
+              {{ lien.libelle }}
+              <svg appIcone="arrow-right" taille="sm" class="ngs-icon--move"></svg>
+            </a>
+          }
+        </div>
+        <div class="famille__vitrine-wrap self-center">
+          @switch (famille.categorie) {
+            @case ('template') {
+              <div class="ngs-state famille__vide">
+                <span class="ngs-state__icon"><svg appIcone="browser" taille="lg"></svg></span>
+                <p class="ngs-state__title">{{ t.famillesTemplatesVide }}</p>
+                <a class="ngs-btn ngs-btn--secondary" routerLink="/" fragment="contribuer">{{
+                  t.famillesTemplatesCta
+                }}</a>
+              </div>
+            }
+            @case ('design') {
+              <ul class="famille__designs m-0 grid list-none gap-3 p-0">
+                @for (design of pastilles(); track design.slug) {
+                  <li class="ngs-case ngs-cat-designs famille__design">
+                    <span class="flex" aria-hidden="true">
+                      @for (couleur of design.couleurs; track $index) {
+                        <span
+                          class="famille__pastille"
+                          [style.background]="couleur"
+                          [style.border-radius]="design.rayon"
+                        ></span>
+                      }
+                    </span>
+                    <span class="ml-3 font-semibold">{{ design.nom }}</span>
+                  </li>
+                }
+              </ul>
+            }
+            @default {
+              @if (famille.cases.length) {
+                <div class="famille__vitrine">
+                  <app-planche [entrees]="famille.cases" [avecTitre]="false" />
+                </div>
+              }
+            }
+          }
+        </div>
+      </article>
+    }
+  </div>
+</section>
