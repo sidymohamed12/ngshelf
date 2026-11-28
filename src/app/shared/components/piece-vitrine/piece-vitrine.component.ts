@@ -12,6 +12,8 @@ export interface PieceVitrine {
   readonly slug: string;
   readonly categorie: CategorieTypee;
   readonly type: TypeRessource;
+  /** Texte de l'étiquette quand il diffère du type (ex. « Curseur » pour un champ) ; absent = le type. */
+  readonly libelle?: string;
 }
 
 /**
@@ -31,6 +33,8 @@ export class PieceVitrineComponent {
   readonly design = input<string>();
   /** Valeurs de tokens poussées à l'aperçu prêt (habillage), sans recharger l'iframe. */
   readonly reglages = input<ValeursContrat>();
+  /** Faux : animations de la ressource coupées dans la vignette. */
+  readonly animations = input(true);
   /** Rapport largeur / hauteur de la scène (ex. « 16 / 9 »). */
   readonly ratio = input('16 / 9');
   readonly coin = input<'gauche' | 'droite'>('gauche');
@@ -38,7 +42,9 @@ export class PieceVitrineComponent {
   readonly etiquette = input(true);
 
   protected readonly classe = computed(() => classeCategorie(this.piece().categorie));
-  protected readonly libelle = computed(() => LIBELLES_TYPE[this.piece().type]);
+  protected readonly libelle = computed(
+    () => this.piece().libelle ?? LIBELLES_TYPE[this.piece().type],
+  );
   protected readonly icone = computed(() => ICONE_CATEGORIE[this.piece().categorie]);
   protected readonly chemin = computed(() => {
     const { categorie, type, slug } = this.piece();

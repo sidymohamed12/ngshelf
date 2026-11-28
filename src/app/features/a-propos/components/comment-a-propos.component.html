@@ -1,0 +1,120 @@
+<section class="ngs-container ap-section" aria-labelledby="comment-titre" data-ap-comment>
+  <div class="ap-comment">
+    <div class="ap-comment__scene" data-ap-comment-scene>
+      <figure class="ap-photo ap-parallaxe ap-revele ap-comment__photo" data-ap-revele>
+        <img
+          ngSrc="lagos-code"
+          ngSrcset="640w, 1024w"
+          sizes="(min-width: 1024px) 40vw, 92vw"
+          width="1024"
+          height="682"
+          [alt]="t.commentPhotoAlt"
+        />
+      </figure>
+      <div class="ap-panneau" id="ap-panneau" aria-live="polite" data-ap-panneau>
+        <div
+          class="ap-panneau__vue"
+          [class.is-active]="point() === 0"
+          [attr.aria-hidden]="point() !== 0 ? 'true' : null"
+          data-ap-pvue="0"
+        >
+          <div class="ngs-code">
+            <div class="ngs-code__bar">
+              <span class="ngs-code__file min-w-0 flex-1 truncate">{{ nomFichierTs() }}</span>
+            </div>
+            <pre tabindex="0"><code [innerHTML]="extraitTs()"></code></pre>
+          </div>
+        </div>
+        <div
+          class="ap-panneau__vue"
+          [class.is-active]="point() === 1"
+          [attr.aria-hidden]="point() !== 1 ? 'true' : null"
+          data-ap-pvue="1"
+        >
+          <div class="ngs-code">
+            <div class="ngs-code__bar">
+              <span class="ngs-code__file min-w-0 flex-1 truncate">{{ nomFichierHtml() }}</span>
+              <app-choix-segment
+                class="ap-seg-code"
+                [options]="optionsVersion"
+                [valeur]="version()"
+                (valeurChange)="choisirVersion($event)"
+                [libelle]="textesFiche.code.variante"
+              />
+            </div>
+            <pre tabindex="0"><code [innerHTML]="extraitHtml()"></code></pre>
+          </div>
+        </div>
+        <div
+          class="ap-panneau__vue"
+          [class.is-active]="point() === 2"
+          [attr.aria-hidden]="point() !== 2 ? 'true' : null"
+          data-ap-pvue="2"
+        >
+          <div class="ap-habit ap-habit--compact" [style]="reglages() ?? null">
+            <app-choix-segment
+              [options]="optionsDesign"
+              [valeur]="design()"
+              (valeurChange)="design.set($event)"
+              [libelle]="textesFiche.reglages.design"
+            />
+            @for (piece of pieces; track piece.slug) {
+              <app-piece-vitrine
+                [piece]="piece"
+                [reglages]="reglages()"
+                [etiquette]="false"
+                ratio="520 / 100"
+              />
+            }
+          </div>
+        </div>
+        <div
+          class="ap-panneau__vue"
+          [class.is-active]="point() === 3"
+          [attr.aria-hidden]="point() !== 3 ? 'true' : null"
+          data-ap-pvue="3"
+        >
+          <div class="ap-habit ap-habit--compact">
+            <label class="ngs-switch">
+              <input
+                #interrupteur
+                type="checkbox"
+                [checked]="animationsPermises()"
+                (change)="basculerAnimations(interrupteur.checked)"
+              />
+              <span class="ngs-switch__track" aria-hidden="true"></span>
+              <span>{{ textesFiche.reglages.animationsLabel }}</span>
+            </label>
+            <app-piece-vitrine
+              [piece]="notifications"
+              [animations]="animationsEffectives()"
+              [etiquette]="false"
+              ratio="520 / 110"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ap-comment__texte grid content-start gap-5">
+      <h2 class="ngs-h2 ap-titre m-0" id="comment-titre">{{ t.commentH2 }}</h2>
+      <p class="ap-comment__aide m-0">
+        <svg appIcone="cursor-click"></svg><span>{{ t.commentAide }}</span>
+      </p>
+      <ul class="ap-points" data-ap-points>
+        @for (item of points; track item.texte; let i = $index) {
+          <li>
+            <button
+              class="ap-point"
+              type="button"
+              [attr.aria-pressed]="i === point()"
+              aria-controls="ap-panneau"
+              (click)="choisir(i)"
+            >
+              <svg [appIcone]="item.icone"></svg><span>{{ item.texte }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

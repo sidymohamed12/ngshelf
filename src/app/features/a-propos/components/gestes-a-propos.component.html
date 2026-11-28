@@ -1,0 +1,90 @@
+<section class="ap-gestes" id="gestes" aria-labelledby="gestes-titre" data-ap-gestes>
+  <div class="ngs-container ap-gestes__grille">
+    <div class="grid content-center gap-8">
+      <div class="grid gap-3">
+        <h2 class="ngs-h2 ap-titre m-0" id="gestes-titre">{{ t.gestesH2 }}</h2>
+      </div>
+      <div class="ap-etapes-cadre">
+        <span class="ap-progression" aria-hidden="true"><span data-ap-progression></span></span>
+        <ol class="ap-etapes" data-ap-etapes>
+          <li class="ap-etape" data-ap-etape="0">
+            <h3 class="ap-etape__nom">{{ t.gestesCopier }}</h3>
+            <p class="ap-etape__texte">{{ t.gestesCopierTexte }}</p>
+          </li>
+          <li class="ap-etape" data-ap-etape="1">
+            <h3 class="ap-etape__nom">{{ t.gestesRegler }}</h3>
+            <p class="ap-etape__texte">{{ t.gestesReglerTexte }}</p>
+          </li>
+          <li class="ap-etape" data-ap-etape="2">
+            <h3 class="ap-etape__nom">{{ t.gestesLivrer }}</h3>
+            <p class="ap-etape__texte">{{ t.gestesLivrerTexte }}</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="ap-scene" data-ap-scene>
+      @if (fiche() === null) {
+        <p class="ngs-muted m-0 p-4">{{ textesFiche.code.erreurTexte }}</p>
+      } @else {
+        <div class="ap-scene__vue" data-ap-vue="0">
+          <div class="ngs-code">
+            <div class="ngs-code__bar">
+              <span class="ngs-code__file min-w-0 flex-1 truncate">{{ fichier()?.nom }}</span>
+              <button class="ngs-copy" type="button" [class.is-done]="copie()" (click)="copier()">
+                <svg appIcone="copy" taille="sm"></svg>
+                <span>{{ copie() ? textesFiche.code.copieFichier : textesFiche.code.copier }}</span>
+              </button>
+            </div>
+            <pre tabindex="0"><code #code [innerHTML]="fichier()?.html"></code></pre>
+            <p class="sr-only" role="status" aria-live="polite">
+              @if (copie()) {
+                {{ textesFiche.code.copieReussie }}
+              }
+            </p>
+            @if (copieImpossible()) {
+              <p class="ngs-small m-0 p-4 pt-0 text-(--color-code-text)" role="alert">
+                {{ textesFiche.code.copieImpossible }}
+              </p>
+            }
+          </div>
+        </div>
+        <div class="ap-scene__vue" data-ap-vue="1">
+          <div class="ap-habit" data-ap-habit [style]="reglages() ?? null">
+            <p class="ap-habit__nom m-0">
+              <i aria-hidden="true"></i><span>{{ t.gestesDesign }}</span>
+              <span>{{ nomDesign() }}</span>
+            </p>
+            @for (piece of pieces; track piece.slug) {
+              <app-piece-vitrine
+                [piece]="piece"
+                [reglages]="reglages()"
+                [etiquette]="false"
+                ratio="520 / 100"
+              />
+            }
+          </div>
+        </div>
+        <div class="ap-scene__vue" data-ap-vue="2">
+          <div class="ngs-code grid content-start gap-4 p-5">
+            <div class="flex items-center gap-3">
+              <svg appIcone="file-zip" taille="lg"></svg>
+              <span class="font-mono text-sm">{{ nomZip() }}</span>
+            </div>
+            <ul class="ap-zip" data-ap-zip>
+              @for (f of fichiersZip(); track f.nom) {
+                <li>
+                  <svg [appIcone]="f.icone" taille="sm"></svg>
+                  <span>{{ f.nom }}</span>
+                </li>
+              }
+            </ul>
+            <a class="ngs-btn ngs-btn--on-dark justify-self-start" [href]="lienZip()" download>
+              <svg appIcone="download-simple"></svg>
+              <span>{{ textesFiche.telecharger }}</span>
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

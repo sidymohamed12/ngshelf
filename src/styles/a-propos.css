@@ -1,0 +1,1075 @@
+/*
+  Mise en page de « À propos » (maquette a-propos.html, bloc <style> de la page) : hero, chiffres, gestes épinglés,
+  pourquoi, pour qui épinglé, comment c'est fait, contribuer, qui le développe. Uniquement des valeurs de tokens.css.
+  Les états cachés de motion (`.ngs-motion …`) n'existent que tant que le script a monté la page.
+*/
+
+@layer components {
+  /* Styles propres à « À propos » (v0.4) : mise en page et états de motion uniquement, valeurs en tokens. */
+  .ap-section {
+    padding-block: var(--space-section) 0;
+  }
+  .ap-titre .line,
+  .ap-titre .word {
+    padding-bottom: 0.06em;
+  }
+
+  /* Hero (v0.6) : texte à gauche, de vraies pièces du catalogue en apesanteur à droite */
+  .ap-hero {
+    padding-block: clamp(2.5rem, 1rem + 5vw, 5rem) clamp(2rem, 4vw, 3.5rem);
+    overflow: clip;
+  }
+  .ap-hero__grille {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .ap-hero__grille {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+  .ap-hero__titre {
+    margin: 0;
+    max-width: 12ch;
+    font-size: clamp(2.5rem, 1.2rem + 4vw, 5rem);
+  }
+  .ap-hero__titre .word {
+    padding-bottom: 0.06em;
+  }
+  .ap-apesanteur {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: start;
+  }
+  .ap-piece {
+    position: relative;
+    padding: 1rem;
+    min-width: 0;
+    border-radius: var(--radius-case);
+    border: 1px solid var(--color-border);
+    background: var(--ngs-color-surface, var(--color-canvas));
+    box-shadow: var(--shadow-raise);
+    transition: background-color var(--duration-theme) var(--ease-out);
+  }
+  .ap-piece--cal {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+  .ap-piece--cal .ngs-piece {
+    width: 19rem;
+    max-width: 100%;
+  }
+  .ap-fait {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 34px;
+    padding: 0 0.8rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-canvas);
+    font-size: var(--text-label);
+    font-weight: 640;
+    white-space: nowrap;
+  }
+  @media (min-width: 64rem) {
+    /* Composition libre : les pièces flottent, légèrement tournées, et se chevauchent comme posées sur une table */
+    .ap-apesanteur {
+      display: block;
+      min-height: 37.5rem;
+    }
+    .ap-piece {
+      position: absolute;
+    }
+    .ap-piece--cal {
+      left: 40%;
+      top: 0;
+      z-index: 2;
+    }
+    .ap-piece--cal .ngs-piece {
+      width: 18rem;
+    }
+    .ap-piece--inter {
+      left: 0;
+      top: 2%;
+      width: 17.5rem;
+      z-index: 3;
+    }
+    .ap-piece--boutons {
+      left: 3%;
+      top: 37%;
+      width: 15rem;
+      z-index: 1;
+    }
+    .ap-piece--notif {
+      left: 6%;
+      bottom: 0;
+      width: 19rem;
+      z-index: 4;
+    }
+    .ap-piece--curseur {
+      right: 0;
+      bottom: 2%;
+      width: 17.5rem;
+      z-index: 3;
+    }
+    .ap-fait {
+      display: inline-flex;
+      position: absolute;
+      z-index: 5;
+    }
+    .ap-fait--a {
+      right: 3%;
+      top: 0;
+    }
+    .ap-fait--b {
+      left: 26%;
+      top: 27%;
+    }
+    .ap-fait--c {
+      right: 0;
+      top: 36%;
+    }
+  }
+  /* Sous 1024 px : trois pièces seulement, pour garder un hero court */
+  @media (max-width: 63.99rem) {
+    .ap-piece--cal,
+    .ap-piece--boutons {
+      display: none;
+    }
+  }
+  @media (max-width: 39.99rem) {
+    .ap-apesanteur {
+      grid-template-columns: 1fr;
+    }
+  }
+  .ap-photo {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    border-radius: var(--radius-case);
+    background: var(--color-surface);
+  }
+  .ap-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Les photos débordent un peu leur cadre pour le parallaxe (le cadre coupe) */
+  .ap-parallaxe img {
+    height: 118%;
+    margin-top: -9%;
+  }
+
+  /* Le catalogue en chiffres (v0.6) : tuiles en mosaïque, grands compteurs, visuels tirés du registre */
+  .ap-chiffres-section {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+    padding-block: clamp(2.5rem, 1.5rem + 3vw, 4.5rem) 0;
+  }
+  .ap-tuiles {
+    display: grid;
+    gap: var(--space-gutter);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .ap-tuiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .ap-tuile--ressources {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 64rem) {
+    .ap-tuiles {
+      grid-template-columns: 1.3fr 1fr 1fr;
+    }
+    .ap-tuile--ressources {
+      grid-column: 1;
+      grid-row: 1 / 3;
+    }
+  }
+  .ap-tuile {
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    min-width: 0;
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+    border-radius: var(--radius-panel);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+  .ap-tuile__nombre {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    font-size: clamp(4.5rem, 3rem + 5vw, 8.5rem);
+    font-variant-numeric: tabular-nums;
+  }
+  .ap-tuile--ressources .ap-tuile__nombre {
+    font-size: clamp(6rem, 3.5rem + 9vw, 13rem);
+  }
+  .ap-tuile__libelle {
+    margin: 0;
+    font-size: var(--text-lead);
+    font-weight: 600;
+  }
+  .ap-carres {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr));
+    gap: 8px;
+    margin-top: 0.75rem;
+  }
+  @media (min-width: 64rem) {
+    .ap-tuile--ressources {
+      align-content: space-between;
+    }
+    .ap-tuile--ressources .ap-carres {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+  }
+  .ap-carres span {
+    aspect-ratio: 1;
+    border-radius: var(--radius-chip);
+    background: var(--cat);
+  }
+  .ap-legende {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    margin: 0;
+    font-size: var(--text-label);
+    color: var(--color-text-muted);
+  }
+  .ap-legende span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .ap-legende i {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 2px;
+    background: var(--cat);
+  }
+  .ap-jetons {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .ap-jetons li {
+    padding: 0.15rem 0.45rem;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    transition:
+      color var(--duration-in) var(--ease-out),
+      border-color var(--duration-in) var(--ease-out);
+  }
+  .ap-jetons li.is-on {
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+  }
+  .ap-pastilles {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .ap-pastilles span {
+    display: grid;
+    place-items: end start;
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0.3rem;
+    border-radius: var(--r, 12px);
+    background: var(--sw);
+    color: var(--sw-texte);
+    font-size: 0.625rem;
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px var(--color-contour);
+  }
+  .ap-bascule {
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    justify-self: start;
+    padding: 3px;
+    border-radius: var(--radius-button);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    font-size: var(--text-label);
+    font-weight: 620;
+  }
+  .ap-bascule span {
+    position: relative;
+    z-index: 1;
+    padding: 0.45rem 0.9rem;
+    text-align: center;
+  }
+  .ap-bascule i {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    border-radius: calc(var(--radius-button) - 3px);
+    background: var(--color-surface-hover);
+    box-shadow: var(--shadow-raise);
+  }
+  .ap-barre-compte {
+    position: relative;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 1rem;
+    border-radius: var(--radius-button);
+    border: 1.5px dashed var(--color-border-strong);
+    color: var(--color-text-muted);
+    font-weight: 600;
+    font-size: var(--text-small);
+  }
+  .ap-barre-compte i {
+    position: absolute;
+    left: 0.6rem;
+    right: 0.6rem;
+    top: 50%;
+    height: 2px;
+    background: var(--color-text);
+    transform-origin: 0 50%;
+  }
+
+  /* Pour qui (v0.7) : manifeste en très grand à gauche, avant / après d'un calendrier à droite */
+  .ap-pourqui {
+    padding-block: var(--space-section) 0;
+  }
+  .ap-pourqui__grille {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .ap-pourqui__grille {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+  }
+  /* Épinglé : la section fait exactement un écran (sous le header), sans marge en haut qui pousserait le contenu */
+  .ap-pourqui--pin {
+    padding-block: 0;
+  }
+  .ap-pourqui--pin .ap-pourqui__grille {
+    box-sizing: border-box;
+    height: 100dvh;
+    padding-block: calc(4.25rem + 1.5rem) 1.5rem;
+  }
+  .ap-pourqui--pin .ap-manifeste {
+    font-size: clamp(2.1rem, 0.8rem + 3vw, 3.75rem);
+  }
+  .ap-pourqui__texte {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+    align-content: center;
+  }
+  .ap-manifeste {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.1rem, 1rem + 3.6vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .ap-pourqui__profils {
+    max-width: 52ch;
+    color: var(--color-text);
+  }
+  .ap-epargne {
+    margin: 0;
+    display: grid;
+    gap: 0.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    max-width: 52ch;
+  }
+  .ap-epargne dt {
+    font-weight: 700;
+  }
+  .ap-epargne dd {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+  .ap-avap {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+  .ap-avap__avant,
+  .ap-avap__apres {
+    margin: 0;
+    display: grid;
+    gap: 0.6rem;
+    min-width: 0;
+    align-content: start;
+  }
+  .ap-avap__etiquette {
+    font-size: var(--text-label);
+    font-weight: 640;
+  }
+  .ap-avap__apres {
+    gap: 1.4rem;
+  }
+  .ap-todos {
+    padding: 1rem 1.1rem 1.1rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--color-code-text);
+    font-feature-settings: 'zero' 1;
+    font-variant-ligatures: none;
+  }
+  .ap-todos__ligne {
+    margin: 0;
+  }
+  .ap-todo__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 1.5rem;
+    display: grid;
+    gap: 0.1rem;
+  }
+  .ap-todo {
+    position: relative;
+    display: block;
+  }
+  /* État final par défaut (sans JS, mouvement réduit) : lignes rayées, coches visibles. L'animation pose son propre départ. */
+  .ap-todo__marque {
+    position: absolute;
+    left: -1.3rem;
+    top: 0.25em;
+    color: var(--color-code-string);
+  }
+  .ap-todo__texte {
+    --rature: 100%;
+    color: var(--color-code-text);
+    opacity: 0.55;
+    background: linear-gradient(currentColor, currentColor) 0 55% / var(--rature) 1.5px no-repeat;
+  }
+  .ap-avap__piece {
+    position: relative;
+    justify-self: start;
+    padding: 1rem;
+    border-radius: var(--radius-case);
+    border: 1px solid var(--color-border);
+    background: var(--ngs-color-surface, var(--color-canvas));
+    box-shadow: var(--shadow-raise);
+    max-width: 100%;
+  }
+  .ap-avap__piece .ngs-piece {
+    display: block;
+    width: 19rem;
+    max-width: 100%;
+  }
+  @media (min-width: 64rem) {
+    /* Avant et après occupent la même place : l'après remplace l'avant pendant le défilement épinglé */
+    .ap-pourqui--pin .ap-avap {
+      grid-template-areas: 'scene';
+    }
+    .ap-pourqui--pin .ap-avap__avant,
+    .ap-pourqui--pin .ap-avap__apres {
+      grid-area: scene;
+      align-self: center;
+    }
+  }
+
+  /* Moment fort : copier, régler, livrer (épinglé en desktop) */
+  .ap-gestes {
+    padding-block: var(--space-section) 0;
+  }
+  .ap-gestes__grille {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .ap-etapes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2rem;
+    counter-reset: etape;
+  }
+  .ap-etape {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .ap-etape__nom {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 1.4rem + 3vw, 4.25rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    font-weight: var(--wght, 800);
+  }
+  .ap-etape__texte {
+    margin: 0;
+    max-width: 40ch;
+    color: var(--color-text-muted);
+  }
+  .ap-scene {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    min-height: 24rem;
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+    border-radius: var(--radius-panel);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+  .ap-scene__vue {
+    display: grid;
+    align-content: center;
+    gap: 1rem;
+    min-width: 0;
+  }
+  .ap-scene__vue .ngs-code pre {
+    max-height: 20rem;
+  }
+  .ap-habit {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border-radius: var(--radius-button);
+    background: var(--ngs-color-surface, var(--color-canvas));
+    transition: background-color var(--duration-theme) var(--ease-out);
+  }
+  .ap-habit__nom {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+  .ap-habit__nom i {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    background: var(--ngs-color-action, var(--color-text));
+    box-shadow: inset 0 0 0 1px var(--color-contour);
+    transition: background-color var(--duration-theme) var(--ease-out);
+  }
+  .ap-zip {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .ap-zip li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 48px;
+    padding: 0 1rem;
+    border-radius: var(--radius-button);
+    background: var(--color-code-surface);
+    color: var(--color-code-text);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    min-width: 0;
+  }
+  .ap-zip li span:nth-child(2) {
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .ap-zip li span:last-child {
+    margin-left: auto;
+    color: var(--color-code-comment);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 29.99rem) {
+    .ap-zip li {
+      font-size: 0.78rem;
+      padding: 0 0.75rem;
+      gap: 0.5rem;
+    }
+  }
+  .ap-progression {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .ap-gestes--pin {
+      padding-block: 0;
+    }
+    .ap-gestes--pin .ap-gestes__grille {
+      grid-template-columns: 5fr 7fr;
+      align-items: center;
+      min-height: 100dvh;
+      padding-block: calc(4.25rem + 2rem) 2rem;
+    }
+    .ap-gestes--pin .ap-etapes-cadre {
+      position: relative;
+      padding-left: 1.75rem;
+    }
+    .ap-gestes--pin .ap-progression {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0.4rem;
+      bottom: 0.4rem;
+      width: 3px;
+      border-radius: 3px;
+      background: var(--color-border);
+    }
+    .ap-gestes--pin .ap-progression span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--color-text);
+      transform-origin: 50% 0;
+      transform: scaleY(0);
+    }
+    .ap-gestes--pin .ap-scene {
+      min-height: 30rem;
+    }
+    .ap-gestes--pin .ap-scene__vue {
+      grid-area: 1 / 1;
+    }
+  }
+
+  /* Pourquoi : promesses */
+  .ap-promesses {
+    margin: 0;
+    display: grid;
+  }
+  .ap-promesses > div {
+    display: grid;
+    gap: 0.35rem 2rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .ap-promesses > div:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+  @media (min-width: 48rem) {
+    .ap-promesses > div {
+      grid-template-columns: 11rem 1fr;
+      align-items: baseline;
+    }
+  }
+  .ap-promesses dt {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+  .ap-promesses dd {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  /* v0.5 : sections en rangées alignées sur la grille de 12 colonnes, sans colonne vide */
+  .ap-rangee {
+    display: grid;
+    gap: 1rem 2rem;
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+    border-top: 1px solid var(--color-border);
+  }
+  @media (min-width: 64rem) {
+    .ap-rangee {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: start;
+    }
+    .ap-rangee__titre {
+      grid-column: 1 / 5;
+    }
+    .ap-rangee__texte {
+      grid-column: 6 / 13;
+    }
+  }
+  .ap-contribuer {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .ap-contribuer {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+  /* Comment c'est fait (v0.7) : photo cadrée 16/10, panneau posé dans sa zone, liste serrée et lisible */
+  .ap-comment {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .ap-comment {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+  }
+  .ap-comment__scene {
+    display: grid;
+    min-width: 0;
+  }
+  .ap-comment__photo {
+    aspect-ratio: 16 / 10;
+  }
+  /* Le panneau chevauche le bas de la photo avec la même marge à gauche et à droite : il ne sort jamais du cadre */
+  .ap-panneau {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    margin: -5.5rem clamp(0.75rem, 3vw, 2rem) 0;
+    min-width: 0;
+  }
+  .ap-panneau__vue {
+    grid-area: 1 / 1;
+    display: grid;
+    align-content: start;
+    min-width: 0;
+    visibility: hidden;
+    opacity: 0;
+  }
+  .ap-panneau__vue.is-active {
+    visibility: visible;
+    opacity: 1;
+  }
+  .ap-panneau .ngs-code,
+  .ap-panneau .ap-habit {
+    box-shadow: var(--shadow-overlay);
+  }
+  /* Code du panneau : retour à la ligne, aucun texte coupé, extrait court */
+  .ap-panneau pre {
+    max-height: none;
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    padding: 0.9rem 1rem 1rem;
+  }
+  .ap-seg-code {
+    background: var(--color-code-surface);
+    border-color: var(--color-code-border);
+  }
+  .ap-seg-code .ngs-seg__btn {
+    min-height: 32px;
+    color: var(--color-code-comment);
+  }
+  .ap-seg-code .ngs-seg__btn[aria-checked='true'] {
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
+  }
+  .ap-habit--compact {
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    align-content: start;
+  }
+  .ap-comment__aide {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: var(--text-small);
+  }
+  .ap-points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.25rem;
+  }
+  .ap-point {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.85rem;
+    align-items: start;
+    width: 100%;
+    padding: 0.85rem 0.9rem 0.85rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-button);
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    font-size: var(--text-body);
+    line-height: 1.5;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-out) var(--ease-out),
+      border-color var(--duration-out) var(--ease-out);
+  }
+  .ap-point::before {
+    content: '';
+    position: absolute;
+    left: 0.45rem;
+    top: 0.85rem;
+    bottom: 0.85rem;
+    width: 3px;
+    border-radius: 3px;
+    background: var(--color-text);
+    transform: scaleY(0);
+    transform-origin: 50% 0;
+    transition: transform var(--duration-panel-in) var(--ease-enter);
+  }
+  .ap-point .ngs-icon {
+    margin-top: 0.15em;
+    color: var(--color-text-muted);
+    transition: color var(--duration-out) var(--ease-out);
+  }
+  .ap-point[aria-pressed='true'] {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+  }
+  .ap-point[aria-pressed='true']::before {
+    transform: scaleY(1);
+  }
+  .ap-point[aria-pressed='true'] .ngs-icon {
+    color: var(--color-text);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ap-point:hover {
+      border-color: var(--color-border);
+      transition-duration: var(--duration-in);
+    }
+  }
+  /* Dossier d'une ressource (arborescence) et parcours d'une contribution */
+  .ap-dossier {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+  }
+  .ap-arbre {
+    padding: 1rem 1.25rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+  .ap-arbre__racine {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-code-tag);
+  }
+  .ap-arbre__liste {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .ap-arbre__liste li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    color: var(--color-code-text);
+  }
+  .ap-arbre__liste .ngs-icon {
+    color: var(--color-code-comment);
+  }
+  .ap-arbre__trait {
+    color: var(--color-code-comment);
+  }
+  @media (max-width: 29.99rem) {
+    .ap-arbre {
+      font-size: 0.75rem;
+      padding-inline: 0.875rem;
+    }
+  }
+  .ap-parcours {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  @media (min-width: 40rem) {
+    .ap-parcours {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .ap-parcours li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 52px;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-button);
+    border: 1px solid var(--color-border);
+    background: var(--color-canvas);
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+  .ap-parcours__num {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-chip);
+    background: var(--color-text);
+    color: var(--color-canvas);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Qui le développe : bande sombre (zone forcée en mode sombre), portrait, nom, liens en cartes */
+  .ap-qui-bande {
+    margin-top: var(--space-section);
+    padding-block: clamp(3rem, 2rem + 4vw, 5.5rem);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+  .ap-qui {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  @media (min-width: 48rem) {
+    .ap-qui {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    }
+  }
+  .ap-portrait {
+    position: relative;
+    width: min(100%, 22rem);
+    margin: 0;
+  }
+  .ap-portrait__cadre {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-panel);
+    background: var(--color-surface-hover);
+  }
+  .ap-portrait__cadre img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: contrast(1.04) saturate(1.06);
+  }
+  .ap-portrait__marque {
+    position: absolute;
+    right: -0.9rem;
+    bottom: -0.9rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    width: 4.5rem;
+    height: 4.5rem;
+    padding: 6px;
+    border-radius: 16px;
+    background: var(--color-canvas);
+    box-shadow: var(--shadow-raise);
+  }
+  .ap-portrait__marque span {
+    border-radius: 5px;
+    background: var(--cat);
+  }
+  .ap-nom {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 1.2rem + 3.6vw, 4.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    font-weight: 800;
+    text-wrap: balance;
+  }
+  .ap-liens {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .ap-liens {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .ap-lien {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-height: 4.25rem;
+    padding: 0.75rem 1rem;
+    min-width: 0;
+    border-radius: var(--radius-button);
+    border: 1px solid var(--color-border);
+    background: var(--color-canvas);
+    color: var(--color-text);
+    text-decoration: none;
+    transition:
+      border-color var(--duration-out) var(--ease-out),
+      translate var(--duration-out) var(--ease-out),
+      background-color var(--duration-out) var(--ease-out);
+  }
+  .ap-lien__texte {
+    display: grid;
+    min-width: 0;
+    line-height: 1.3;
+  }
+  .ap-lien__texte small {
+    color: var(--color-text-muted);
+    font-size: var(--text-label);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ap-lien__fleche {
+    margin-left: auto;
+    color: var(--color-text-muted);
+    transition: translate var(--duration-out) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ap-lien:hover {
+      border-color: var(--color-border-strong);
+      background: var(--color-surface-hover);
+      translate: 0 -2px;
+      transition-duration: var(--duration-in);
+    }
+    .ap-lien:hover .ap-lien__fleche {
+      translate: 3px -3px;
+      color: var(--color-text);
+    }
+  }
+
+  /* Motion : états cachés posés seulement par le script (classe ngs-motion), jamais sans JS */
+  .ngs-motion .ap-revele {
+    clip-path: inset(100% 0 0 0 round var(--radius-case));
+  }
+  /* Panneaux de « Comment c'est fait » : fondu et léger glissement à l'affichage (mouvement réduit : immédiat) */
+  @media (prefers-reduced-motion: no-preference) {
+    .ap-panneau__vue {
+      transition:
+        opacity var(--duration-panel-in) var(--ease-enter),
+        translate var(--duration-panel-in) var(--ease-enter),
+        visibility 0s linear var(--duration-panel-out);
+      translate: 0 6px;
+    }
+    .ap-panneau__vue.is-active {
+      translate: 0 0;
+      transition-delay: 0s;
+    }
+  }
+}

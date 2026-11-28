@@ -1,0 +1,45 @@
+<section class="ap-pourqui" aria-labelledby="pourqui-titre" data-ap-pourqui>
+  <div class="ngs-container ap-pourqui__grille">
+    <div class="ap-pourqui__texte">
+      <h2 class="ap-manifeste" id="pourqui-titre" data-ap-manifeste>{{ t.manifeste }}</h2>
+      <p class="ngs-lead ap-pourqui__profils m-0" data-ap-profils>{{ t.profils }}</p>
+      <dl class="ap-epargne" data-ap-epargne>
+        <dt>{{ t.epargneTitre }}</dt>
+        <dd>{{ t.epargneTexte }}</dd>
+      </dl>
+    </div>
+    <div class="ap-avap" data-ap-avap>
+      <figure class="ap-avap__avant" data-ap-avant>
+        <figcaption class="ap-avap__etiquette">{{ t.avant }}</figcaption>
+        <div class="ngs-code">
+          <div class="ngs-code__bar">
+            <span class="ngs-code__file min-w-0 flex-1 truncate">mon-calendrier.component.ts</span>
+          </div>
+          <div class="ap-todos">
+            <p class="ap-todos__ligne">
+              <span class="tok-k">export class</span> MonCalendrierComponent {{ '{' }}
+            </p>
+            <ul class="ap-todo__liste">
+              @for (tache of taches; track tache) {
+                <li class="ap-todo" data-ap-todo>
+                  <span class="ap-todo__marque" aria-hidden="true"
+                    ><svg appIcone="check" taille="sm"></svg
+                  ></span>
+                  <span class="tok-c">// À faire : </span>
+                  <span class="ap-todo__texte">{{ tache }}</span>
+                </li>
+              }
+            </ul>
+            <p class="ap-todos__ligne">{{ '}' }}</p>
+          </div>
+        </div>
+      </figure>
+      <figure class="ap-avap__apres" data-ap-apres>
+        <figcaption class="ap-avap__etiquette">{{ t.apres }}</figcaption>
+        <div class="ap-avap__piece" data-ap-apres-piece>
+          <app-piece-vitrine [piece]="calendrier" ratio="19 / 21" />
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>

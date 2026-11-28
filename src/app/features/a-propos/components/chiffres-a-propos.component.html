@@ -1,0 +1,65 @@
+<section class="ngs-container ap-chiffres-section" aria-labelledby="chiffres-titre">
+  <h2 class="ngs-h2 ap-titre m-0" id="chiffres-titre">{{ t.chiffresTitre }}</h2>
+  <div class="ap-tuiles" data-ap-tuiles>
+    <article class="ap-tuile ap-tuile--ressources" data-ap-tuile>
+      <p class="ap-tuile__nombre">
+        <span data-compte>{{ compte.ressources }}</span>
+      </p>
+      <p class="ap-tuile__libelle">{{ t.chiffresRessources }}</p>
+      <div class="ap-carres" aria-hidden="true" data-ap-carres>
+        @for (classe of carres; track $index) {
+          <span [class]="classe"></span>
+        }
+      </div>
+      <p class="ap-legende" data-ap-legende>
+        @for (ligne of legende; track ligne.classe) {
+          <span [class]="ligne.classe"><i></i>{{ ligne.texte }}</span>
+        }
+      </p>
+    </article>
+    <article class="ap-tuile ap-tuile--tokens" data-ap-tuile>
+      <p class="ap-tuile__nombre">
+        <span data-compte>{{ compte.tokens }}</span>
+      </p>
+      <p class="ap-tuile__libelle">{{ t.chiffresTokens }}</p>
+      <ul class="ap-jetons" aria-hidden="true" data-ap-jetons>
+        @for (jeton of jetons; track jeton) {
+          <li>{{ jeton }}</li>
+        }
+      </ul>
+    </article>
+    <article class="ap-tuile ap-tuile--designs" data-ap-tuile>
+      <p class="ap-tuile__nombre">
+        <span data-compte>{{ compte.designs }}</span>
+      </p>
+      <p class="ap-tuile__libelle">{{ t.chiffresDesigns }}</p>
+      <div class="ap-pastilles" aria-hidden="true" data-ap-pastilles>
+        @for (p of pastilles(); track p.nom) {
+          <span [style.--sw]="p.action" [style.--sw-texte]="p.surAction" [style.--r]="p.rayon">{{
+            p.nom
+          }}</span>
+        }
+      </div>
+    </article>
+    <article class="ap-tuile ap-tuile--versions" data-ap-tuile>
+      <p class="ap-tuile__nombre">
+        <span data-compte>{{ compte.versions }}</span>
+      </p>
+      <p class="ap-tuile__libelle">{{ t.chiffresVersions }}</p>
+      <div class="ap-bascule" aria-hidden="true">
+        <span>{{ versions.tailwind }}</span><span>{{ versions.css }}</span
+        ><i data-ap-curseur></i>
+      </div>
+    </article>
+    <article class="ap-tuile ap-tuile--zero" data-ap-tuile>
+      <p class="ap-tuile__nombre">
+        <span data-compte>{{ compte.comptes }}</span>
+      </p>
+      <p class="ap-tuile__libelle">{{ t.chiffresCompte }}</p>
+      <span class="ap-barre-compte" aria-hidden="true"
+        ><span>{{ t.chiffresCreer }}</span
+        ><i data-ap-rature></i
+      ></span>
+    </article>
+  </div>
+</section>
