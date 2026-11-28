@@ -4,15 +4,16 @@ Catalogue public de ressources Angular : composants à voir en vrai, à copier e
 
 ## Stack
 
-| Élément     | Choix                                                               |
-| ----------- | ------------------------------------------------------------------- |
-| Framework   | Angular 22 (zoneless, `OnPush` par défaut, signals)                 |
-| Langage     | TypeScript 6, mode `strict` et `strictTemplates`                    |
-| Style       | Tailwind CSS v4 (`@tailwindcss/postcss`)                            |
-| Rendu       | Prérendu statique (`outputMode: "static"`), hydratation côté client |
-| Tests       | Vitest via `ng test`                                                |
-| Hébergement | Cloudflare Pages (plan gratuit)                                     |
-| Outils      | Node 26, npm 11                                                     |
+| Élément     | Choix                                                                 |
+| ----------- | --------------------------------------------------------------------- |
+| Framework   | Angular 22 (zoneless, `OnPush` par défaut, signals)                   |
+| Langage     | TypeScript 6, mode `strict` et `strictTemplates`                      |
+| Style       | Tailwind CSS v4 (`@tailwindcss/postcss`)                              |
+| Rendu       | Prérendu statique (`outputMode: "static"`), hydratation côté client   |
+| Animation   | GSAP 3.15.1 et Lenis 1.3.28 (npm, versions exactes, import dynamique) |
+| Tests       | Vitest via `ng test`                                                  |
+| Hébergement | Cloudflare Pages (plan gratuit)                                       |
+| Outils      | Node 26, npm 11                                                       |
 
 ## Démarrage
 
@@ -58,6 +59,10 @@ Sorties, dans `src/generated/registre/` (non versionnées) : un index par catég
 - **Page d'aperçu autonome** (ADR 0016) : « Ouvrir l'aperçu seul » ouvre `/apercu/<slug>?design=…&mode=…&p.<nom>=…` dans un nouvel onglet ; hors d'une iframe, l'aperçu affiche sa barre (retour à la fiche, design, mode, animations, paramètres).
 - **Vignettes vivantes** (ADR 0015) : chaque case de la planche charge, par `@defer (on viewport)`, une iframe de `/apercu/<slug>?vignette=1` (8 au plus en même temps, détruites hors viewport, jamais en économie de données).
 - Tests d'une ressource : `registry/<categorie>/<slug>/demo/<slug>.component.spec.ts` (non livré), exécuté dans le projet `apercus` contre la variante Tailwind.
+
+## Motion des pages vitrines
+
+L'accueil et « À propos » sont animés par GSAP (ScrollTrigger, SplitText) et Lenis, installés en paquets npm à version exacte (jamais de CDN : CSP `script-src 'self'`). Ils sont importés dynamiquement, après le premier rendu dans le navigateur, dans des chunks à part (`BibliothequesMouvementService`). `MouvementPageService` (à fournir dans les `providers` de la page) monte la mise en scène, la défait dans `DestroyRef` (ScrollTrigger, SplitText, Lenis, ticker) et arrête Lenis dès le début d'une navigation. `MotionService` est le seul à lire `prefers-reduced-motion` : en mouvement réduit, rien n'est téléchargé et la page reste à son état final. Les états de départ (éléments cachés) ne sont posés que par le script : le HTML prérendu est complet et lisible sans JavaScript. Licences : GSAP « Standard "no charge" license » (gratuite, usage commercial permis, non redistribuée), Lenis MIT.
 
 ## Structure
 
