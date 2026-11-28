@@ -1,0 +1,77 @@
+{
+  "usage": "<ngs-galerie-roue\n  libelle=\"Les artistes de la semaine\"\n  [elements]=\"elements\"\n  [hauteur]=\"520\"\n  [lectureAuto]=\"true\"\n  [dureeLecture]=\"4\"\n/>\n\n// elements : { image, titre, sousTitre?, alt? }[]\nelements = [\n  { image: '/images/a.webp', titre: 'Twist', sousTitre: 'Mara Voss' },\n];",
+  "api": [
+    {
+      "nom": "elements",
+      "type": "input.required<readonly ElementGalerieRoue[]>()",
+      "defaut": "—",
+      "role": "Les éléments : image et titre, sousTitre et alt facultatifs. Sans alt, le titre sert de texte alternatif."
+    },
+    {
+      "nom": "libelle",
+      "type": "input<string>()",
+      "defaut": "'Galerie'",
+      "role": "Nom accessible de la galerie."
+    },
+    {
+      "nom": "indexInitial",
+      "type": "input<number>()",
+      "defaut": "2",
+      "role": "Élément affiché au départ (0 pour le premier)."
+    },
+    {
+      "nom": "hauteur",
+      "type": "input<number>()",
+      "defaut": "560",
+      "role": "Hauteur du composant en pixels."
+    },
+    {
+      "nom": "angle",
+      "type": "input<number>()",
+      "defaut": "15",
+      "role": "Angle entre deux titres, en degrés."
+    },
+    {
+      "nom": "rayonArc",
+      "type": "input<number>()",
+      "defaut": "380",
+      "role": "Rayon de l’arc en pixels : plus il est grand, plus l’arc est plat."
+    },
+    {
+      "nom": "boucle",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Le dernier élément revient au premier."
+    },
+    {
+      "nom": "lectureAuto",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Passe au suivant quand le titre actif est entièrement rempli. Jamais en mouvement réduit."
+    },
+    {
+      "nom": "dureeLecture",
+      "type": "input<number>()",
+      "defaut": "4",
+      "role": "Temps de remplissage du titre actif, en secondes (0,5 au minimum)."
+    },
+    {
+      "nom": "pauseAuSurvol",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Met la lecture en pause au survol et au focus. Elle l’est aussi hors de l’écran."
+    },
+    {
+      "nom": "molette",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Autorise la molette sur la liste des titres ; aux extrémités sans boucle, la page défile."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : pas de rotation animée ni de lecture automatique (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

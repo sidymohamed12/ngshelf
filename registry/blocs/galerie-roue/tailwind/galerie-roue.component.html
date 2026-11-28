@@ -1,0 +1,91 @@
+<div
+  class="relative w-full overflow-hidden rounded-[calc(var(--ngs-radius)*2)] border border-ngs-border bg-ngs-surface-alt text-ngs-text"
+  role="group"
+  [attr.aria-label]="libelle()"
+  [style.height.px]="hauteur()"
+  (pointerenter)="survoler(true)"
+  (pointerleave)="survoler(false)"
+  (focusin)="focaliser(true)"
+  (focusout)="focaliser(false)"
+>
+  <div
+    class="absolute inset-0 flex items-center justify-center gap-[clamp(2rem,6cqi,5rem)] px-[clamp(1rem,4cqi,3rem)] @max-[32rem]:gap-5"
+  >
+    <div
+      class="relative aspect-[4/5] h-[78%] max-w-[46%] flex-none overflow-hidden rounded-[calc(var(--ngs-radius)*1.6)] bg-ngs-surface @max-[32rem]:max-w-1/2"
+    >
+      @for (noeud of noeuds(); track $index; let i = $index) {
+        <img
+          class="absolute inset-0 size-full scale-105 [-webkit-user-drag:none] object-cover opacity-0 blur-[14px] select-none data-[actif=true]:scale-100 data-[actif=true]:opacity-100 data-[actif=true]:blur-none motion-safe:transition-[opacity,filter,transform] motion-safe:duration-[calc(var(--ngs-duration)*3)] motion-safe:ease-out in-[.ngs-sans-animation]:transition-none!"
+          [attr.data-actif]="i === actif()"
+          [src]="noeud.element.image"
+          [alt]="noeud.element.alt ?? noeud.element.titre"
+          [attr.aria-hidden]="i === actif() ? null : 'true'"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
+      }
+    </div>
+    <ul
+      #liste
+      class="relative m-0 h-full w-[clamp(11rem,26cqi,22rem)] flex-none list-none touch-none p-0"
+      (wheel)="surMolette($event)"
+      (pointerdown)="toucherDebut($event)"
+      (pointerup)="toucherFin($event)"
+    >
+      @for (noeud of noeuds(); track $index; let i = $index) {
+        <li
+          class="pointer-events-none absolute inset-0 flex origin-[0_50%] items-center pl-7 [rotate:var(--ngs-th)] [translate:var(--ngs-x)_var(--ngs-y)] will-change-[translate,rotate]"
+          [style.--ngs-x.px]="noeud.x"
+          [style.--ngs-y.px]="noeud.y"
+          [style.--ngs-th.deg]="noeud.angle"
+          [style.--ngs-op]="noeud.base"
+          [style.--ngs-act]="noeud.presence"
+          [style.--ngs-p]="noeud.progression"
+        >
+          <button
+            class="group pointer-events-auto relative m-0 inline-block cursor-pointer border-0 bg-transparent p-0 text-left text-inherit [font:inherit] disabled:pointer-events-none focus-visible:outline-none"
+            type="button"
+            [attr.aria-current]="i === actif() ? 'true' : null"
+            [attr.tabindex]="i === actif() ? 0 : -1"
+            [attr.aria-hidden]="noeud.cache ? 'true' : null"
+            [disabled]="noeud.cache"
+            (click)="cliquer(i)"
+            (keydown)="touche($event)"
+          >
+            <svg
+              class="absolute top-1/2 -left-6 -mt-[7px] size-3.5 text-ngs-text-muted opacity-(--ngs-act)"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="m9 5 7 7-7 7"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span
+              class="block text-[clamp(1.5rem,2.6cqi+.5rem,2.2rem)] leading-[1.2] font-semibold tracking-[-.02em] whitespace-nowrap text-ngs-text opacity-(--ngs-op) group-focus-visible:underline group-focus-visible:decoration-2 group-focus-visible:underline-offset-6"
+              >{{ noeud.element.titre }}</span
+            >
+            <span
+              class="absolute inset-0 block [background-clip:text] bg-[linear-gradient(90deg,var(--color-ngs-action)_0,var(--color-ngs-action)_calc(var(--ngs-p)*100%),var(--color-ngs-text-muted)_calc(var(--ngs-p)*100%_+_14%))] text-[clamp(1.5rem,2.6cqi+.5rem,2.2rem)] leading-[1.2] font-semibold tracking-[-.02em] whitespace-nowrap text-transparent opacity-(--ngs-act) group-focus-visible:underline group-focus-visible:decoration-2 group-focus-visible:underline-offset-6"
+              aria-hidden="true"
+              >{{ noeud.element.titre }}</span
+            >
+            @if (noeud.element.sousTitre) {
+              <span
+                class="absolute top-full left-0 mt-0.5 text-[.8rem] font-medium whitespace-nowrap text-ngs-text-muted opacity-(--ngs-act)"
+                >{{ noeud.element.sousTitre }}</span
+              >
+            }
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+</div>
