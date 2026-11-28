@@ -9,3 +9,8 @@ aperçus (`demo/`) : elles ne sont jamais livrées dans les zips des ressources.
 
 Les fichiers `yassa-*.webp` et `stlouis-*.webp` sont des photographies de la phase précédente : leur
 licence n'est pas documentée dans ce dossier (à compléter).
+
+Les six portraits `portrait-*.svg` (`fatou`, `cheikh`, `aminata`, `moussa`, `khady`, `ibrahima`) sont des
+personnages **fictifs et stylisés, créés pour NgShelf** (formes et dégradés), sans photographie ni source
+tierce. Ils ne représentent aucune personne réelle. Licence : MIT. Ils ne servent que dans la scène de
+démonstration du bloc « Carrousel de témoignages » : jamais livrés dans les zips.

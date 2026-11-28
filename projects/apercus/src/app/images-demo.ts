@@ -31,7 +31,8 @@ export type CleImages =
   | 'galerie-dome'
   | 'mur-images'
   | 'media-extensible'
-  | 'revelation-iris';
+  | 'revelation-iris'
+  | 'carrousel-temoignages';
 
 const PHOTO = (numero: number): string => `Photographie de démonstration ${numero}`;
 
@@ -41,6 +42,30 @@ function picsum(id: number, largeur: number, hauteur: number): string {
 
 function unsplash(photo: string): string {
   return `https://images.unsplash.com/photo-${photo}?q=80&w=774&auto=format&fit=crop`;
+}
+
+function portraitsLocaux(): readonly ImageDemo[] {
+  return ['moussa', 'cheikh', 'aminata', 'ibrahima', 'khady', 'fatou'].map((nom) => ({
+    src: `images/portrait-${nom}.svg`,
+    alt: `Portrait illustré de ${nom} (personnage fictif)`,
+  }));
+}
+
+/** Ordre : Moussa, Cheikh, Aminata, Ibrahima, Khady, Fatou (même ordre que la démo). */
+const PORTRAITS_UNSPLASH: readonly string[] = [
+  '1507003211169-0a1dd7228f2d',
+  '1500648767791-00dcc994a43e',
+  '1580489944761-15a19d654956',
+  '1472099645785-5658abf4ff4e',
+  '1494790108377-be9c29b29330',
+  '1531427186611-ecfd6d936c79',
+];
+
+function portraitsExternes(): readonly ImageDemo[] {
+  return PORTRAITS_UNSPLASH.map((photo) => ({
+    src: `https://images.unsplash.com/photo-${photo}?q=80&w=600&h=800&auto=format&fit=crop&crop=faces`,
+    alt: "Portrait d'illustration (photo libre de droits, personnage fictif)",
+  }));
 }
 
 function externes(adresses: readonly string[]): readonly ImageDemo[] {
@@ -67,6 +92,8 @@ const EXTERNES: Readonly<Record<CleImages, readonly ImageDemo[]>> = {
   ),
   'media-extensible': externes([picsum(1043, 1600, 900)]),
   'revelation-iris': externes([picsum(1018, 1920, 1080)]),
+  // Portraits illustrés et fictifs, créés pour NgShelf : jamais d'hôte tiers, quel que soit l'interrupteur.
+  'carrousel-temoignages': portraitsExternes(),
 };
 
 const ILLUSTRATIONS: Readonly<Record<string, string>> = {
@@ -119,6 +146,7 @@ const LOCALES: Readonly<Record<CleImages, readonly ImageDemo[]>> = {
   'mur-images': locales(HUIT),
   'media-extensible': locales(['or-chaud']),
   'revelation-iris': locales(['crepuscule']),
+  'carrousel-temoignages': portraitsLocaux(),
 };
 
 /** Images de la scène `cle` : externes tant que le retour au local n'est pas fait. */

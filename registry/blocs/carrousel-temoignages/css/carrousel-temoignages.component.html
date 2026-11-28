@@ -1,0 +1,214 @@
+<section class="temoignages" [attr.aria-labelledby]="id">
+  <div
+    class="temoignages__panneau"
+    (pointerenter)="survoler(true)"
+    (pointerleave)="survoler(false)"
+    (focusin)="survoler(true)"
+    (focusout)="survoler(false)"
+  >
+    <div
+      class="temoignages__scene"
+      tabindex="0"
+      role="group"
+      aria-roledescription="carrousel"
+      [attr.aria-label]="libelle()"
+      [attr.aria-live]="enLecture() ? 'off' : 'polite'"
+      (keydown)="surTouche($event)"
+    >
+      @for (carte of cartes(); track carte.index) {
+        <div
+          class="temoignages__carte"
+          [attr.data-position]="carte.position"
+          [attr.data-saut]="carte.saut"
+        >
+          <figure
+            class="temoignages__cadre"
+            [attr.aria-hidden]="carte.position === 0 ? null : 'true'"
+          >
+            <img
+              class="temoignages__image"
+              [src]="carte.temoignage.image"
+              [alt]="carte.alt"
+              width="480"
+              height="640"
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+            />
+            <figcaption class="temoignages__legende">
+              <p class="temoignages__citation">{{ carte.temoignage.citation }}</p>
+              <p class="temoignages__auteur">
+                {{ carte.temoignage.nom }}, {{ carte.temoignage.fonction }}
+              </p>
+            </figcaption>
+          </figure>
+          @if (carte.voisine) {
+            <button
+              class="temoignages__voir"
+              type="button"
+              [attr.aria-label]="carte.voir"
+              (click)="choisir(carte.index)"
+            ></button>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="temoignages__commandes">
+      <button
+        class="temoignages__commande"
+        type="button"
+        [attr.aria-label]="textes.precedent"
+        (click)="precedent()"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="m14.5 6-6 6 6 6"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      @if (lectureAuto()) {
+        <button
+          class="temoignages__commande"
+          type="button"
+          [attr.aria-label]="libellePause()"
+          [attr.aria-pressed]="enPause()"
+          (click)="basculerPause()"
+        >
+          @if (enPause()) {
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M8 5.5v13l10-6.5-10-6.5Z" fill="currentColor" />
+            </svg>
+          } @else {
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M8 5v14M16 5v14"
+                stroke="currentColor"
+                stroke-width="2.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          }
+        </button>
+      }
+      <button
+        class="temoignages__commande"
+        type="button"
+        [attr.aria-label]="textes.suivant"
+        (click)="suivant()"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="m9.5 6 6 6-6 6"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <ul class="temoignages__logos">
+      @for (logo of logosAffiches(); track logo.nom) {
+        <li>
+          <button
+            class="temoignages__logo"
+            type="button"
+            [attr.aria-pressed]="logo.actif"
+            (click)="choisirEntreprise(logo.nom)"
+          >
+            @switch (logo.icone) {
+              @case ('traits') {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M6 19 10.5 5M13 19l4.5-14"
+                    stroke="currentColor"
+                    stroke-width="2.6"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              }
+              @case ('carre') {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <rect
+                    x="3.5"
+                    y="3.5"
+                    width="17"
+                    height="17"
+                    rx="4.5"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <circle cx="12" cy="12" r="3" fill="currentColor" />
+                </svg>
+              }
+              @case ('disque') {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3a9 9 0 0 0-9 9h9Z" fill="currentColor" />
+                  <path d="M12 12h9a9 9 0 0 1-9 9Z" fill="currentColor" />
+                </svg>
+              }
+              @case ('cube') {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M12 3 20 7.5v9L12 21l-8-4.5v-9L12 3Zm0 9 8-4.5M12 12 4 7.5M12 12v9"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              }
+              @case ('vagues') {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M3 9.5c2-2.2 4-2.2 6 0s4 2.2 6 0 4-2.2 6 0M3 15.5c2-2.2 4-2.2 6 0s4 2.2 6 0 4-2.2 6 0"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              }
+            }
+            <span>{{ logo.nom }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div class="temoignages__contenu">
+    @if (niveauTitre() === 1) {
+      <h1 class="temoignages__titre" [id]="id">{{ titre() }}</h1>
+    } @else {
+      <h2 class="temoignages__titre" [id]="id">{{ titre() }}</h2>
+    }
+    @if (texte()) {
+      <p class="temoignages__texte">{{ texte() }}</p>
+    }
+    <div class="temoignages__actions">
+      @if (action()) {
+        <a class="temoignages__action" [routerLink]="routeAction()">{{ action() }}</a>
+      }
+      @if (lien()) {
+        <a class="temoignages__lien" [routerLink]="routeLien()">
+          {{ lien() }}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M5 12h14m-6-6 6 6-6 6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      }
+    </div>
+  </div>
+</section>

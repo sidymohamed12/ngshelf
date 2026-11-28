@@ -1,0 +1,59 @@
+{
+  "usage": "<ngs-carrousel-temoignages\n  titre=\"Ceux qui planifient ici.\"\n  texte=\"Teranga Lab, baobab.io et Kora gardent leurs specs, leurs feuilles de route et leurs livraisons au même endroit.\"\n  [temoignages]=\"temoignages\"\n  [logos]=\"logos\"\n  action=\"Essayer gratuitement\"\n  routeAction=\"/inscription\"\n  lien=\"Lire leurs témoignages\"\n  routeLien=\"/temoignages\"\n/>\n\n// temoignages : { image, citation, nom, fonction, entreprise, alt? }[]\n// logos : { nom, icone? }[]  (le nom d'un logo = l'entreprise d'un témoignage)",
+  "api": [
+    {
+      "nom": "temoignages",
+      "type": "input.required<readonly Temoignage[]>()",
+      "defaut": "—",
+      "role": "Un portrait (image), une citation, un nom, une fonction et l'entreprise dont le logo s'allume. alt est facultatif (par défaut « Portrait de … »)."
+    },
+    {
+      "nom": "logos",
+      "type": "input.required<readonly LogoEntreprise[]>()",
+      "defaut": "—",
+      "role": "Les logos de la grille : un nom (celui de l'entreprise) et un pictogramme (traits, carre, disque, cube, vagues ou aucune)."
+    },
+    {
+      "nom": "titre / texte",
+      "type": "input.required<string>() / input<string>()",
+      "defaut": "— / ''",
+      "role": "Titre (h2 par défaut) et phrase à côté du carrousel."
+    },
+    {
+      "nom": "niveauTitre",
+      "type": "input<1 | 2>()",
+      "defaut": "2",
+      "role": "h1 si le bloc ouvre la page."
+    },
+    {
+      "nom": "action / routeAction / lien / routeLien",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Bouton principal et lien secondaire (routerLink)."
+    },
+    {
+      "nom": "libelle",
+      "type": "input<string>()",
+      "defaut": "'Témoignages'",
+      "role": "Nom accessible du carrousel."
+    },
+    {
+      "nom": "lectureAuto",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Passe au témoignage suivant tout seul, en boucle ; pause au survol, au focus, hors de l'écran et avec le bouton Pause."
+    },
+    {
+      "nom": "dureeAffichage",
+      "type": "input<number>()",
+      "defaut": "4",
+      "role": "Durée d'affichage de chaque témoignage, en secondes (1 s au minimum)."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : ni lecture automatique ni transitions (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

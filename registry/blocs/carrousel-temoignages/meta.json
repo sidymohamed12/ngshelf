@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "slug": "carrousel-temoignages",
+  "categorie": "bloc",
+  "type": "temoignages",
+  "titre": {
+    "fr": "Carrousel de témoignages"
+  },
+  "description": {
+    "fr": "Des cartes portrait dont la carte active passe au centre, liées à une grille de logos, avec un titre et deux boutons. Lecture automatique, pause, flèches."
+  },
+  "secteurs": ["saas"],
+  "tags": ["témoignages", "carrousel", "logos", "portrait", "autoplay"],
+  "contratTokens": 1,
+  "motion": {
+    "resume": {
+      "fr": "La carte choisie glisse au centre pendant que ses voisines reculent et s'atténuent ; sa légende apparaît juste après, et le logo de l'entreprise s'allume. La lecture passe au témoignage suivant, se met en pause au survol et ne tourne jamais en mouvement réduit."
+    },
+    "moments": ["changement"],
+    "technique": "transitions CSS sur transform et opacity, pilotées par un attribut data-position ; une minuterie setInterval pour la lecture automatique ; aucune bibliothèque d'animation"
+  },
+  "parametres": [
+    {
+      "nom": "lectureAuto",
+      "genre": "interrupteur",
+      "libelle": { "fr": "Lecture automatique" },
+      "defaut": true
+    },
+    {
+      "nom": "dureeAffichage",
+      "genre": "nombre",
+      "libelle": { "fr": "Durée d'un témoignage" },
+      "min": 2,
+      "max": 10,
+      "pas": 1,
+      "unite": "s",
+      "defaut": 4
+    }
+  ],
+  "rendu": "grand-ecran",
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-28",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}
