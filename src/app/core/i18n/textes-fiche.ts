@@ -51,6 +51,8 @@ export const TEXTES_FICHE = {
     mode: $localize`:@@ressource.mode:Mode de l’aperçu`,
     clair: $localize`:@@ressource.mode.clair:Clair`,
     sombre: $localize`:@@ressource.mode.sombre:Sombre`,
+    ouvrir: $localize`:@@ressource.apercu.ouvrir:Ouvrir l’aperçu seul`,
+    nouvelOnglet: $localize`:@@ressource.apercu.nouvel-onglet:(s’ouvre dans un nouvel onglet)`,
     rejouerEntree: $localize`:@@ressource.rejouer.entree:Rejouer l’entrée`,
     rejouerSortie: $localize`:@@ressource.rejouer.sortie:Rejouer la sortie`,
   },

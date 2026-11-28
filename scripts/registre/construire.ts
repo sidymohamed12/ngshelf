@@ -3,7 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE } from '../../src/app/core/config/site.config.ts';
 import type { MetaDesign, MetaRessource } from '../../src/app/shared/models/ressource.model.ts';
-import { CATEGORIES } from '../../src/app/shared/models/taxonomie.model.ts';
+import { CATEGORIES, SEGMENT_CATEGORIE } from '../../src/app/shared/models/taxonomie.model.ts';
 import { construireApercus } from './apercus.ts';
 import { construireLivraisons } from './livraisons.ts';
 import { lireRegistre } from './lire.ts';
@@ -52,13 +52,18 @@ function ecrireLivraisons(
   const apercus = construireApercus(
     ressources.map((r) => ({
       slug: r.meta.slug,
+      titre: r.meta.titre.fr,
+      cheminFiche: `/${SEGMENT_CATEGORIE[r.meta.categorie]}/${r.meta.type}/${r.meta.slug}`,
       avecMotion: r.meta.motion !== null,
       parametres: r.meta.parametres,
       fichiers: r.fichiers,
     })),
-    planche,
-    readFileSync(PONT, 'utf8'),
-    SITE.nom,
+    {
+      design: planche,
+      pont: readFileSync(PONT, 'utf8'),
+      nomSite: SITE.nom,
+      designs: livraisons.designs,
+    },
   );
   rmSync(SORTIE_APERCUS, { recursive: true, force: true });
   for (const [chemin, contenu] of apercus) ecrireFichier(join(SORTIE_APERCUS, chemin), contenu);

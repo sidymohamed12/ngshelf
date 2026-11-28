@@ -1,11 +1,26 @@
-import { DOCUMENT, DestroyRef, Service, afterNextRender, inject, signal } from '@angular/core';
-import { PARAMETRES_APERCUS } from '@generated-apercus/scenes';
+import {
+  DOCUMENT,
+  DestroyRef,
+  Service,
+  afterNextRender,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { DESIGNS_APERCUS, INFOS_APERCUS, PARAMETRES_APERCUS } from '@generated-apercus/scenes';
+import { TOKENS_CONTRAT, valeursDuDesign } from '@shared/livraison/livraison';
+import { ReglagesVisiteur, lireRechercheApercu, versSurcharges } from '@shared/apercu/reglages-url';
 import {
   parametresDepuisRecherche,
   parametresParDefaut,
   resoudreParametres,
 } from '@shared/apercu/parametres';
-import type { ParametreReglable, ValeursParametres } from '@shared/models/parametre.model';
+import type {
+  ParametreReglable,
+  ValeurParametre,
+  ValeursParametres,
+} from '@shared/models/parametre.model';
 import {
   MessageReglages,
   MessageSortie,
@@ -19,6 +34,7 @@ import {
 import { ORIGINES_SITE } from './origines';
 
 const CLASSE_SOMBRE = 'dark';
+const CLASSE_AUTONOME = 'ap-autonome';
 const CLASSE_SANS_ANIMATION = 'ngs-sans-animation';
 const SELECTEUR_HOTES = '[data-hote]';
 /** Délai après lequel une sortie sans animation en cours est considérée comme terminée. */
@@ -27,15 +43,6 @@ const DELAI_DETECTION_SORTIE_MS = 80;
 const DELAI_MAX_SORTIE_MS = 1200;
 /** Marge verticale du corps de l'aperçu (styles.css : padding de 32 px). */
 const MARGE_VERTICALE_PX = 32;
-
-/** Mode et animations demandés par l'URL : l'état initial seulement, les messages prennent ensuite le relais. */
-export function etatInitial(recherche: string): { mode: ModeApercu; animations: boolean } {
-  const parametres = new URLSearchParams(recherche);
-  return {
-    mode: parametres.get('mode') === 'sombre' ? 'sombre' : 'clair',
-    animations: parametres.get('animations') !== '0',
-  };
-}
 
 /**
  * Côté aperçu du protocole (ADR 0010) : reçoit les réglages du site, annonce qu'il est prêt, rejoue une
@@ -49,12 +56,30 @@ export class ApercuService {
   readonly #mode = signal<ModeApercu>('clair');
   #definitions: readonly ParametreReglable[] = [];
   readonly #parametres = signal<ValeursParametres>({});
+  readonly #titre = inject(Title);
+  readonly #mouvementReduit = signal(false);
+  readonly #slug = signal<string | null>(null);
+  readonly #autonome = signal(false);
+  readonly #design = signal<string | undefined>(undefined);
+  readonly #reglagesVisiteur = signal<ReglagesVisiteur>({});
+  readonly #definitionsSignal = signal<readonly ParametreReglable[]>([]);
 
   /** Animations permises : les scènes la passent à l'input `animations` de leur ressource. */
   readonly animations = this.#animations.asReadonly();
   readonly mode = this.#mode.asReadonly();
   /** Paramètres propres de la ressource montrée (ADR 0014) : défauts, puis URL, puis messages du site. */
   readonly parametres = this.#parametres.asReadonly();
+
+  /** Vrai quand la page est ouverte seule (nouvel onglet), faux dans l'iframe de la fiche ou d'une case. */
+  readonly autonome = this.#autonome.asReadonly();
+  /** Titre et chemin de la fiche de la ressource montrée (null avant la route ou pour un slug inconnu). */
+  readonly info = computed(() => INFOS_APERCUS[this.#slug() ?? ''] ?? null);
+  readonly definitions = this.#definitionsSignal.asReadonly();
+  /** Préférence du système (`prefers-reduced-motion`) : sur la page autonome, elle coupe les animations. */
+  readonly mouvementReduit = this.#mouvementReduit.asReadonly();
+  readonly designs = DESIGNS_APERCUS;
+  /** Slug du design réglé ; Planche tant que ni l'URL ni la page autonome n'en ont choisi un autre. */
+  readonly design = computed(() => this.#design() ?? this.designs[0]?.slug ?? '');
 
   constructor() {
     afterNextRender(() => this.#demarrer());
@@ -63,7 +88,46 @@ export class ApercuService {
   /** Appelé par la route de la scène : fixe la liste blanche des paramètres et leurs valeurs de départ. */
   ouvrir(slug: string): void {
     this.#definitions = PARAMETRES_APERCUS[slug] ?? [];
+    this.#definitionsSignal.set(this.#definitions);
     this.#parametres.set(parametresParDefaut(this.#definitions));
+    this.#slug.set(slug);
+    const info = INFOS_APERCUS[slug];
+    if (info) this.#titre.setTitle(`Aperçu : ${info.titre} | NgShelf`);
+  }
+
+  /** Recharge la page (état d'erreur de la page autonome). */
+  recharger(): void {
+    this.#document.defaultView?.location.reload();
+  }
+
+  choisirDesign(slug: string): void {
+    this.#design.set(slug);
+    this.#poserVariables();
+  }
+
+  choisirMode(mode: ModeApercu): void {
+    this.#appliquerMode(mode);
+    this.#poserVariables();
+  }
+
+  choisirAnimations(permises: boolean): void {
+    this.#appliquerAnimations(permises && !this.#mouvementReduit());
+  }
+
+  reglerParametre(nom: string, valeur: ValeurParametre): void {
+    this.#parametres.set(
+      resoudreParametres(this.#definitions, { ...this.#parametres(), [nom]: valeur }),
+    );
+  }
+
+  /** « Réinitialiser » de la page autonome : défauts des paramètres, design et mode de départ. */
+  reinitialiser(): void {
+    this.#parametres.set(parametresParDefaut(this.#definitions));
+    this.#reglagesVisiteur.set({});
+    this.#design.set(undefined);
+    this.#appliquerMode('clair');
+    this.#appliquerAnimations(!this.#mouvementReduit());
+    this.#poserVariables();
   }
 
   /** Un choix parmi `valides` : la scène re-vérifie, le type du résultat est donc sûr sans conversion. */
@@ -85,9 +149,20 @@ export class ApercuService {
   #demarrer(): void {
     const fenetre = this.#document.defaultView;
     if (!fenetre) return;
-    const initial = etatInitial(fenetre.location.search);
+    this.#autonome.set(fenetre.parent === fenetre);
+    this.#document.documentElement.classList.toggle(CLASSE_AUTONOME, fenetre.parent === fenetre);
+    const initial = lireRechercheApercu(fenetre.location.search);
+    const reduit = fenetre.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    this.#mouvementReduit.set(reduit);
     this.#appliquerMode(initial.mode);
-    this.#appliquerAnimations(initial.animations);
+    this.#appliquerAnimations(initial.animations && !reduit);
+    this.#reglagesVisiteur.set(initial.reglages);
+    if (initial.design !== undefined && this.designs.some((d) => d.slug === initial.design)) {
+      this.#design.set(initial.design);
+    }
+    if (this.#design() !== undefined || Object.keys(initial.reglages).length > 0) {
+      this.#poserVariables();
+    }
     this.#parametres.set(parametresDepuisRecherche(this.#definitions, fenetre.location.search));
     const surMessage = (evenement: MessageEvent<unknown>): void => {
       if (!vientDuSite(evenement, fenetre.parent, ORIGINES_SITE)) return;
@@ -112,6 +187,24 @@ export class ApercuService {
     this.#appliquerMode(message.mode);
     this.#appliquerAnimations(message.animations);
     this.#parametres.set(resoudreParametres(this.#definitions, message.params));
+  }
+
+  /**
+   * Pose les 12 variables du design réglé (page autonome ou URL d'une fiche) : même calcul que la fiche
+   * (`valeursDuDesign`). Les messages du site, eux, posent directement les valeurs qu'il a calculées.
+   */
+  #poserVariables(): void {
+    const racine = this.#document.documentElement;
+    const personnalise =
+      this.#design() !== undefined || Object.keys(this.#reglagesVisiteur()).length > 0;
+    const design = this.designs.find((d) => d.slug === this.design());
+    if (!personnalise || !design) {
+      // Rien de réglé : le tokens.css livré (Planche, clair et .dark) s'applique seul.
+      for (const token of TOKENS_CONTRAT) racine.style.removeProperty(token);
+      return;
+    }
+    const valeurs = valeursDuDesign(design, this.#mode(), versSurcharges(this.#reglagesVisiteur()));
+    for (const token of TOKENS_CONTRAT) racine.style.setProperty(token, valeurs[token]);
   }
 
   #appliquerMode(mode: ModeApercu): void {

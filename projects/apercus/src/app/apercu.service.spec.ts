@@ -1,7 +1,7 @@
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { messageReglages, messageSortie } from '@shared/apercu/protocole';
-import { ApercuService, etatInitial } from './apercu.service';
+import { ApercuService } from './apercu.service';
 
 const ORIGINE_SITE = 'http://localhost:4200';
 
@@ -18,14 +18,6 @@ function demarrer(): ApercuService {
   TestBed.inject(ApplicationRef).tick();
   return service;
 }
-
-describe('etatInitial', () => {
-  it('lit le mode et les animations de l’URL, clair et animé par défaut', () => {
-    expect(etatInitial('')).toEqual({ mode: 'clair', animations: true });
-    expect(etatInitial('?mode=sombre&animations=0')).toEqual({ mode: 'sombre', animations: false });
-    expect(etatInitial('?mode=noir')).toEqual({ mode: 'clair', animations: true });
-  });
-});
 
 describe('ApercuService', () => {
   beforeEach(() => {
@@ -111,5 +103,44 @@ describe('ApercuService', () => {
     envoyer(messageSortie('hero-sortie'));
     expect(hote.classList.contains('hero-sortie')).toBe(true);
     hote.remove();
+  });
+
+  describe('page autonome', () => {
+    it('se reconnaît ouverte seule : pas de fenêtre parente', () => {
+      const service = demarrer();
+      expect(service.autonome()).toBe(true);
+      expect(document.documentElement.classList.contains('ap-autonome')).toBe(true);
+    });
+
+    it('applique le design choisi (valeurs du registre) et suit le mode', () => {
+      const service = demarrer();
+      service.choisirDesign('fleuve');
+      const style = document.documentElement.style;
+      expect(service.design()).toBe('fleuve');
+      expect(style.getPropertyValue('--ngs-radius')).toBe('18px');
+      expect(style.getPropertyValue('--ngs-color-action')).toBe('#0b6464');
+      service.choisirMode('sombre');
+      expect(style.getPropertyValue('--ngs-color-action')).toBe('#5fd0c8');
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
+    });
+
+    it('se réinitialise : le tokens.css livré reprend la main', () => {
+      const service = demarrer();
+      service.choisirDesign('fleuve');
+      service.choisirMode('sombre');
+      service.reinitialiser();
+      expect(document.documentElement.style.getPropertyValue('--ngs-radius')).toBe('');
+      expect(service.mode()).toBe('clair');
+      expect(service.design()).toBe('planche');
+    });
+
+    it('coupe les animations quand le système demande moins de mouvement', () => {
+      vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }));
+      const service = demarrer();
+      expect(service.mouvementReduit()).toBe(true);
+      expect(service.animations()).toBe(false);
+      service.choisirAnimations(true);
+      expect(service.animations()).toBe(false);
+    });
   });
 });

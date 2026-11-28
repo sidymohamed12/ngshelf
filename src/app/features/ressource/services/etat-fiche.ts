@@ -4,10 +4,9 @@ import { MotionService } from '@core/motion/motion.service';
 import { ThemeService } from '@core/theme/theme.service';
 import { parametresParDefaut, resoudreParametres } from '@shared/apercu/parametres';
 import { ModeApercu, ReglagesEnvoyes } from '@shared/apercu/protocole';
+import { ReglagesVisiteur, versSurcharges } from '@shared/apercu/reglages-url';
 import {
   DesignContrat,
-  Surcharges,
-  TokenContrat,
   VarianteLivree,
   contraste,
   genererTokensCss,
@@ -16,19 +15,15 @@ import {
 import { FicheRessource } from '@shared/models/fiche.model';
 import { ParametreReglable, ValeurParametre } from '@shared/models/parametre.model';
 
+export { POLICES, versSurcharges } from '@shared/apercu/reglages-url';
+export type { PoliceReglee, ReglagesVisiteur } from '@shared/apercu/reglages-url';
+
 export const COOKIE_VARIANTE = 'ngs_variante';
 const DUREE_COOKIE_VARIANTE_SECONDES = 31_536_000;
 const DESIGN_PAR_DEFAUT = 'planche';
 const CONTRASTE_AA = 4.5;
 
 export type LargeurApercu = 'auto' | 390 | 768 | 1280;
-export type PoliceReglee = 'systeme' | 'arrondie' | 'serif';
-
-export const POLICES: Readonly<Record<PoliceReglee, string>> = {
-  systeme: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-  arrondie: 'ui-rounded, system-ui, sans-serif',
-  serif: 'ui-serif, Georgia, "Times New Roman", serif',
-};
 
 /** Pastilles de couleur d'action proposées (maquette ressource.js), en plus de celle du design. */
 export const COULEURS_ACTION = [
@@ -37,23 +32,6 @@ export const COULEURS_ACTION = [
   { id: 'framboise', couleur: '#b0005e' },
   { id: 'ambre', couleur: '#8a5300' },
 ] as const;
-
-export interface ReglagesVisiteur {
-  readonly couleur?: string;
-  readonly rayon?: number;
-  readonly densite?: number;
-  readonly police?: PoliceReglee;
-}
-
-/** Réglages du visiteur vers les tokens du contrat qu'ils surchargent. */
-export function versSurcharges(reglages: ReglagesVisiteur): Surcharges {
-  const surcharges: Partial<Record<TokenContrat, string>> = {};
-  if (reglages.couleur !== undefined) surcharges['--ngs-color-action'] = reglages.couleur;
-  if (reglages.rayon !== undefined) surcharges['--ngs-radius'] = `${reglages.rayon}px`;
-  if (reglages.densite !== undefined) surcharges['--ngs-density'] = String(reglages.densite);
-  if (reglages.police !== undefined) surcharges['--ngs-font-family'] = POLICES[reglages.police];
-  return surcharges;
-}
 
 /**
  * État de la fiche, propre à chaque page (jamais partagé entre deux fiches) : design, mode, réglages,

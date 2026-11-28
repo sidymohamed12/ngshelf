@@ -39,12 +39,11 @@ const DESIGN = {
 } as unknown as DesignContrat;
 
 describe('construireApercus', () => {
-  const sorties = construireApercus(
-    [{ slug: 'barre', avecMotion: true, fichiers: FICHIERS }],
-    DESIGN,
-    '/* pont */',
-    'NgShelf',
-  );
+  const sorties = construireApercus([{ slug: 'barre', avecMotion: true, fichiers: FICHIERS }], {
+    design: DESIGN,
+    pont: '/* pont */',
+    nomSite: 'NgShelf',
+  });
 
   it('assemble les fichiers de la variante Tailwind, tels que livrés, et la scène', () => {
     expect([...sorties.keys()].sort()).toEqual([
@@ -88,9 +87,7 @@ describe('construireApercus', () => {
         },
         { slug: 'autre', avecMotion: false, fichiers: FICHIERS },
       ],
-      DESIGN,
-      '',
-      'NgShelf',
+      { design: DESIGN, pont: '', nomSite: 'NgShelf' },
     );
     const scenes = avec.get('scenes.ts') ?? '';
     expect(scenes).toContain('export const PARAMETRES_APERCUS');

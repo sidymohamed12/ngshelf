@@ -19,7 +19,9 @@ import { EntreeIndex } from '@shared/models/index-catalogue.model';
 import { Moment } from '@shared/models/motion.model';
 import { classeCategorie } from '@shared/utils/taxonomie-affichage';
 import { RegistreService } from '@core/registre/registre.service';
-import { ApercuFrameComponent } from '../components/apercu-frame.component';
+import { parametresVersRecherche } from '@shared/apercu/parametres';
+import { ecrireRechercheApercu } from '@shared/apercu/reglages-url';
+import { ApercuFrameComponent, urlApercu } from '../components/apercu-frame.component';
 import { CodeFicheComponent } from '../components/code-fiche.component';
 import { ReglagesFicheComponent } from '../components/reglages-fiche.component';
 import { EtatFiche, LargeurApercu } from '../services/etat-fiche';
@@ -113,6 +115,24 @@ export class RessourceComponent {
     if (!m) return TEXTES_FICHE.meta.sansAnimation;
     const libelles = m.moments.map((moment: Moment) => TEXTES_FICHE.moments[moment]);
     return TEXTES_FICHE.meta.animationsValeur(libelles.join(', '));
+  });
+  /** Adresse de la page d'aperçu autonome, avec le design, le mode et les réglages courants (ADR 0016). */
+  protected readonly urlAutonome = computed(() => {
+    const slug = this.meta()?.slug;
+    if (!slug) return '';
+    const recherche = new URLSearchParams();
+    ecrireRechercheApercu(
+      {
+        design: this.etat.design(),
+        mode: this.etat.mode(),
+        animations: this.etat.animationsPermises(),
+        reglages: this.etat.reglages(),
+      },
+      recherche,
+    );
+    parametresVersRecherche(this.etat.definitionsParametres(), this.etat.parametres(), recherche);
+    const texte = recherche.toString();
+    return texte ? `${urlApercu(slug)}?${texte}` : urlApercu(slug);
   });
   protected readonly versionAngular = computed(() => this.meta()?.angularMin.split('.')[0] ?? '');
   protected readonly etapes = computed(() => {
