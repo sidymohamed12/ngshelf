@@ -75,6 +75,10 @@
   --color-canvas: var(--color-ink-0);
   --color-surface: var(--color-ink-50);
   --color-surface-hover: var(--color-ink-100);
+  /* Fond de la page d'aperçu de chaque design (surface du contrat, contrat-tokens.css) : celui de la zone d'aperçu d'une case (ADR 0026). */
+  --apercu-fond-planche: #ffffff;
+  --apercu-fond-fleuve: #ffffff;
+  --apercu-fond-laterite: #ffffff;
   --color-text: var(--color-ink-950);
   --color-text-muted: var(--color-ink-500);
   --color-primary: var(--color-ink-950);
@@ -182,6 +186,8 @@
   --radius-button: 12px;
   --radius-input: 12px;
   --radius-case: 20px;
+  /* Rapport de la zone d'aperçu de toute case de la planche (ADR 0026). */
+  --ratio-case: 4 / 3;
   --radius-panel: 20px;
   --radius-full: 999px;
 
@@ -226,6 +232,9 @@
   --color-canvas: #111113;
   --color-surface: #1a1a1e;
   --color-surface-hover: #242429;
+  --apercu-fond-planche: #161618;
+  --apercu-fond-fleuve: #0f1a1a;
+  --apercu-fond-laterite: #1a1210;
   --color-text: #ededf0;
   --color-text-muted: #a4a4ae;
   --logo-tuile: var(--logo-tuile-sombre); /* tuiles claires sur fond sombre ; la planche reste orange */

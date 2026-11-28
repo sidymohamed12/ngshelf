@@ -15,17 +15,14 @@ import { NomIcone } from '@shared/components/icone/icones';
 import { ValeursContrat } from '@shared/livraison/livraison';
 import { SqueletteComponent } from '@shared/components/squelette/squelette.component';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
-import { CLASSES_TAILLE_CASE } from '@shared/utils/taille-case';
 import { ICONE_CATEGORIE, ICONE_SECTEUR, classeCategorie } from '@shared/utils/taxonomie-affichage';
 
 /** Nombre de cases fantômes pendant le chargement de l'index (maquette : 6). */
 const CASES_CHARGEMENT = [1, 2, 3, 4, 5, 6] as const;
 
 interface CaseRessource {
-  /** Valeur CSS d'`aspect-ratio` de la scène quand la ressource déclare la taille de son aperçu. */
-  readonly ratio: string | null;
   readonly entree: EntreeIndex;
-  /** Classes de la case : couleur de famille et taille (registre). */
+  /** Classe de la case : couleur de sa famille. */
   readonly classes: string;
   readonly icone: NomIcone;
   /** Le type de la ressource, ou sa catégorie pour un design (qui n'a pas de type). */
@@ -38,7 +35,7 @@ interface CaseRessource {
 }
 
 /**
- * Planche du catalogue (DESIGN.md « Case de planche ») : la grille de cases `ngs-case` de toutes les
+ * Planche du catalogue (DESIGN.md « Case de planche ») : la grille régulière (ADR 0026, toutes les cases de même taille) de cases `ngs-case` de toutes les
  * pages de liste (catalogue, catégorie, type, secteur). Gère tous ses états : chargement, erreur avec
  * « Réessayer », vide, planche. La vignette d'une case est l'aperçu vivant de la ressource, chargé quand la
  * case entre dans le viewport (`@defer`, ADR 0015), l'icône de sa catégorie sinon (design, hors place,
@@ -77,11 +74,8 @@ export class PlancheComponent {
   protected readonly cases = computed<readonly CaseRessource[]>(() =>
     (this.entrees() ?? []).map((entree) => ({
       entree,
-      classes: `${classeCategorie(entree.categorie)} ${CLASSES_TAILLE_CASE[entree.tailleCase]}`,
+      classes: classeCategorie(entree.categorie),
       icone: ICONE_CATEGORIE[entree.categorie],
-      ratio: entree.apercuCase
-        ? `${entree.apercuCase.largeur} / ${entree.apercuCase.hauteur}`
-        : null,
       libelle: entree.type
         ? LIBELLES_TYPE[entree.type]
         : LIBELLES_CATEGORIE[entree.categorie].singulier,

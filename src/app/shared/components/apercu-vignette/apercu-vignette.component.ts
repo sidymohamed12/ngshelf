@@ -25,6 +25,9 @@ import { IconeComponent } from '../icone/icone.component';
 import { SqueletteComponent } from '../squelette/squelette.component';
 import { NomIcone } from '../icone/icones';
 
+/** Design de l'aperçu quand la ressource n'en met aucun en avant. */
+const DESIGN_APERCU_PAR_DEFAUT = 'planche';
+
 export type EtatVignette = 'veille' | 'chargement' | 'pret' | 'erreur';
 
 /** Largeur à laquelle l'aperçu est rendu avant d'être réduit pour tenir dans la case. */
@@ -56,24 +59,40 @@ export function urlVignette(options: {
   return `/apercu/${options.slug}?${recherche.toString()}`;
 }
 
-/** Dimensions de l'iframe et échelle d'affichage : l'aperçu garde sa largeur de test et rétrécit pour tenir. */
+/** Dimensions de l'iframe, échelle d'affichage et décalage (haut-gauche) de l'aperçu dans la zone. */
+export interface DimensionsVignette {
+  readonly largeur: number;
+  readonly hauteur: number;
+  readonly echelle: number;
+  readonly gauche: number;
+  readonly haut: number;
+}
+
+/**
+ * Dimensions de l'iframe et échelle d'affichage dans la zone `largeur × hauteur` (de rapport commun à toutes
+ * les cases, ADR 0026). Avec une taille de rendu déclarée (ADR 0023), l'aperçu la garde et rétrécit pour tenir
+ * en entier, centré (« contain », rien n'est coupé). Sans elle, il garde sa largeur de test et remplit la zone.
+ */
 export function dimensionsVignette(
   largeur: number,
   hauteur: number,
   reference?: ApercuCase,
-): { readonly largeur: number; readonly hauteur: number; readonly echelle: number } {
-  if (largeur <= 0 || hauteur <= 0) return { largeur: 0, hauteur: 0, echelle: 1 };
-  // Taille de rendu déclarée (ADR 0023) : l'aperçu garde ses dimensions et rétrécit pour remplir la case.
+): DimensionsVignette {
+  if (largeur <= 0 || hauteur <= 0)
+    return { largeur: 0, hauteur: 0, echelle: 1, gauche: 0, haut: 0 };
   if (reference) {
+    const echelle = Math.min(largeur / reference.largeur, hauteur / reference.hauteur);
     return {
       largeur: reference.largeur,
       hauteur: reference.hauteur,
-      echelle: largeur / reference.largeur,
+      echelle,
+      gauche: Math.round((largeur - reference.largeur * echelle) / 2),
+      haut: Math.round((hauteur - reference.hauteur * echelle) / 2),
     };
   }
   const largeurIframe = Math.max(largeur, LARGEUR_NOMINALE_PX);
   const echelle = largeur / largeurIframe;
-  return { largeur: largeurIframe, hauteur: hauteur / echelle, echelle };
+  return { largeur: largeurIframe, hauteur: hauteur / echelle, echelle, gauche: 0, haut: 0 };
 }
 
 interface NavigatorAvecConnexion extends Navigator {
@@ -100,6 +119,8 @@ let compteur = 0;
   templateUrl: './apercu-vignette.component.html',
   host: {
     class: 'ngs-vignette',
+    '[class]': 'classeDesign()',
+    '[style.--apercu-fond]': "reglages()?.['--ngs-color-surface']",
     '[class.ngs-vignette--interactif]': 'interactif()',
     '[class.ngs-vignette--actif]': 'manipule()',
     '[attr.data-etat]': 'etat()',
@@ -116,7 +137,7 @@ export class ApercuVignetteComponent {
    * l'habillage de l'accueil et les témoins du contrat. Absentes, l'aperçu garde le design de l'adresse.
    */
   readonly reglages = input<ValeursContrat>();
-  /** Taille de rendu de la ressource (meta.json) : l'aperçu la garde et rétrécit, centré dans la case. */
+  /** Taille de rendu de la ressource (meta.json) : l'aperçu la garde et rétrécit pour tenir en entier, centré dans la zone de la case. */
   readonly apercuCase = input<ApercuCase>();
   /** Faux : les animations de la ressource sont coupées (interrupteur « Animations » de À propos). Le mouvement réduit les coupe toujours. */
   readonly animations = input(true);
@@ -154,12 +175,10 @@ export class ApercuVignetteComponent {
   protected readonly dimensions = computed(() =>
     dimensionsVignette(this.#disponible().largeur, this.#disponible().hauteur, this.apercuCase()),
   );
-  /** Avec une taille déclarée, l'aperçu est centré si la case est plus haute (rangée étirée par sa voisine). */
-  protected readonly decalageHaut = computed(() => {
-    if (!this.apercuCase()) return 0;
-    const d = this.dimensions();
-    return Math.max(0, Math.round((this.#disponible().hauteur - d.hauteur * d.echelle) / 2));
-  });
+  /** Design de l'aperçu : fixe, derrière l'aperçu mis à l'échelle, le fond de sa page (ADR 0026). */
+  protected readonly classeDesign = computed(
+    () => `ngs-vignette--${this.design() ?? DESIGN_APERCU_PAR_DEFAUT}`,
+  );
   protected readonly url = computed(() =>
     urlVignette({
       slug: this.slug(),

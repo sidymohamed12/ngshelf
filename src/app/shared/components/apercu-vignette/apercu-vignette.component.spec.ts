@@ -45,17 +45,37 @@ describe('dimensionsVignette', () => {
   });
 
   it('n’agrandit jamais : une case large reçoit l’aperçu à sa taille', () => {
-    expect(dimensionsVignette(900, 300)).toEqual({ largeur: 900, hauteur: 300, echelle: 1 });
+    expect(dimensionsVignette(900, 300)).toEqual({
+      largeur: 900,
+      hauteur: 300,
+      echelle: 1,
+      gauche: 0,
+      haut: 0,
+    });
   });
 
-  it('avec une taille déclarée, garde ses dimensions et remplit la case sans rien couper', () => {
-    const d = dimensionsVignette(480, 270, { largeur: 960, hauteur: 540 });
-    expect(d).toEqual({ largeur: 960, hauteur: 540, echelle: 0.5 });
-    expect(d.hauteur * d.echelle).toBe(270);
+  it('avec une taille déclarée, tient en entier : zone plus haute que le rapport, centré en hauteur', () => {
+    const d = dimensionsVignette(480, 360, { largeur: 960, hauteur: 540 });
+    expect(d).toEqual({ largeur: 960, hauteur: 540, echelle: 0.5, gauche: 0, haut: 45 });
+  });
+
+  it('avec une taille déclarée, tient en entier : zone plus large que le rapport, centré en largeur', () => {
+    const d = dimensionsVignette(480, 360, { largeur: 520, hauteur: 600 });
+    expect(d.echelle).toBeCloseTo(0.6);
+    expect(d.haut).toBe(0);
+    expect(d.gauche).toBe(84);
+    expect(d.largeur * d.echelle).toBeLessThanOrEqual(480);
+    expect(d.hauteur * d.echelle).toBeLessThanOrEqual(360);
   });
 
   it('renvoie des dimensions nulles tant que la case n’est pas mesurée', () => {
-    expect(dimensionsVignette(0, 0)).toEqual({ largeur: 0, hauteur: 0, echelle: 1 });
+    expect(dimensionsVignette(0, 0)).toEqual({
+      largeur: 0,
+      hauteur: 0,
+      echelle: 1,
+      gauche: 0,
+      haut: 0,
+    });
   });
 });
 

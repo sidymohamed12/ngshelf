@@ -16,14 +16,10 @@ export interface Sorties {
   readonly compteurs: Compteurs;
 }
 
-/** Un design n'a ni type, ni animation propre, ni case de taille particulière. `animee` dérive de `motion` (ADR 0007). */
-function champsPropres(meta: MetaRegistre): Pick<EntreeIndex, 'type' | 'animee' | 'tailleCase'> {
-  if (meta.categorie === 'design') return { type: null, animee: false, tailleCase: 'normale' };
-  return {
-    type: meta.type,
-    animee: meta.motion !== null,
-    tailleCase: meta.tailleCase ?? 'normale',
-  };
+/** Un design n'a ni type ni animation propre. `animee` dérive de `motion` (ADR 0007). */
+function champsPropres(meta: MetaRegistre): Pick<EntreeIndex, 'type' | 'animee'> {
+  if (meta.categorie === 'design') return { type: null, animee: false };
+  return { type: meta.type, animee: meta.motion !== null };
 }
 
 function designMisEnAvant(meta: MetaRegistre): Pick<EntreeIndex, 'designMisEnAvant'> {

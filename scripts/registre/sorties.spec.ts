@@ -52,7 +52,6 @@ const METAS: readonly MetaRegistre[] = [
     titre: { fr: 'Zèbre' },
     secteurs: ['voyage'],
     motion: MOTION,
-    tailleCase: 'large-haute',
   }),
   ressource({
     slug: 'abeille',
@@ -86,7 +85,6 @@ describe('construireSorties', () => {
       tags: [],
       contratTokens: 1,
       animee: false,
-      tailleCase: 'normale',
       statut: 'provisoire',
       ajouteLe: '2026-11-26',
     });
@@ -105,8 +103,8 @@ describe('construireSorties', () => {
   it('dérive animée de motion et renseigne toujours la taille de case dans l’index', () => {
     const parSlug = (slug: string): EntreeIndex | undefined =>
       sorties.index.composant.find((e) => e.slug === slug);
-    expect(parSlug('zebre')).toMatchObject({ animee: true, tailleCase: 'large-haute' });
-    expect(parSlug('abeille')).toMatchObject({ animee: false, tailleCase: 'normale' });
+    expect(parSlug('zebre')).toMatchObject({ animee: true });
+    expect(parSlug('abeille')).toMatchObject({ animee: false });
   });
 
   it('reporte le premier design mis en avant dans l’index, et seulement s’il existe', () => {

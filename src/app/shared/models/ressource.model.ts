@@ -1,4 +1,4 @@
-import { ApercuCase, CategorieTypee, Secteur, TailleCase, TypeRessource } from './taxonomie.model';
+import { ApercuCase, CategorieTypee, Secteur, TypeRessource } from './taxonomie.model';
 import { Motion } from './motion.model';
 import { ParametreReglable } from './parametre.model';
 import { Texte } from './texte.model';
@@ -45,9 +45,7 @@ export interface MetaRessource {
    * filtre du catalogue en dérivent : `animee` n'existe plus dans le meta.json, seulement dans l'index.
    */
   readonly motion: Motion | null;
-  /** Taille de sa case dans la planche du catalogue (absent = « normale », 1×1). */
-  readonly tailleCase?: TailleCase;
-  /** Dimensions de rendu de l'aperçu de la case (ADR 0023) : la case en prend le rapport, rien n'est coupé. */
+  /** Dimensions de rendu de l'aperçu de la case (ADR 0023) : mis à l'échelle pour tenir en entier dans la zone commune (ADR 0026). */
   readonly apercuCase?: ApercuCase;
   /**
    * Paramètres propres réglables dans la fiche (ADR 0014), en plus des 12 tokens : chacun est un input

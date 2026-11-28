@@ -85,7 +85,6 @@
       "defaut": true
     }
   ],
-  "tailleCase": "large",
   "apercuCase": { "largeur": 720, "hauteur": 552 },
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

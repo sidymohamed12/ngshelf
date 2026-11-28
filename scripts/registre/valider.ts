@@ -8,7 +8,6 @@ import {
   CATEGORIES,
   SECTEURS,
   SEGMENT_CATEGORIE,
-  TAILLES_CASE,
   TYPES_PAR_CATEGORIE,
 } from '../../src/app/shared/models/taxonomie.model.ts';
 
@@ -80,7 +79,6 @@ const CLES_RESSOURCE = [
   'designsMisEnAvant',
   'motion',
   'parametres',
-  'tailleCase',
   'apercuCase',
   'modifieLe',
   'anciensChemins',
@@ -279,9 +277,6 @@ function validerApercuCase(valeur: unknown, rapport: Rapport): void {
 function validerOptionsPlanche(meta: Objet, rapport: Rapport): void {
   validerMotion(meta, rapport);
   if (meta['apercuCase'] !== undefined) validerApercuCase(meta['apercuCase'], rapport);
-  if (meta['tailleCase'] !== undefined && !inclus(TAILLES_CASE, meta['tailleCase'])) {
-    rapport.signaler(`« tailleCase » doit être l'une de : ${TAILLES_CASE.join(', ')}`);
-  }
 }
 
 function validerDependances(valeur: unknown, rapport: Rapport): void {

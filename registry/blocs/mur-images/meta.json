@@ -71,7 +71,6 @@
       "defaut": 28
     }
   ],
-  "tailleCase": "large",
   "apercuCase": { "largeur": 960, "hauteur": 672 },
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",

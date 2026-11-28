@@ -8,7 +8,8 @@
     class="ngs-vignette__cadre"
     [style.width.px]="dimensions().largeur"
     [style.height.px]="dimensions().hauteur"
-    [style.top.px]="decalageHaut()"
+    [style.top.px]="dimensions().haut"
+    [style.left.px]="dimensions().gauche"
     [style.transform]="'scale(' + dimensions().echelle + ')'"
   >
     <iframe

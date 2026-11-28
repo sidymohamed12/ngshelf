@@ -104,15 +104,8 @@ export const SECTEURS = [
 export type Secteur = (typeof SECTEURS)[number];
 
 /**
- * Taille de la case d'une ressource dans la planche du catalogue (DESIGN.md, « dans le catalogue, la taille
- * vient du registre ») : 1×1, 2×1, 1×2 ou 2×2. Une valeur inconnue fait échouer le build.
- */
-export const TAILLES_CASE = ['normale', 'large', 'haute', 'large-haute'] as const;
-export type TailleCase = (typeof TAILLES_CASE)[number];
-
-/**
  * Taille de rendu de l'aperçu d'une case, en pixels (largeur × hauteur de l'iframe, marge de 16 px comprise) :
- * la case prend ce rapport et l'aperçu est mis à l'échelle pour la remplir, sans rien couper ni laisser de vide.
+ * l'aperçu est mis à l'échelle pour tenir en entier, centré, dans la zone au rapport commun des cases (ADR 0026).
  */
 export interface ApercuCase {
   readonly largeur: number;

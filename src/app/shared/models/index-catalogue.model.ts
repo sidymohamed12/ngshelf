@@ -1,4 +1,4 @@
-import { ApercuCase, Categorie, Secteur, TailleCase, TypeRessource } from './taxonomie.model';
+import { ApercuCase, Categorie, Secteur, TypeRessource } from './taxonomie.model';
 import { Texte } from './texte.model';
 import { StatutRessource } from './ressource.model';
 
@@ -18,9 +18,7 @@ export interface EntreeIndex {
   readonly contratTokens: 1 | null;
   /** Dérivé de `motion` du meta.json (ADR 0007) : vrai si elle a des animations propres ; faux pour un design. */
   readonly animee: boolean;
-  /** Taille de la case dans la planche (toujours renseignée : « normale » par défaut). */
-  readonly tailleCase: TailleCase;
-  /** Dimensions de rendu de l'aperçu de la case ; absent = aperçu centré sur une scène de 520 px. */
+  /** Dimensions de rendu de l'aperçu de la case ; absent = aperçu de 520 px de large qui remplit la zone. */
   readonly apercuCase?: ApercuCase;
   /** Design montré dans la vignette live de la planche (ADR 0015) ; absent = le design par défaut. */
   readonly designMisEnAvant?: string;
