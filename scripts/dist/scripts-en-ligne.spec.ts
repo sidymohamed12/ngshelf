@@ -12,6 +12,12 @@ describe('trouverScriptsEnLigne', () => {
     expect(trouverScriptsEnLigne(html)).toEqual([]);
   });
 
+  it('accepte un bloc JSON-LD (données, non exécuté : la CSP script-src ne le concerne pas)', () => {
+    const html =
+      '<script type="application/ld+json" data-ngs-seo="">{"@context":"https://schema.org","@type":"WebSite"}</script>';
+    expect(trouverScriptsEnLigne(html)).toEqual([]);
+  });
+
   it('refuse un script exécutable en ligne', () => {
     expect(trouverScriptsEnLigne('<script>alert(1)</script>')).toEqual([
       expect.stringContaining('script en ligne'),
