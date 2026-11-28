@@ -32,7 +32,8 @@ export type CleImages =
   | 'mur-images'
   | 'media-extensible'
   | 'revelation-iris'
-  | 'carrousel-temoignages';
+  | 'carrousel-temoignages'
+  | 'hero-grille-defilante';
 
 const PHOTO = (numero: number): string => `Photographie de démonstration ${numero}`;
 
@@ -92,6 +93,16 @@ const EXTERNES: Readonly<Record<CleImages, readonly ImageDemo[]>> = {
   ),
   'media-extensible': externes([picsum(1043, 1600, 900)]),
   'revelation-iris': externes([picsum(1018, 1920, 1080)]),
+  'hero-grille-defilante': externes(
+    [
+      '1755331039789-7e5680e26e8f',
+      '1755569309049-98410b94f66d',
+      '1755497595318-7e5e3523854f',
+      '1755353985163-c2a0fe5ac3d8',
+      '1745965976680-d00be7dc0377',
+      '1752588975228-21f44630bb3c',
+    ].map(unsplash),
+  ),
   // Portraits illustrés et fictifs, créés pour NgShelf : jamais d'hôte tiers, quel que soit l'interrupteur.
   'carrousel-temoignages': portraitsExternes(),
 };
@@ -146,6 +157,7 @@ const LOCALES: Readonly<Record<CleImages, readonly ImageDemo[]>> = {
   'mur-images': locales(HUIT),
   'media-extensible': locales(['or-chaud']),
   'revelation-iris': locales(['crepuscule']),
+  'hero-grille-defilante': locales(HUIT),
   'carrousel-temoignages': portraitsLocaux(),
 };
 

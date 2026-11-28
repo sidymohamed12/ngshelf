@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "slug": "hero-grille-defilante",
+  "categorie": "bloc",
+  "type": "hero",
+  "titre": {
+    "fr": "Hero à grille d'images au défilement"
+  },
+  "description": {
+    "fr": "Les colonnes de côté descendent, celle du centre monte ; la grille s'écarte puis s'ouvre au centre pour révéler le titre, le texte et le bouton."
+  },
+  "secteurs": ["creatif", "saas"],
+  "tags": ["défilement", "scroll", "grille", "images", "hero", "parallaxe"],
+  "contratTokens": 1,
+  "motion": {
+    "resume": {
+      "fr": "En défilant, les colonnes de côté descendent du haut pendant que celle du centre monte du bas. Quand elle arrive entre les deux, la grille s'agrandit et s'écarte, les côtés sortent, puis les deux images du centre se séparent et le texte se révèle sous le titre, qui remonte."
+    },
+    "moments": ["entree", "sortie"],
+    "technique": "variable CSS --ngs-p (progression du défilement, lissée en requestAnimationFrame) lue par des calc() ; transform sur trois colonnes et unités de conteneur (cqw, cqh), aucune bibliothèque d'animation"
+  },
+  "parametres": [
+    {
+      "nom": "pilotage",
+      "genre": "choix",
+      "libelle": {
+        "fr": "Pilotage"
+      },
+      "options": [
+        {
+          "valeur": "defilement",
+          "libelle": {
+            "fr": "Défilement"
+          }
+        },
+        {
+          "valeur": "manuel",
+          "libelle": {
+            "fr": "Manuel"
+          }
+        }
+      ],
+      "defaut": "defilement"
+    },
+    {
+      "nom": "progression",
+      "genre": "nombre",
+      "libelle": {
+        "fr": "Progression (pilotage manuel)"
+      },
+      "min": 0,
+      "max": 1,
+      "pas": 0.05,
+      "defaut": 0.5
+    },
+    {
+      "nom": "longueur",
+      "genre": "nombre",
+      "libelle": {
+        "fr": "Longueur du défilement"
+      },
+      "min": 2,
+      "max": 8,
+      "pas": 0.5,
+      "defaut": 4
+    },
+    {
+      "nom": "rangs",
+      "genre": "nombre",
+      "libelle": {
+        "fr": "Images par colonne"
+      },
+      "min": 2,
+      "max": 6,
+      "pas": 2,
+      "defaut": 4
+    }
+  ],
+  "rendu": "grand-ecran",
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-28",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

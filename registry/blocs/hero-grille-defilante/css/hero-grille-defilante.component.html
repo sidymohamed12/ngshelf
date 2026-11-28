@@ -1,0 +1,51 @@
+<section
+  #racine
+  class="grille"
+  data-fin="non"
+  [attr.aria-labelledby]="id"
+  [style.--ngs-longueur]="longueur()"
+  [style.--ngs-rangs]="rangsPairs()"
+>
+  <div #scene class="grille__scene">
+    <div class="grille__images" aria-hidden="true">
+      @for (tuile of tuiles(); track tuile.cle) {
+        <div
+          class="grille__tuile"
+          [attr.data-col]="tuile.colonne"
+          [style.--c]="tuile.c"
+          [style.--r]="tuile.r"
+          [style.--cote]="tuile.cote"
+        >
+          <img class="grille__image" [src]="tuile.src" alt="" draggable="false" />
+        </div>
+      }
+    </div>
+    <div class="grille__copie">
+      @if (niveauTitre() === 1) {
+        <h1 class="grille__titre" [id]="id">{{ titre() }}</h1>
+      } @else {
+        <h2 class="grille__titre" [id]="id">{{ titre() }}</h2>
+      }
+      <div class="grille__suite">
+        @if (texte()) {
+          <p class="grille__texte">{{ texte() }}</p>
+        }
+        @if (libelle()) {
+          @if (lien()) {
+            <a class="grille__bouton" [href]="lien()">{{ libelle() }}</a>
+          } @else {
+            <button type="button" class="grille__bouton" (click)="cliquer()">
+              {{ libelle() }}
+            </button>
+          }
+        }
+      </div>
+    </div>
+    @if (indice()) {
+      <div class="grille__indice" aria-hidden="true">
+        <span class="grille__indice-libelle">{{ indice() }}</span>
+        <span class="grille__indice-ligne"></span>
+      </div>
+    }
+  </div>
+</section>

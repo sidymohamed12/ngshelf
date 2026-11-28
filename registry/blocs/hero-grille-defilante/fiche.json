@@ -1,0 +1,71 @@
+{
+  "usage": "<ngs-hero-grille-defilante\n  [images]=\"photos\"\n  [titre]=\"'Pensé pour\\nce qui vient'\"\n  texte=\"Une grille qui se compose au défilement, puis s’écarte pour laisser place à votre titre.\"\n  libelle=\"Commencer\"\n  lien=\"/inscription\"\n  indice=\"Défiler\"\n/>",
+  "api": [
+    {
+      "nom": "images",
+      "type": "input.required<readonly string[]>()",
+      "defaut": "—",
+      "role": "Adresses des images, décoratives (alt vide) : elles se répètent pour remplir les trois colonnes."
+    },
+    {
+      "nom": "titre / niveauTitre",
+      "type": "input.required<string>() / input<1 | 2>()",
+      "defaut": "— / 2",
+      "role": "Titre, visible du début à la fin (h2 par défaut, h1 si le bloc ouvre la page). Un retour à la ligne (\\n) force le passage à la ligne : deux lignes, comme dans la démo."
+    },
+    {
+      "nom": "texte",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Texte sous le titre, qui apparaît quand la grille est sortie ; vide pour le masquer."
+    },
+    {
+      "nom": "libelle / lien",
+      "type": "input<string>() / input<string>()",
+      "defaut": "'' / ''",
+      "role": "Libellé du bouton (vide : pas de bouton) et son adresse. Sans adresse, c’est un bouton qui émet `action`."
+    },
+    {
+      "nom": "action",
+      "type": "output<void>()",
+      "defaut": "—",
+      "role": "Émis au clic sur le bouton quand `lien` est vide."
+    },
+    {
+      "nom": "longueur",
+      "type": "input<number>()",
+      "defaut": "4",
+      "role": "Longueur du défilement de la section en hauteurs d’écran : plus c’est grand, plus l’effet est lent."
+    },
+    {
+      "nom": "rangs",
+      "type": "input<number>()",
+      "defaut": "4",
+      "role": "Nombre d’images par colonne, arrondi au nombre pair (2 au minimum) pour garder un espace au centre, où se place le titre."
+    },
+    {
+      "nom": "lissage",
+      "type": "input<number>()",
+      "defaut": "0.14",
+      "role": "Lissage de la progression (0,01 : quasi instantané)."
+    },
+    {
+      "nom": "pilotage",
+      "type": "input<'defilement' | 'manuel'>()",
+      "defaut": "'defilement'",
+      "role": "« manuel » : la progression vaut `progression` au lieu de suivre le défilement (aperçu, capture, démonstration)."
+    },
+    {
+      "nom": "progression",
+      "type": "input<number>()",
+      "defaut": "0",
+      "role": "Progression de 0 à 1 quand le pilotage est manuel."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : pas de lissage, ni de flou ni de glissement du texte (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système). L’effet suit toujours le défilement."
+    }
+  ]
+}

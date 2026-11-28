@@ -1,0 +1,90 @@
+<section
+  #racine
+  class="group/grille relative h-[calc(var(--ngs-longueur)*100svh)] w-full bg-ngs-surface text-ngs-text [--ngs-p:0] [--as:clamp(0,(var(--ngs-p)_-_.03)/.37,1)] [--as-e:calc(var(--as)*var(--as)*(3_-_2*var(--as)))] [--ac:clamp(0,(var(--ngs-p)_-_.08)/.37,1)] [--ac-e:calc(var(--ac)*var(--ac)*(3_-_2*var(--ac)))] [--b:clamp(0,(var(--ngs-p)_-_.45)/.3,1)] [--b-e:calc(var(--b)*var(--b)*(3_-_2*var(--b)))] [--d:clamp(0,(var(--ngs-p)_-_.72)/.2,1)] [--d-e:calc(var(--d)*var(--d)*(3_-_2*var(--d)))] [--t:clamp(0,(var(--ngs-p)_-_.8)/.16,1)] [--t-e:calc(var(--t)*var(--t)*(3_-_2*var(--t)))] [--decal:14px] [--flou:6px] in-[.ngs-sans-animation]:[--decal:0px] in-[.ngs-sans-animation]:[--flou:0px] motion-reduce:[--decal:0px] motion-reduce:[--flou:0px]"
+  data-fin="non"
+  [attr.aria-labelledby]="id"
+  [style.--ngs-longueur]="longueur()"
+  [style.--ngs-rangs]="rangsPairs()"
+>
+  <div
+    #scene
+    class="sticky top-0 h-svh w-full overflow-hidden bg-ngs-surface [container-type:size]"
+  >
+    <div class="absolute inset-0" aria-hidden="true">
+      @for (tuile of tuiles(); track tuile.cle) {
+        <div
+          class="absolute top-1/2 left-1/2 aspect-square w-(--w0) overflow-hidden rounded-[calc(var(--ngs-radius)*.6)] bg-ngs-surface-alt will-change-transform [--w0:15cqw] @max-[40rem]:[--w0:26cqw] [--s:calc(1_+_.8*var(--b-e)_+_.25*var(--d-e))] [--dx0:calc(var(--w0)_+_1.8cqw)] [--dx1:calc(50cqw_+_var(--w0)_+_4cqw)] [--dx:calc(var(--dx0)_+_(var(--dx1)_-_var(--dx0))*var(--b-e))] [--dy:calc(var(--w0)*var(--s)*(1.35_+_.35*var(--b-e))_+_var(--d-e)*(100cqh_+_var(--w0)*var(--s)))] [--k:calc(50cqh_+_var(--ngs-rangs)/2*var(--w0)*1.35_+_var(--w0))] [--yc:calc(var(--cote)*(var(--as-e)_-_1)*var(--k)_+_(1_-_var(--cote))*(1_-_var(--ac-e))*var(--k))] [transform:translate(-50%,-50%)_translate(calc(var(--c)*var(--dx)),calc(var(--r)*var(--dy)_+_var(--yc)))_scale(var(--s))]"
+          [attr.data-col]="tuile.colonne"
+          [style.--c]="tuile.c"
+          [style.--r]="tuile.r"
+          [style.--cote]="tuile.cote"
+        >
+          <img
+            class="block size-full object-cover select-none [-webkit-user-drag:none]"
+            [src]="tuile.src"
+            alt=""
+            draggable="false"
+          />
+        </div>
+      }
+    </div>
+    <div
+      class="pointer-events-none absolute inset-0 z-[2] flex flex-col items-center justify-center px-6 text-center"
+    >
+      @if (niveauTitre() === 1) {
+        <h1
+          class="m-0 max-w-[12em] text-[clamp(2.2rem,5cqi,5.5rem)] leading-[1.04] font-medium tracking-[-.04em] whitespace-pre-line text-balance text-ngs-text [text-shadow:0_0_.6em_color-mix(in_srgb,var(--color-ngs-surface)_80%,transparent)]"
+          [id]="id"
+        >
+          {{ titre() }}
+        </h1>
+      } @else {
+        <h2
+          class="m-0 max-w-[12em] text-[clamp(2.2rem,5cqi,5.5rem)] leading-[1.04] font-medium tracking-[-.04em] whitespace-pre-line text-balance text-ngs-text [text-shadow:0_0_.6em_color-mix(in_srgb,var(--color-ngs-surface)_80%,transparent)]"
+          [id]="id"
+        >
+          {{ titre() }}
+        </h2>
+      }
+      <div
+        class="grid max-h-[calc(var(--t-e)*12rem)] justify-items-center gap-[calc(var(--ngs-density)*20px)] pt-[calc(var(--t-e)*var(--ngs-density)*24px)] opacity-(--t-e) [filter:blur(calc((1_-_var(--t-e))*var(--flou)))] [transform:translateY(calc((1_-_var(--t-e))*var(--decal)))] group-data-[fin=non]/grille:invisible"
+      >
+        @if (texte()) {
+          <p class="m-0 max-w-[24rem] text-[.9rem] leading-normal text-balance text-ngs-text-muted">
+            {{ texte() }}
+          </p>
+        }
+        @if (libelle()) {
+          @if (lien()) {
+            <a
+              class="pointer-events-auto inline-flex min-h-11 cursor-pointer items-center rounded-full border border-ngs-border bg-ngs-surface px-[calc(var(--ngs-density)*24px)] font-[inherit] text-[.9rem] font-medium text-ngs-text no-underline transition-colors duration-ngs hover:bg-ngs-surface-alt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ngs-action"
+              [href]="lien()"
+              >{{ libelle() }}</a
+            >
+          } @else {
+            <button
+              type="button"
+              class="pointer-events-auto inline-flex min-h-11 cursor-pointer items-center rounded-full border border-ngs-border bg-ngs-surface px-[calc(var(--ngs-density)*24px)] font-[inherit] text-[.9rem] font-medium text-ngs-text no-underline transition-colors duration-ngs hover:bg-ngs-surface-alt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ngs-action"
+              (click)="cliquer()"
+            >
+              {{ libelle() }}
+            </button>
+          }
+        }
+      </div>
+    </div>
+    @if (indice()) {
+      <div
+        class="pointer-events-none absolute bottom-0 left-1/2 z-[3] flex -translate-x-1/2 flex-col items-center gap-[1.1rem] opacity-[clamp(0,calc(1_-_var(--ngs-p)*20),1)]"
+        aria-hidden="true"
+      >
+        <span class="-mr-[.42em] text-[.6rem] tracking-[.42em] text-ngs-text-muted uppercase">{{
+          indice()
+        }}</span>
+        <span
+          class="block h-[3.2rem] w-px bg-ngs-text-muted motion-safe:animate-[ngs-grille-ligne_calc(var(--ngs-duration)*14)_cubic-bezier(.65,0,.35,1)_infinite] in-[.ngs-sans-animation]:animate-none!"
+        ></span>
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,229 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+  width: 100%;
+  font-family: var(--ngs-font-family, system-ui, sans-serif);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+/*
+  Toute la mise en scène est lue dans --ngs-p, la progression de 0 à 1 que le composant mesure. Chaque
+  rampe est bornée puis adoucie (3t² − 2t³, suffixe -e) :
+  - as : les colonnes de côté descendent du haut, de 3 à 40 % ;
+  - ac : la colonne du centre monte du bas, de 8 à 45 % (elle arrive la dernière, entre les deux) ;
+  - b : la grille s'agrandit et s'écarte, les colonnes de côté sortent, de 45 à 75 % ;
+  - d : les images du centre se séparent vers le haut et vers le bas, de 72 à 92 % ;
+  - t : le texte et le bouton se révèlent, de 80 à 96 %.
+*/
+.grille {
+  --ngs-p: 0;
+  --as: clamp(0, (var(--ngs-p) - 0.03) / 0.37, 1);
+  --as-e: calc(var(--as) * var(--as) * (3 - 2 * var(--as)));
+  --ac: clamp(0, (var(--ngs-p) - 0.08) / 0.37, 1);
+  --ac-e: calc(var(--ac) * var(--ac) * (3 - 2 * var(--ac)));
+  --b: clamp(0, (var(--ngs-p) - 0.45) / 0.3, 1);
+  --b-e: calc(var(--b) * var(--b) * (3 - 2 * var(--b)));
+  --d: clamp(0, (var(--ngs-p) - 0.72) / 0.2, 1);
+  --d-e: calc(var(--d) * var(--d) * (3 - 2 * var(--d)));
+  --t: clamp(0, (var(--ngs-p) - 0.8) / 0.16, 1);
+  --t-e: calc(var(--t) * var(--t) * (3 - 2 * var(--t)));
+  --decal: 14px;
+  --flou: 6px;
+  position: relative;
+  width: 100%;
+  height: calc(var(--ngs-longueur) * 100svh);
+  background: var(--ngs-color-surface, #ffffff);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+/* Zone « épinglée » : reste à l'écran pendant que la section défile. */
+.grille__scene {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  container-type: size;
+  background: var(--ngs-color-surface, #ffffff);
+}
+.grille__images {
+  position: absolute;
+  inset: 0;
+}
+/*
+  Une tuile carrée, centrée sur l'écran puis déplacée :
+  - horizontalement de --c fois --dx (l'écart entre colonnes, qui grandit jusqu'à sortir les côtés) ;
+  - verticalement de --r fois --dy (l'écart entre rangs, qui grandit puis ouvre le centre) plus --yc,
+    l'arrivée de sa colonne : du haut pour les côtés (--cote: 1), du bas pour le centre (--cote: 0).
+*/
+.grille__tuile {
+  --w0: 15cqw;
+  --s: calc(1 + 0.8 * var(--b-e) + 0.25 * var(--d-e));
+  --dx0: calc(var(--w0) + 1.8cqw);
+  --dx1: calc(50cqw + var(--w0) + 4cqw);
+  --dx: calc(var(--dx0) + (var(--dx1) - var(--dx0)) * var(--b-e));
+  --dy: calc(
+    var(--w0) * var(--s) * (1.35 + 0.35 * var(--b-e)) + var(--d-e) * (100cqh + var(--w0) * var(--s))
+  );
+  --k: calc(50cqh + var(--ngs-rangs) / 2 * var(--w0) * 1.35 + var(--w0));
+  --yc: calc(
+    var(--cote) * (var(--as-e) - 1) * var(--k) + (1 - var(--cote)) * (1 - var(--ac-e)) * var(--k)
+  );
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--w0);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: calc(var(--ngs-radius, 10px) * 0.6);
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+  transform: translate(-50%, -50%)
+    translate(calc(var(--c) * var(--dx)), calc(var(--r) * var(--dy) + var(--yc))) scale(var(--s));
+  will-change: transform;
+}
+@container (max-width: 40rem) {
+  .grille__tuile {
+    --w0: 26cqw;
+  }
+}
+.grille__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* Le titre reste à l'écran du début à la fin ; il remonte à mesure que le texte et le bouton prennent place. */
+.grille__copie {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  text-align: center;
+  pointer-events: none;
+}
+.grille__titre {
+  max-width: 12em;
+  margin: 0;
+  color: var(--ngs-color-text, #0b0b0c);
+  font-size: clamp(2.2rem, 5cqi, 5.5rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+  white-space: pre-line;
+  text-wrap: balance;
+  text-shadow: 0 0 0.6em color-mix(in srgb, var(--ngs-color-surface, #ffffff) 80%, transparent);
+}
+.grille__suite {
+  display: grid;
+  justify-items: center;
+  gap: calc(var(--ngs-density, 1) * 20px);
+  max-height: calc(var(--t-e) * 12rem);
+  padding-top: calc(var(--t-e) * var(--ngs-density, 1) * 24px);
+  opacity: var(--t-e);
+  filter: blur(calc((1 - var(--t-e)) * var(--flou)));
+  transform: translateY(calc((1 - var(--t-e)) * var(--decal)));
+}
+.grille[data-fin='non'] .grille__suite {
+  visibility: hidden;
+}
+.grille__texte {
+  max-width: 24rem;
+  margin: 0;
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+.grille__bouton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 calc(var(--ngs-density, 1) * 24px);
+  border: 1px solid var(--ngs-color-border, #d4d4d8);
+  border-radius: 999px;
+  background: var(--ngs-color-surface, #ffffff);
+  color: var(--ngs-color-text, #0b0b0c);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color var(--ngs-duration, 160ms) ease;
+}
+.grille__bouton:hover {
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+}
+.grille__bouton:focus-visible {
+  outline: 2px solid var(--ngs-color-action, #0b0b0c);
+  outline-offset: 3px;
+}
+.grille__indice {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  pointer-events: none;
+  opacity: clamp(0, calc(1 - var(--ngs-p) * 20), 1);
+  transform: translateX(-50%);
+}
+.grille__indice-libelle {
+  margin-right: -0.42em;
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-size: 0.6rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+}
+.grille__indice-ligne {
+  display: block;
+  width: 1px;
+  height: 3.2rem;
+  background: var(--ngs-color-text-muted, #5f5f66);
+}
+/* Mouvement réduit ou animations coupées : l'effet suit toujours le défilement, sans flou ni glissement du texte. */
+@media (prefers-reduced-motion: reduce) {
+  .grille {
+    --decal: 0px;
+    --flou: 0px;
+  }
+}
+:host(.ngs-sans-animation) .grille {
+  --decal: 0px;
+  --flou: 0px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :host(:not(.ngs-sans-animation)) .grille__indice-ligne {
+    animation: ngs-grille-ligne calc(var(--ngs-duration, 160ms) * 14) cubic-bezier(0.65, 0, 0.35, 1)
+      infinite;
+  }
+}
+@keyframes ngs-grille-ligne {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  50.01% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
