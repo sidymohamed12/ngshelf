@@ -31,6 +31,7 @@ import {
   messageSortieFin,
   vientDuSite,
 } from '@shared/apercu/protocole';
+import { suivreManipulation } from './manipulation';
 import { ORIGINES_SITE } from './origines';
 
 const CLASSE_SOMBRE = 'dark';
@@ -64,6 +65,7 @@ export class ApercuService {
   readonly #slug = signal<string | null>(null);
   readonly #autonome = signal(false);
   readonly #vignette = signal(false);
+  readonly #manipulation = signal(false);
   readonly #design = signal<string | undefined>(undefined);
   readonly #reglagesVisiteur = signal<ReglagesVisiteur>({});
   readonly #definitionsSignal = signal<readonly ParametreReglable[]>([]);
@@ -76,8 +78,14 @@ export class ApercuService {
 
   /** Vrai quand la page est ouverte seule (nouvel onglet), faux dans l'iframe de la fiche ou d'une case. */
   readonly autonome = this.#autonome.asReadonly();
-  /** Vrai pour l'aperçu d'une case de la planche : aucune interaction, aucun message de hauteur. */
+  /** Vrai pour l'aperçu d'une case de la planche : calé sur la case, sans barre ni message de hauteur (ADR 0017). */
   readonly vignette = this.#vignette.asReadonly();
+  /**
+   * Vrai quand le visiteur a pris la main sur l'aperçu d'une case (clic, ou bouton « Manipuler » du site) :
+   * la molette et le clavier agissent alors sur la ressource. Les ressources pilotées par le défilement
+   * (hero extensible, iris) passent de leur boucle automatique au vrai défilement.
+   */
+  readonly manipulation = this.#manipulation.asReadonly();
   /** Titre et chemin de la fiche de la ressource montrée (null avant la route ou pour un slug inconnu). */
   readonly info = computed(() => INFOS_APERCUS[this.#slug() ?? ''] ?? null);
   readonly definitions = this.#definitionsSignal.asReadonly();
@@ -189,7 +197,16 @@ export class ApercuService {
     };
     fenetre.addEventListener('message', surMessage);
     this.#destroyRef.onDestroy(() => fenetre.removeEventListener('message', surMessage));
-    if (!initial.vignette) this.#suivreHauteur(fenetre);
+    if (initial.vignette) {
+      const arreter = suivreManipulation({
+        fenetre,
+        annoncer: (message) => this.#envoyer(fenetre, message),
+        surChangement: (actif) => this.#manipulation.set(actif),
+      });
+      this.#destroyRef.onDestroy(arreter);
+    } else {
+      this.#suivreHauteur(fenetre);
+    }
     this.#envoyer(fenetre, messagePret());
   }
 

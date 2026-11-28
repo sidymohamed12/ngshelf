@@ -4,8 +4,8 @@ import { creerProgressionAuto } from '@apercus/progression-auto';
 import { MediaExtensibleComponent } from '../media-extensible.component';
 
 /**
- * Scène de l'aperçu : un séjour en Casamance. Sans défilement possible (vignette d'une case), la progression
- * va et vient d'elle-même (non livrée).
+ * Scène de l'aperçu : un séjour en Casamance. Dans une case que le visiteur n'a pas activée, la progression
+ * va et vient d'elle-même (non livrée) ; activée, la scène défile pour de vrai.
  */
 @Component({
   selector: 'ngs-demo',
@@ -41,8 +41,10 @@ import { MediaExtensibleComponent } from '../media-extensible.component';
 export class DemoComponent {
   protected readonly contexte = inject(ApercuService);
   readonly #auto = creerProgressionAuto();
+  /** Case de la planche que le visiteur n'a pas activée : boucle automatique ; activée : vrai défilement. */
+  readonly #enBoucle = computed(() => this.contexte.vignette() && !this.contexte.manipulation());
   protected readonly pilotage = computed(() =>
-    this.contexte.vignette()
+    this.#enBoucle()
       ? ('manuel' as const)
       : this.contexte.choix<'defilement' | 'manuel'>(
           'pilotage',
@@ -51,6 +53,6 @@ export class DemoComponent {
         ),
   );
   protected readonly progression = computed(() =>
-    this.contexte.vignette() ? this.#auto() : this.contexte.nombre('progression', 0.5),
+    this.#enBoucle() ? this.#auto() : this.contexte.nombre('progression', 0.5),
   );
 }
