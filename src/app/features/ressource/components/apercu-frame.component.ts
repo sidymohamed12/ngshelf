@@ -82,6 +82,7 @@ export class ApercuFrameComponent {
   readonly #hauteurContenu = signal(0);
   #minuteur: ReturnType<typeof setTimeout> | undefined;
   #dernierRechargement = 0;
+  #dernierSlug: string | null = null;
   #derniereSortie = 0;
 
   protected readonly echelle = computed(() =>
@@ -108,6 +109,12 @@ export class ApercuFrameComponent {
       this.#ecouter();
       this.#mesurer();
       this.#charger();
+    });
+    // Même composant réutilisé par le router (« Autres ressources ») : un nouveau slug recharge l'iframe.
+    afterRenderEffect(() => {
+      const slug = this.slug();
+      if (this.#dernierSlug !== null && slug !== this.#dernierSlug) this.#charger();
+      this.#dernierSlug = slug;
     });
     // Réglages : envoyés dès qu'ils changent, une fois l'aperçu prêt.
     afterRenderEffect(() => {

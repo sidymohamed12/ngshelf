@@ -61,6 +61,8 @@ export class CodeFicheComponent {
   private readonly panneaux = viewChildren<ElementRef<HTMLElement>>('panneau');
 
   protected readonly fragment = signal<FragmentCode | null>(null);
+  /** Slug dont le fragment CSS est chargé (ou en cours) : un autre slug force un nouveau chargement. */
+  private slugFragment: string | null = null;
   protected readonly chargement = signal<ChargementCode>('ok');
   protected readonly actif = signal(0);
   protected readonly copie = signal<string | null>(null);
@@ -102,7 +104,9 @@ export class CodeFicheComponent {
     // Version CSS : le fragment est chargé au premier besoin, dans le navigateur seulement.
     afterRenderEffect(() => {
       const fiche = this.etat.fiche();
-      if (this.etat.variante() === 'css' && fiche && !this.fragment()) {
+      if (this.etat.variante() === 'css' && fiche && this.slugFragment !== fiche.meta.slug) {
+        this.slugFragment = fiche.meta.slug;
+        this.fragment.set(null);
         void this.charger(fiche.meta.slug);
       }
     });
@@ -128,10 +132,12 @@ export class CodeFicheComponent {
   protected async charger(slug: string): Promise<void> {
     this.chargement.set('chargement');
     try {
-      this.fragment.set(await this.#fragments.charger(slug));
+      const fragment = await this.#fragments.charger(slug);
+      if (slug !== this.slugFragment) return;
+      this.fragment.set(fragment);
       this.chargement.set('ok');
     } catch {
-      this.chargement.set('erreur');
+      if (slug === this.slugFragment) this.chargement.set('erreur');
     }
   }
 
