@@ -13,7 +13,7 @@ import { fichiersVariante } from './sources.ts';
 
 export interface RessourceApercu {
   readonly slug: string;
-  /** Titre français et chemin de la fiche : le retour de la page d'aperçu autonome (ADR 0016). */
+  /** Titre français (titre de l'aperçu) et chemin de la fiche. */
   readonly titre?: string;
   readonly cheminFiche?: string;
   readonly avecMotion: boolean;
@@ -22,7 +22,7 @@ export interface RessourceApercu {
   readonly fichiers: FichiersRessource;
 }
 
-/** Un design du registre, tel que l'aperçu autonome le propose. */
+/** Un design du registre, tel que l'aperçu le relit dans l'URL. */
 export type DesignApercu = DesignContrat & { readonly slug: string };
 
 export const FICHIER_SCENE = 'demo/demo.component.ts';
@@ -70,12 +70,12 @@ function scenes(ressources: readonly RessourceApercu[], designs: readonly Design
     ...parametres,
     '};',
     '',
-    '/** Titre et fiche de chaque ressource : en-tête et lien de retour de la page autonome. */',
+    '/** Titre et fiche de chaque ressource : titre de la page de l’aperçu. */',
     'export const INFOS_APERCUS: Readonly<Record<string, { titre: string; fiche: string; animee: boolean }>> = {',
     ...infos(ressources),
     '};',
     '',
-    "/** Les designs du registre : choix de la page autonome et valeurs relues de l'URL. */",
+    "/** Les designs du registre : valeurs relues de l'URL (design de la case). */",
     'export const DESIGNS_APERCUS: readonly (DesignContrat & { slug: string })[] = ' +
       `${JSON.stringify(designs)};`,
     '',

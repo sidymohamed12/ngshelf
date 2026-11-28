@@ -16,7 +16,7 @@ const TAILLES: readonly {
 
 /**
  * Barre au-dessus de l'aperçu (ADR 0019, ADR 0020) : ce qui concerne le cadre d'affichage seulement,
- * taille et mode, puis rejouer l'entrée ou la sortie et « Ouvrir l'aperçu seul ». Les réglages de la
+ * taille et mode, puis rejouer l'entrée ou la sortie et « Agrandir l'aperçu » (fenêtre modale, ADR 0022). Les réglages de la
  * ressource (design, animations, tokens) sont dans le panneau de droite, une seule fois.
  */
 @Component({
@@ -26,7 +26,7 @@ const TAILLES: readonly {
 })
 export class BarreApercuComponent {
   readonly motion = input.required<Motion | null>();
-  readonly urlAutonome = input.required<string>();
+  readonly agrandir = output<void>();
   readonly rejouerEntree = output<void>();
   readonly rejouerSortie = output<void>();
 

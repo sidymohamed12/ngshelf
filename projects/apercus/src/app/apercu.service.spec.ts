@@ -105,41 +105,21 @@ describe('ApercuService', () => {
     hote.remove();
   });
 
-  describe('page autonome', () => {
-    it('se reconnaît ouverte seule : pas de fenêtre parente', () => {
+  describe('état initial lu dans l’URL (aperçu d’une case)', () => {
+    it('applique le design et le mode de l’adresse, et suit le mode sombre', () => {
+      window.history.pushState({}, '', '/?design=fleuve&mode=sombre');
       const service = demarrer();
-      expect(service.autonome()).toBe(true);
-      expect(document.documentElement.classList.contains('ap-autonome')).toBe(true);
-    });
-
-    it('applique le design choisi (valeurs du registre) et suit le mode', () => {
-      const service = demarrer();
-      service.choisirDesign('fleuve');
       const style = document.documentElement.style;
       expect(service.design()).toBe('fleuve');
-      expect(style.getPropertyValue('--ngs-radius')).toBe('18px');
-      expect(style.getPropertyValue('--ngs-color-action')).toBe('#0b6464');
-      service.choisirMode('sombre');
       expect(style.getPropertyValue('--ngs-color-action')).toBe('#5fd0c8');
       expect(document.documentElement.classList.contains('dark')).toBe(true);
-    });
-
-    it('se réinitialise : le tokens.css livré reprend la main', () => {
-      const service = demarrer();
-      service.choisirDesign('fleuve');
-      service.choisirMode('sombre');
-      service.reinitialiser();
-      expect(document.documentElement.style.getPropertyValue('--ngs-radius')).toBe('');
-      expect(service.mode()).toBe('clair');
-      expect(service.design()).toBe('planche');
+      window.history.pushState({}, '', '/');
     });
 
     it('coupe les animations quand le système demande moins de mouvement', () => {
       vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }));
       const service = demarrer();
       expect(service.mouvementReduit()).toBe(true);
-      expect(service.animations()).toBe(false);
-      service.choisirAnimations(true);
       expect(service.animations()).toBe(false);
     });
   });
@@ -150,7 +130,7 @@ describe('ApercuService', () => {
     it('démarre sur les défauts de la ressource et expose des lecteurs sûrs', () => {
       const service = demarrer();
       service.ouvrir(SLUG);
-      expect(service.definitions().map((d) => d.nom)).toContain('orientation');
+      expect(Object.keys(service.parametres())).toContain('orientation');
       expect(service.choix('orientation', ['horizontal', 'vertical'], 'vertical')).toBe(
         'horizontal',
       );
@@ -191,20 +171,9 @@ describe('ApercuService', () => {
       expect('intrus' in service.parametres()).toBe(false);
     });
 
-    it('règle un paramètre depuis la barre et revient aux défauts à la réinitialisation', () => {
-      const service = demarrer();
-      service.ouvrir(SLUG);
-      service.reglerParametre('inclinaison', 15);
-      service.reglerParametre('declencheur', 'diagonale');
-      expect(service.parametres()).toMatchObject({ inclinaison: 15, declencheur: 'survol' });
-      service.reinitialiser();
-      expect(service.parametres()).toMatchObject({ inclinaison: 8 });
-    });
-
     it('n’a aucun paramètre pour une ressource qui n’en déclare pas', () => {
       const service = demarrer();
       service.ouvrir('boutons');
-      expect(service.definitions()).toEqual([]);
       expect(service.parametres()).toEqual({});
     });
   });

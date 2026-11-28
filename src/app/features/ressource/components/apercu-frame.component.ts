@@ -8,6 +8,7 @@ import {
   computed,
   inject,
   input,
+  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -59,10 +60,15 @@ export class ApercuFrameComponent {
   readonly titre = input.required<string>();
   readonly largeur = input<LargeurCadre>('auto');
   readonly reglages = input<ReglagesEnvoyes | null>(null);
+  /** Vrai : la scène prend toute la hauteur de son conteneur (aperçu agrandi), au lieu de suivre le contenu. */
+  readonly remplir = input(false);
   /** Chaque nouvelle valeur recharge l'aperçu (rejouer l'entrée, animations changées). */
   readonly rechargement = input(0);
   /** Chaque nouvelle demande joue la sortie (classe posée sur l'hôte de la ressource). */
   readonly sortie = input<{ readonly id: number; readonly classes: string } | null>(null);
+
+  /** Échap tapé dans l'aperçu (le focus y est) : l'aperçu agrandi se ferme. */
+  readonly echap = output<void>();
 
   protected readonly textes = TEXTES_FICHE.apercu;
   protected readonly etats = TEXTES;
@@ -150,6 +156,7 @@ export class ApercuFrameComponent {
       const message = lireMessageVersSite(evenement.data);
       if (!message) return;
       if (message.type === 'ngs-pret') this.#surPret();
+      if (message.type === 'ngs-manipulation' && message.echap) this.echap.emit();
       if (message.type === 'ngs-hauteur') this.#hauteurContenu.set(message.hauteur);
       if (message.type === 'ngs-sortie-fin') {
         setTimeout(() => this.recharger(), DELAI_REJOUER_ENTREE_MS);

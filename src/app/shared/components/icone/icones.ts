@@ -14,6 +14,7 @@ export const NOMS_ICONES = [
   'arrow-right',
   'arrow-square-out',
   'arrow-up-right',
+  'arrows-out',
   'bank',
   'book-open',
   'browser',

@@ -63,15 +63,14 @@
         </button>
       }
     }
-    <a
+    <button
       class="ngs-btn ngs-btn--ghost ngs-btn--sm"
-      target="_blank"
-      rel="noopener noreferrer"
-      [href]="urlAutonome()"
+      type="button"
+      aria-haspopup="dialog"
+      (click)="agrandir.emit()"
     >
-      <svg appIcone="arrow-square-out"></svg>
+      <svg appIcone="arrows-out"></svg>
       <span>{{ textes.apercu.ouvrir }}</span>
-      <span class="sr-only">{{ textes.apercu.nouvelOnglet }}</span>
-    </a>
+    </button>
   </div>
 </div>

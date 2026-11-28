@@ -1,0 +1,46 @@
+<dialog
+  #dialogue
+  class="apercu-agrandi"
+  data-lenis-prevent
+  [attr.aria-label]="textes.label(titre())"
+  (close)="surFermeture()"
+>
+  <div class="apercu-agrandi__tete">
+    <div class="min-w-0">
+      <p class="apercu-agrandi__titre">{{ titre() }}</p>
+      <p class="apercu-agrandi__resume ngs-small ngs-muted">{{ resume() }}</p>
+    </div>
+    <button
+      #fermer
+      class="ngs-btn ngs-btn--ghost ngs-btn--icon"
+      type="button"
+      [attr.aria-label]="textes.fermer"
+      (click)="ouvert.set(false)"
+      (keydown.shift.tab)="versLaFin($event)"
+    >
+      <svg appIcone="x"></svg>
+    </button>
+  </div>
+  @if (ouvert()) {
+    <div class="apercu-agrandi__corps ngs-preview">
+      <app-apercu-frame
+        class="apercu-agrandi__cadre"
+        [slug]="slug()"
+        [titre]="titre()"
+        [largeur]="etat.largeur()"
+        [reglages]="etat.messageApercu()"
+        [remplir]="true"
+        (echap)="ouvert.set(false)"
+      />
+      <!-- Garde de fin : après l'aperçu, le focus revient au bouton (le <dialog> seul laisserait Tab sortir de la page). -->
+      <button
+        class="sr-only"
+        type="button"
+        tabindex="0"
+        (focus)="boutonFermer()?.nativeElement?.focus()"
+      >
+        {{ textes.retourDebut }}
+      </button>
+    </div>
+  }
+</dialog>

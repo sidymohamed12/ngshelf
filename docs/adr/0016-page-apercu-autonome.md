@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-28, phase 5). Complète les ADR 0003 et 0010 ; le HANDOFF et la maquette ne prévoient pas cette page (ils décrivent seulement l'iframe de la fiche).
+remplacé en partie par l'ADR 0022 (2026-11-28) : la page autonome, sa barre et le lien « Ouvrir l'aperçu seul » sont retirés ; la route `/apercu/<slug>` comme hôte d'iframe et la lecture de l'état initial dans l'URL (design, mode, animations, paramètres) restent. Statut d'origine : proposé (2026-11-28, phase 5). Complète les ADR 0003 et 0010 ; le HANDOFF et la maquette ne prévoient pas cette page (ils décrivent seulement l'iframe de la fiche).
 
 ## Contexte
 
