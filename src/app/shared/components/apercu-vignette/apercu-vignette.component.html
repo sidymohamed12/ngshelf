@@ -1,11 +1,15 @@
-@if (etat() !== 'pret') {
+@if (repli()) {
   <svg [appIcone]="icone()" class="ngs-vignette__icone"></svg>
+} @else if (etat() !== 'pret') {
+  <app-squelette forme="plein" />
 }
 @if (actif()) {
   <div
     class="ngs-vignette__cadre"
     [style.width.px]="dimensions().largeur"
     [style.height.px]="dimensions().hauteur"
+    [style.top.px]="dimensions().haut"
+    [style.left.px]="dimensions().gauche"
     [style.transform]="'scale(' + dimensions().echelle + ')'"
   >
     <iframe

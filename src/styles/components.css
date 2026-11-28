@@ -210,7 +210,7 @@
     color: var(--color-text-muted); font: inherit; font-size: var(--text-small); cursor: pointer;
     transition: border-color var(--duration-out) var(--ease-out), background-color var(--duration-out) var(--ease-out);
   }
-  @media (hover: hover) and (pointer: fine) { .ngs-search-trigger:hover { border-color: var(--color-border-strong); background: var(--color-canvas); } }
+  @media (hover: hover) and (pointer: fine) { .ngs-search-trigger:hover { border-color: var(--color-border-strong); background: var(--ngs-color-surface, var(--color-canvas)); } }
   .ngs-search-trigger__text { min-width: 9.5rem; text-align: left; }
   @media (min-width: 64rem) and (max-width: 79.99rem) { .ngs-search-trigger__text, .ngs-search-trigger .ngs-kbd { display: none; } .ngs-search-trigger { padding: 0; width: 44px; justify-content: center; } }
   @media (max-width: 47.99rem) { .ngs-search-trigger__text, .ngs-search-trigger .ngs-kbd { display: none; } .ngs-search-trigger { padding: 0; width: 44px; justify-content: center; } }
@@ -291,10 +291,11 @@
     transition: translate var(--duration-out) var(--ease-out), border-color var(--duration-out) var(--ease-out), box-shadow var(--duration-out) var(--ease-out);
     isolation: isolate; min-width: 0;
   }
+  /* Zone d'aperçu au rapport commun à toutes les cases (ADR 0026) : la planche est une grille régulière. */
   .ngs-case__stage {
-    position: relative; flex: 1; display: grid; place-items: center; padding: clamp(1rem, 2.5vw, 2rem);
-    min-height: 13rem; border-radius: calc(var(--radius-case) - 1px) calc(var(--radius-case) - 1px) 0 0;
-    overflow: hidden;
+    position: relative; flex: none; display: grid; place-items: center; aspect-ratio: var(--ratio-case);
+    border-radius: calc(var(--radius-case) - 1px) calc(var(--radius-case) - 1px) 0 0;
+    background: var(--color-surface); overflow: hidden;
   }
   .ngs-case__stage > * { max-width: 100%; min-width: 0; }
 
@@ -329,11 +330,16 @@
   /* Écran tactile : pas de survol, l'indication reste visible mais discrète. */
   @media (hover: none) { .ngs-vignette__outils { opacity: 0.85; } }
   .ngs-vignette[data-etat="pret"] .ngs-vignette__cadre { opacity: 1; }
+  /* Aperçu prêt : le fond de la zone est celui de la page d'aperçu, pour que les marges de la mise à l'échelle (ADR 0026) ne se voient pas. */
+  .ngs-vignette--planche { --apercu-fond: var(--apercu-fond-planche); }
+  .ngs-vignette--fleuve { --apercu-fond: var(--apercu-fond-fleuve); }
+  .ngs-vignette--laterite { --apercu-fond: var(--apercu-fond-laterite); }
+  .ngs-vignette[data-etat="pret"] { background: var(--apercu-fond, var(--color-canvas)); }
   @media (prefers-reduced-motion: no-preference) {
     .ngs-vignette__cadre { transition: opacity var(--duration-out) var(--ease-out); }
   }
   .ngs-case__foot {
-    position: relative; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.875rem 0.75rem 1rem;
+    position: relative; flex: 1; display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0.875rem 0.75rem 1rem;
     border-top: 1px solid var(--color-border); background: var(--color-canvas);
     border-radius: 0 0 calc(var(--radius-case) - 1px) calc(var(--radius-case) - 1px);
   }
@@ -356,22 +362,18 @@
     .ngs-case:has(.ngs-case__link:hover) .ngs-case__open .ngs-icon { transform: translateX(3px); }
   }
   .ngs-case__open .ngs-icon { transition: transform var(--duration-out) var(--ease-out); }
-  .ngs-case--wide { grid-column: span 2; }
-  .ngs-case--tall { grid-row: span 2; }
 
   /* ---------- Planche (grille modulaire) ---------- */
   .ngs-planche {
     display: grid; gap: var(--space-gutter);
     grid-template-columns: repeat(1, minmax(0, 1fr));
-    grid-auto-flow: dense;
   }
-  @media (min-width: 40rem) { .ngs-planche { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  /* Dès 2 colonnes, toutes les rangées ont la hauteur de la plus haute : les cases sont strictement identiques. */
+  @media (min-width: 40rem) { .ngs-planche { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; } }
   @media (min-width: 64rem) { .ngs-planche { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  /* Pleine largeur (ADR 0018) : la planche gagne des colonnes sur les grands écrans au lieu d'étirer les cases, 5 au plus. */
   @media (min-width: 80rem) { .ngs-planche { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  /* Pleine largeur : la planche gagne des colonnes sur les très grands écrans au lieu d'étirer les cases. */
   @media (min-width: 120rem) { .ngs-planche { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
-  @media (min-width: 160rem) { .ngs-planche { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
-  @media (max-width: 39.99rem) { .ngs-case--wide { grid-column: auto; } .ngs-case--tall { grid-row: auto; } }
 
   /* ---------- Onglets avec indicateur glissant ---------- */
   .ngs-tabs { position: relative; display: flex; gap: 0.25rem; overflow-x: auto; scrollbar-width: none; }
@@ -538,7 +540,9 @@
   .ngs-result mark { background: var(--color-cat-blocs-soft); color: inherit; border-radius: 3px; padding: 0 1px; }
 
   /* ---------- Squelette ---------- */
-  .ngs-skeleton { border-radius: var(--radius-chip); background: var(--color-surface-hover); position: relative; overflow: hidden; }
+  .ngs-skeleton { display: block; border-radius: var(--radius-chip); background: var(--color-surface-hover); position: relative; overflow: hidden; }
+  .ngs-skeleton--plein { position: absolute; inset: 0; border-radius: 0; }
+  .ngs-skeleton--ligne { height: 1rem; }
   .ngs-skeleton::after {
     content: ""; position: absolute; inset: 0; transform: translateX(-100%);
     background: linear-gradient(90deg, transparent, var(--color-shimmer), transparent);
@@ -579,7 +583,7 @@
     border-radius: var(--radius-panel); border: 1px solid var(--color-border); background: var(--color-surface);
     overflow: hidden; display: flex; flex-direction: column; min-width: 0;
   }
-  .ngs-preview__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding: 0.5rem; border-bottom: 1px solid var(--color-border); background: var(--color-canvas); }
+  .ngs-preview__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding: 0.5rem; border-bottom: 1px solid var(--color-border); background: var(--ngs-color-surface, var(--color-canvas)); }
   .ngs-preview__stage { position: relative; display: grid; justify-items: center; padding: clamp(0.75rem, 2vw, 1.5rem); min-height: 26rem; overflow: auto; }
   .ngs-preview__frame {
     display: block; width: 100%; max-width: 100%; height: 26rem; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-canvas);
@@ -589,7 +593,7 @@
   }
 
   /* ---------- Panneau de réglages ---------- */
-  .ngs-panel { border-radius: var(--radius-panel); border: 1px solid var(--color-border); background: var(--color-canvas); }
+  .ngs-panel { border-radius: var(--radius-panel); border: 1px solid var(--color-border); background: var(--ngs-color-surface, var(--color-canvas)); }
   .ngs-panel__section { padding: 1.125rem 1.25rem; border-top: 1px solid var(--color-border); display: grid; gap: 0.75rem; }
   .ngs-panel__section:first-child { border-top: 0; }
   .ngs-contrast { display: inline-flex; align-items: center; gap: 0.4rem; font-size: var(--text-label); font-weight: 560; }
@@ -733,7 +737,7 @@
     position: relative; border-radius: var(--radius-panel); background: var(--color-surface); border: 1px solid var(--color-border);
     box-shadow: var(--shadow-overlay); overflow: hidden;
   }
-  .ngs-vitrine__barre { display: flex; align-items: center; gap: 0.5rem; min-height: 40px; padding: 0 0.875rem; border-bottom: 1px solid var(--color-border); background: var(--color-canvas); }
+  .ngs-vitrine__barre { display: flex; align-items: center; gap: 0.5rem; min-height: 40px; padding: 0 0.875rem; border-bottom: 1px solid var(--color-border); background: var(--ngs-color-surface, var(--color-canvas)); }
   .ngs-vitrine__adresse { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); background: var(--color-surface); font-size: 0.8125rem; color: var(--color-text-muted); }
   .ngs-vitrine__page { display: grid; gap: 0.75rem; padding: 0.75rem; background: var(--ngs-color-surface-alt, var(--color-surface)); transition: background-color var(--duration-theme) var(--ease-out); }
   .ngs-vitrine__piece { position: relative; }

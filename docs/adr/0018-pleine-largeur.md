@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-28). Écart assumé par rapport à `DESIGN.md` (« Conteneur : `--container-site: 90rem` », « à partir de 1920 px, `--container-wide` ») et au HANDOFF (ligne « Espacement, conteneur »), que `designer` devra reporter.
+proposé (2026-11-28). Point 3 amendé par l'ADR 0026 (cases uniformes, 5 colonnes au plus). Écart assumé par rapport à `DESIGN.md` (« Conteneur : `--container-site: 90rem` », « à partir de 1920 px, `--container-wide` ») et au HANDOFF (ligne « Espacement, conteneur »), que `designer` devra reporter.
 
 ## Contexte
 

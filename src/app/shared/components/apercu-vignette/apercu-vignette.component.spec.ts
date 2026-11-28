@@ -10,6 +10,7 @@ import {
   dimensionsVignette,
   urlVignette,
 } from './apercu-vignette.component';
+import { DIMENSIONS_RENDU } from '@shared/models/taxonomie.model';
 
 describe('urlVignette', () => {
   it('demande la vignette, clair et animée par défaut', () => {
@@ -45,11 +46,46 @@ describe('dimensionsVignette', () => {
   });
 
   it('n’agrandit jamais : une case large reçoit l’aperçu à sa taille', () => {
-    expect(dimensionsVignette(900, 300)).toEqual({ largeur: 900, hauteur: 300, echelle: 1 });
+    expect(dimensionsVignette(900, 300)).toEqual({
+      largeur: 900,
+      hauteur: 300,
+      echelle: 1,
+      gauche: 0,
+      haut: 0,
+    });
+  });
+
+  it('avec une taille déclarée, tient en entier : zone plus haute que le rapport, centré en hauteur', () => {
+    const d = dimensionsVignette(480, 360, { largeur: 960, hauteur: 540 });
+    expect(d).toEqual({ largeur: 960, hauteur: 540, echelle: 0.5, gauche: 0, haut: 45 });
+  });
+
+  it('avec une taille déclarée, tient en entier : zone plus large que le rapport, centré en largeur', () => {
+    const d = dimensionsVignette(480, 360, { largeur: 520, hauteur: 600 });
+    expect(d.echelle).toBeCloseTo(0.6);
+    expect(d.haut).toBe(0);
+    expect(d.gauche).toBe(84);
+    expect(d.largeur * d.echelle).toBeLessThanOrEqual(480);
+    expect(d.hauteur * d.echelle).toBeLessThanOrEqual(360);
+  });
+
+  it('rendu grand écran : 1440 × 1080 dans une case 4 / 3, tout le cadre est occupé sans bande', () => {
+    const d = dimensionsVignette(337, 253, DIMENSIONS_RENDU['grand-ecran']);
+    expect(d.largeur).toBe(1440);
+    expect(d.hauteur).toBe(1080);
+    expect(d.echelle).toBeCloseTo(337 / 1440);
+    expect(d.gauche).toBe(0);
+    expect(d.haut).toBeLessThanOrEqual(1);
   });
 
   it('renvoie des dimensions nulles tant que la case n’est pas mesurée', () => {
-    expect(dimensionsVignette(0, 0)).toEqual({ largeur: 0, hauteur: 0, echelle: 1 });
+    expect(dimensionsVignette(0, 0)).toEqual({
+      largeur: 0,
+      hauteur: 0,
+      echelle: 1,
+      gauche: 0,
+      haut: 0,
+    });
   });
 });
 
@@ -120,6 +156,24 @@ describe('ApercuVignetteComponent', () => {
     expect(iframe?.getAttribute('tabindex')).toBe('-1');
     expect(iframe?.getAttribute('src')).toBe('/apercu/boutons?vignette=1');
     expect(fixture.nativeElement.getAttribute('data-etat')).toBe('chargement');
+  });
+
+  it('montre un squelette (jamais l’icône) en attente et pendant le chargement', async () => {
+    demarrer();
+    const hote = fixture.nativeElement as HTMLElement;
+    expect(hote.querySelector('app-squelette')).not.toBeNull();
+    expect(hote.querySelector('.ngs-vignette__icone')).toBeNull();
+    await visible(true);
+    expect(hote.getAttribute('data-etat')).toBe('chargement');
+    expect(hote.querySelector('app-squelette')).not.toBeNull();
+    expect(hote.querySelector('.ngs-vignette__icone')).toBeNull();
+  });
+
+  it('garde l’icône comme repli seulement : échec ou économie de données, sans squelette', async () => {
+    demarrer(true);
+    const hote = fixture.nativeElement as HTMLElement;
+    expect(hote.querySelector('.ngs-vignette__icone')).not.toBeNull();
+    expect(hote.querySelector('app-squelette')).toBeNull();
   });
 
   it('n’attend pas : une case qui sort avant le délai ne charge rien', async () => {

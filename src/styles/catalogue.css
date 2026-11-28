@@ -22,11 +22,9 @@
     gap: 0.75rem;
     align-items: center;
   }
+  /* Planche à côté de la colonne de filtres : une colonne de moins aux mêmes largeurs (ADR 0026). */
   .catalogue-grille {
     grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-  .catalogue-grille .ngs-case__stage {
-    min-height: 17.5rem;
   }
   @media (min-width: 40rem) {
     .catalogue-grille {
@@ -43,15 +41,9 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
-  /* Pleine largeur (ADR 0018) : une colonne de plus à 2240 px, encore une à 2560 px, au lieu d'étirer les cases. */
   @media (min-width: 140rem) {
     .catalogue-grille {
       grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-  }
-  @media (min-width: 160rem) {
-    .catalogue-grille {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
   }
 }
