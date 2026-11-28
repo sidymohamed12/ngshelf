@@ -43,20 +43,13 @@ function borner(valeur: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, valeur));
 }
 
-/** Aligne une valeur sur le pas du paramètre (depuis son minimum), évite les flottants parasites. */
-function aligner(valeur: number, min: number, pas: number): number {
-  if (pas <= 0) return valeur;
-  const arrondi = min + Math.round((valeur - min) / pas) * pas;
-  return Number(arrondi.toFixed(6));
-}
-
 function resoudreUn(definition: ParametreReglable, brut: unknown): ValeurParametre {
   if (definition.genre === 'interrupteur') {
     return typeof brut === 'boolean' ? brut : definition.defaut;
   }
   if (definition.genre === 'nombre') {
     if (typeof brut !== 'number' || !Number.isFinite(brut)) return definition.defaut;
-    return borner(aligner(brut, definition.min, definition.pas), definition.min, definition.max);
+    return borner(brut, definition.min, definition.max);
   }
   const permis = definition.options.some((option) => option.valeur === brut);
   return typeof brut === 'string' && permis ? brut : definition.defaut;
@@ -69,7 +62,7 @@ export function parametresParDefaut(definitions: readonly ParametreReglable[]): 
 
 /**
  * Valeurs retenues : une par paramètre déclaré, jamais plus. Une valeur absente, d'un autre type, hors
- * liste ou hors bornes retombe sur le défaut (nombre : borné et aligné sur le pas).
+ * liste ou hors bornes retombe sur le défaut (nombre : borné ; le pas est celui du curseur de la fiche, il n'arrondit pas).
  */
 export function resoudreParametres(
   definitions: readonly ParametreReglable[],

@@ -75,10 +75,10 @@ describe('resoudreParametres', () => {
     expect('intrus' in resolu).toBe(false);
   });
 
-  it('borne et aligne les nombres sur le pas', () => {
+  it('borne les nombres sans les arrondir au pas (un défaut hors pas reste intact)', () => {
     expect(resoudreParametres(DEFINITIONS, { hauteur: 5000 })['hauteur']).toBe(600);
     expect(resoudreParametres(DEFINITIONS, { hauteur: -3 })['hauteur']).toBe(200);
-    expect(resoudreParametres(DEFINITIONS, { hauteur: 311 })['hauteur']).toBe(320);
+    expect(resoudreParametres(DEFINITIONS, { hauteur: 311 })['hauteur']).toBe(311);
     expect(resoudreParametres(DEFINITIONS, { hauteur: Number.NaN })['hauteur']).toBe(400);
   });
 });
