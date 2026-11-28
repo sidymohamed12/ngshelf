@@ -1,0 +1,37 @@
+/*
+  Éléments communs aux pages vitrines (accueil, « À propos ») : la pièce du catalogue posée dans la page
+  (aperçu en vignette + étiquette) et les états de motion. Uniquement des valeurs de tokens.css.
+  Règle de motion (HANDOFF 8.5) : les états cachés ne sont posés que par le script ; ici, aucun contenu n'est
+  masqué par le CSS seul (la page prérendue et le mode « mouvement réduit » restent complets).
+*/
+
+@layer components {
+  .ngs-piece {
+    position: relative;
+    display: block;
+    min-width: 0;
+  }
+  .ngs-piece__scene {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    min-width: 0;
+    border-radius: var(--radius-case);
+    background: var(--ngs-color-surface, var(--color-canvas));
+    transition: background-color var(--duration-theme) var(--ease-out);
+  }
+  .ngs-piece__icone {
+    width: 3.5rem;
+    height: 3.5rem;
+    color: var(--cat);
+  }
+  .ngs-piece .ngs-etiquette {
+    top: -14px;
+    left: 14px;
+  }
+  .ngs-piece .ngs-etiquette--droite {
+    left: auto;
+    right: 14px;
+  }
+}
