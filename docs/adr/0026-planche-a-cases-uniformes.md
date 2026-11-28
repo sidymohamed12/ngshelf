@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-28). Amende l'ADR 0023 (cases adaptées à l'aperçu : le rapport de la case ne vient plus de `apercuCase`) et l'ADR 0007 (le champ `tailleCase` est supprimé), et précise le nombre de colonnes de l'ADR 0018 (pas de sixième colonne). L'ADR 0017 (aperçu manipulable) est inchangé.
+proposé (2026-11-28). Amende l'ADR 0023 (cases adaptées à l'aperçu : le rapport de la case ne vient plus de `apercuCase`) et l'ADR 0007 (le champ `tailleCase` est supprimé), et précise le nombre de colonnes de l'ADR 0018 (pas de sixième colonne). L'ADR 0017 (aperçu manipulable) est inchangé. Complété par l'ADR 0027 : les blocs larges déclarent un rendu « grand écran » (1440 × 1080 px) au lieu d'une taille choisie à la main.
 
 ## Contexte
 
