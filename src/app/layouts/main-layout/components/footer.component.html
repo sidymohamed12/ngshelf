@@ -33,6 +33,17 @@
     <nav class="grid content-start gap-3 lg:col-span-4" aria-labelledby="pied-projet">
       <h2 class="ngs-label ngs-muted m-0" id="pied-projet">{{ textes.pied.projet }}</h2>
       <a class="ngs-link justify-self-start" routerLink="/a-propos">{{ textes.nav.apropos }}</a>
+      @if (depot) {
+        <a
+          class="ngs-link justify-self-start"
+          target="_blank"
+          rel="noopener noreferrer"
+          [href]="depot"
+        >
+          {{ textes.nav.github }}
+          <span class="sr-only">{{ textes.nav.nouvelOnglet }}</span>
+        </a>
+      }
     </nav>
     <div
       class="flex flex-wrap items-end justify-between gap-6 border-t border-(--color-border) pt-6 lg:col-span-12"

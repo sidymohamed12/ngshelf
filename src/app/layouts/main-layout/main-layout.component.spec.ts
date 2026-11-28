@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TEXTES } from '@core/i18n/textes.fr';
 import { MainLayoutComponent } from './main-layout.component';
 
 async function monter() {
@@ -48,9 +49,21 @@ describe('MainLayoutComponent', () => {
     expect(menu.querySelector('a[href="/secteurs/finance"]')).toBeNull();
   });
 
-  it('ne montre pas le lien GitHub tant que le dépôt n’existe pas', async () => {
+  it('montre le lien GitHub du dépôt dans le header, nommé et sûr', async () => {
     const { racine } = await monter();
-    expect(racine.querySelector('.ngs-header__github')).toBeNull();
+    const lien = racine.querySelector<HTMLAnchorElement>('.ngs-header__github');
+    expect(lien?.href).toBe('https://github.com/sidymohamed12/ngshelf');
+    expect(lien?.target).toBe('_blank');
+    expect(lien?.rel).toBe('noopener noreferrer');
+    expect(lien?.textContent).toContain(TEXTES.nav.github);
+  });
+
+  it('reprend le lien du dépôt dans le menu mobile', async () => {
+    const { racine } = await monter();
+    const lien = racine.querySelector(
+      '#menu-mobile a[href="https://github.com/sidymohamed12/ngshelf"]',
+    );
+    expect(lien).not.toBeNull();
   });
 
   it('ouvre le menu mobile, bloque le défilement, y place le focus puis le ferme avec Échap', async () => {

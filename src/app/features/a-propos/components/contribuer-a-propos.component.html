@@ -5,17 +5,15 @@
       <p class="ngs-lead m-0">{{ t.contribuerTexte }}</p>
       <div class="flex flex-wrap gap-3">
         @if (depot) {
-          <a class="ngs-btn" [href]="depot" target="_blank" rel="noopener">
+          <a class="ngs-btn" [href]="depot" target="_blank" rel="noopener noreferrer">
             <svg appIcone="github-logo"></svg><span>{{ t.contribuerCta }}</span>
+            <span class="sr-only">{{ nouvelOnglet }}</span>
           </a>
         }
         <a class="ngs-btn ngs-btn--secondary" routerLink="/" fragment="contribuer">{{
           t.contribuerCta2
         }}</a>
       </div>
-      @if (!depot) {
-        <p class="ngs-small ngs-muted m-0">{{ t.contribuerProvisoire }}</p>
-      }
     </div>
     <div class="ap-dossier" data-ap-dossier>
       <div class="ngs-code">

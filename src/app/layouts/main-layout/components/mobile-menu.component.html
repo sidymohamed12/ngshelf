@@ -53,9 +53,15 @@
     </details>
   </div>
   @if (depot) {
-    <a class="ngs-btn ngs-btn--secondary mt-auto" [href]="depot" rel="noopener">
+    <a
+      class="ngs-btn ngs-btn--secondary mt-auto"
+      target="_blank"
+      rel="noopener noreferrer"
+      [href]="depot"
+    >
       <svg appIcone="github-logo"></svg>
       <span>{{ textes.nav.github }}</span>
+      <span class="sr-only">{{ textes.nav.nouvelOnglet }}</span>
     </a>
   }
 </div>

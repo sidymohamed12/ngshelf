@@ -28,6 +28,7 @@ export const TEXTES = {
     designs: $localize`:@@nav.designs:Designs`,
     apropos: $localize`:@@nav.apropos:À propos`,
     github: $localize`:@@nav.github:Code source sur GitHub`,
+    nouvelOnglet: $localize`:@@nav.nouvel-onglet:(s’ouvre dans un nouvel onglet)`,
     menuOuvrir: $localize`:@@nav.menu.ouvrir:Ouvrir le menu`,
     menuFermer: $localize`:@@nav.menu.fermer:Fermer le menu`,
   },
