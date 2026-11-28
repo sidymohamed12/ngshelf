@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "slug": "galerie-dome",
+  "categorie": "bloc",
+  "type": "galerie",
+  "titre": {
+    "fr": "Galerie en dôme 3D"
+  },
+  "description": {
+    "fr": "Les images tapissent l'intérieur d'un dôme qu'on fait tourner au glisser, avec inertie ; un clic agrandit une image, Échap la referme."
+  },
+  "secteurs": ["creatif", "voyage"],
+  "tags": ["galerie", "3d", "dôme", "glisser", "portfolio"],
+  "contratTokens": 1,
+  "designsMisEnAvant": ["laterite"],
+  "motion": {
+    "resume": {
+      "fr": "Le dôme suit le doigt ou la souris et continue sur sa lancée (inertie) ; l'image cliquée s'agrandit depuis sa tuile et y retourne à la fermeture."
+    },
+    "moments": ["survol", "ouverture", "sortie"],
+    "technique": "variables CSS pour la rotation 3D, requestAnimationFrame pour l'inertie, Web Animations pour l'ouverture ; aucune bibliothèque d'animation"
+  },
+  "parametres": [
+    {
+      "nom": "hauteur",
+      "genre": "nombre",
+      "libelle": { "fr": "Hauteur" },
+      "min": 360,
+      "max": 640,
+      "pas": 20,
+      "unite": "px",
+      "defaut": 560
+    },
+    {
+      "nom": "segments",
+      "genre": "nombre",
+      "libelle": { "fr": "Colonnes de tuiles" },
+      "min": 20,
+      "max": 45,
+      "pas": 5,
+      "defaut": 35
+    },
+    {
+      "nom": "ajustement",
+      "genre": "nombre",
+      "libelle": { "fr": "Taille du dôme" },
+      "min": 0.3,
+      "max": 0.8,
+      "pas": 0.05,
+      "defaut": 0.5
+    },
+    {
+      "nom": "sensibilite",
+      "genre": "nombre",
+      "libelle": { "fr": "Pixels par degré de rotation" },
+      "min": 10,
+      "max": 40,
+      "pas": 2,
+      "defaut": 20
+    },
+    {
+      "nom": "amortissement",
+      "genre": "nombre",
+      "libelle": { "fr": "Inertie" },
+      "min": 0,
+      "max": 1,
+      "pas": 0.1,
+      "defaut": 0.8
+    },
+    {
+      "nom": "inclinaisonMax",
+      "genre": "nombre",
+      "libelle": { "fr": "Inclinaison verticale maximale" },
+      "min": 0,
+      "max": 15,
+      "pas": 1,
+      "unite": "°",
+      "defaut": 5
+    },
+    {
+      "nom": "tailleOuverte",
+      "genre": "nombre",
+      "libelle": { "fr": "Taille de l'image agrandie" },
+      "min": 240,
+      "max": 640,
+      "pas": 20,
+      "unite": "px",
+      "defaut": 400
+    },
+    {
+      "nom": "nuancesDeGris",
+      "genre": "interrupteur",
+      "libelle": { "fr": "Images en nuances de gris" },
+      "defaut": true
+    }
+  ],
+  "tailleCase": "large-haute",
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-28",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

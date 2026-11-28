@@ -1,0 +1,185 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+  width: 100%;
+  font-family: var(--ngs-font-family, system-ui, sans-serif);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+.dome {
+  --rot: calc(180deg / var(--ngs-segments));
+  --circ: calc(var(--ngs-rayon) * 3.14);
+  --cote: calc(var(--circ) / var(--ngs-segments) * 2);
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--ngs-color-border, #8a8a93);
+  border-radius: calc(var(--ngs-radius, 10px) * 2);
+  background: var(--ngs-color-surface, #ffffff);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+.dome:has(.dome__acces button:focus-visible) {
+  outline: 2px solid var(--ngs-color-action, #0b0b0c);
+  outline-offset: 2px;
+}
+.dome__principal {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+}
+.dome__scene {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  contain: layout paint size;
+  perspective: calc(var(--ngs-rayon) * 2);
+  perspective-origin: 50% 50%;
+}
+.dome__sphere {
+  transform-style: preserve-3d;
+  transform: translateZ(calc(var(--ngs-rayon) * -1)) rotateX(var(--ngs-rx)) rotateY(var(--ngs-ry));
+  will-change: transform;
+}
+.dome__tuile {
+  position: absolute;
+  inset: -999px;
+  width: var(--cote);
+  height: var(--cote);
+  margin: auto;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform: rotateY(calc(var(--rot) * (var(--ngs-ox) + 0.5)))
+    rotateX(calc(var(--rot) * (var(--ngs-oy) - 0.5))) translateZ(var(--ngs-rayon));
+}
+.dome__image {
+  position: absolute;
+  inset: 10px;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: calc(var(--ngs-radius, 10px) * 2);
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.dome__vignette {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  backface-visibility: hidden;
+}
+.dome[data-gris='true'] .dome__vignette,
+.dome[data-gris='true'] .dome__photo {
+  filter: grayscale(1);
+}
+.dome__voile,
+.dome__flou {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.dome__voile {
+  background: radial-gradient(transparent 65%, var(--ngs-color-surface, #ffffff) 100%);
+}
+.dome__flou {
+  backdrop-filter: blur(3px);
+  mask-image: radial-gradient(transparent 70%, var(--ngs-color-text, #0b0b0c) 90%);
+}
+.dome__bord {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 5;
+  height: 120px;
+  pointer-events: none;
+}
+.dome__bord--haut {
+  top: 0;
+  background: linear-gradient(to top, transparent, var(--ngs-color-surface, #ffffff));
+}
+.dome__bord--bas {
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent, var(--ngs-color-surface, #ffffff));
+}
+.dome__acces {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.dome__visionneuse {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: var(--ngs-marge);
+}
+.dome__fond {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--ngs-color-surface, #ffffff) 78%, transparent);
+  backdrop-filter: blur(3px);
+  cursor: zoom-out;
+}
+.dome__agrandie {
+  position: relative;
+  height: min(var(--ngs-taille-ouverte), 100%);
+  aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
+  border-radius: calc(var(--ngs-radius, 10px) * 2);
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+  box-shadow:
+    0 0 0 1px var(--ngs-color-border, #8a8a93),
+    0 10px 30px color-mix(in srgb, var(--ngs-color-text, #0b0b0c) 25%, transparent);
+  transform-origin: top left;
+}
+.dome__agrandie:focus-visible {
+  outline: 2px solid var(--ngs-color-action, #0b0b0c);
+  outline-offset: 2px;
+}
+.dome__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dome__fermer {
+  position: absolute;
+  top: calc(var(--ngs-density, 1) * 8px);
+  right: calc(var(--ngs-density, 1) * 8px);
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: var(--ngs-radius, 10px);
+  background: var(--ngs-color-action, #0b0b0c);
+  color: var(--ngs-color-on-action, #ffffff);
+  cursor: pointer;
+}
+.dome__fermer:focus-visible {
+  outline: 2px solid var(--ngs-color-text, #0b0b0c);
+  outline-offset: 2px;
+}
