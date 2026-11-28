@@ -1,3 +1,4 @@
+import compteurs from '@generated/registre/compteurs.json';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { TEXTES } from '@core/i18n/textes.fr';
@@ -90,9 +91,14 @@ describe('recherche : dialogue et déclencheur', () => {
       document.getElementById(g.getAttribute('aria-labelledby') ?? '')?.textContent?.trim(),
     );
     expect(titres).toEqual(['Composants', 'Blocs', 'Designs']);
-    // 7 composants, mais 6 montrés par groupe : le septième est derrière le lien « Voir tout ».
-    expect(options()).toHaveLength(12);
-    expect(racine().querySelector('a[href="/composants"]')?.textContent).toContain('(7)');
+    // Au plus 6 ressources montrées par groupe : les suivantes sont derrière le lien « Voir tout ».
+    const { composant, bloc, design } = compteurs.categories;
+    expect(options()).toHaveLength(
+      [composant, bloc, design].reduce((n, c) => n + Math.min(c, 6), 0),
+    );
+    expect(racine().querySelector('a[href="/composants"]')?.textContent).toContain(
+      `(${composant})`,
+    );
     expect(options()[0].getAttribute('aria-selected')).toBe('true');
     expect(champ().getAttribute('aria-activedescendant')).toBe(options()[0].id);
   });

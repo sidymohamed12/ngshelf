@@ -5,10 +5,14 @@ import { Router, provideRouter, withComponentInputBinding } from '@angular/route
 import { RouterTestingHarness } from '@angular/router/testing';
 import { TEXTES, TEXTES_CATALOGUE } from '@core/i18n/textes.fr';
 import { CHARGEUR_INDEX, ChargeurIndex, chargerIndexGenere } from '@core/registre/registre.donnees';
+import compteurs from '@generated/registre/compteurs.json';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
 import { routes } from '../../../app.routes';
 
-/** La page /catalogue et ses filtres, avec le vrai registre du dépôt (10 ressources, 3 designs). */
+/** Nombre de ressources du vrai registre du dépôt (le build du registre l'écrit : il grandit avec lui). */
+const TOTAL = compteurs.total;
+
+/** La page /catalogue et ses filtres, avec le vrai registre du dépôt. */
 describe('page catalogue', () => {
   let harness: RouterTestingHarness;
 
@@ -47,8 +51,8 @@ describe('page catalogue', () => {
   it('affiche toutes les ressources et le titre de la page', async () => {
     await ouvrir('/catalogue');
     expect(page().querySelector('h1')?.textContent).toBe(TEXTES.pages.catalogue.h1);
-    expect(slugs()).toHaveLength(13);
-    expect(statut()).toBe('13 ressources');
+    expect(slugs()).toHaveLength(TOTAL);
+    expect(statut()).toBe(`${TOTAL} ressources`);
   });
 
   it('lit les filtres dans l’URL : type, secteur et option animée, avec leurs compteurs', async () => {
@@ -79,7 +83,7 @@ describe('page catalogue', () => {
     await stabiliser();
     expect(url()).toBe('/catalogue?secteur=voyage');
     expect(history.length).toBe(avant);
-    expect(slugs()).toEqual(['carte-sejour']);
+    expect(slugs()).toContain('carte-sejour');
     cocher('input[name="type"][value="carte"]');
     await stabiliser();
     expect(url()).toBe('/catalogue?type=carte&secteur=voyage');
@@ -142,7 +146,7 @@ describe('page catalogue', () => {
       ?.click();
     await stabiliser();
     expect(url()).toBe('/catalogue');
-    expect(slugs()).toHaveLength(13);
+    expect(slugs()).toHaveLength(TOTAL);
   });
 
   it('annonce l’absence de résultat et propose d’effacer les filtres', async () => {
@@ -154,12 +158,12 @@ describe('page catalogue', () => {
     page().querySelector<HTMLButtonElement>('.ngs-state button')?.click();
     await stabiliser();
     expect(url()).toBe('/catalogue');
-    expect(slugs()).toHaveLength(13);
+    expect(slugs()).toHaveLength(TOTAL);
   });
 
   it('ignore les paramètres inconnus au lieu d’échouer', async () => {
     await ouvrir('/catalogue?type=zzz&secteur=lune&c=chaises&tri=hasard');
-    expect(slugs()).toHaveLength(13);
+    expect(slugs()).toHaveLength(TOTAL);
   });
 
   it('reste indexable sans filtre, passe en noindex avec un filtre', async () => {
@@ -211,7 +215,7 @@ describe('page catalogue', () => {
     echec = false;
     page().querySelector<HTMLButtonElement>('[role="alert"] button')?.click();
     await stabiliser();
-    expect(slugs()).toHaveLength(13);
+    expect(slugs()).toHaveLength(TOTAL);
   });
 
   it('montre le squelette tant que l’index se charge', async () => {
@@ -233,7 +237,7 @@ describe('page catalogue', () => {
     expect(statut()).toBe(TEXTES.etats.chargement);
     finir();
     await stabiliser();
-    expect(slugs()).toHaveLength(13);
+    expect(slugs()).toHaveLength(TOTAL);
   });
 });
 
