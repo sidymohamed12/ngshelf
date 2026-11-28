@@ -5,6 +5,7 @@ import { SEGMENT_SECTEURS } from '@core/registre/chemins';
 import { FicheService } from '@features/ressource/services/fiche.service';
 import { ficheResolver } from '@features/ressource/services/ressource.resolver';
 import { ficheVitrineResolver } from '@shared/vitrine/donnees-vitrine';
+import { donneesVitrineResolver } from '@shared/vitrine/donnees-vitrine';
 import {
   CATEGORIES,
   CATEGORIES_TYPEES,
@@ -64,6 +65,7 @@ export const routes: Routes = [
       {
         path: '',
         title: TEXTES.pages.accueil.titrePage,
+        resolve: { donnees: donneesVitrineResolver },
         loadComponent: () =>
           import('@features/accueil/pages/accueil.component').then((m) => m.AccueilComponent),
       },

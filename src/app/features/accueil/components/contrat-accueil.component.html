@@ -1,0 +1,46 @@
+<section class="ngs-container accueil-section" aria-labelledby="contrat-titre">
+  <div class="grid gap-10 lg:grid-cols-12">
+    <div class="lg:col-span-6">
+      <h2 class="ngs-h2 m-0" id="contrat-titre">{{ t.contratH2 }}</h2>
+      <p class="ngs-lead mt-5 mb-10 max-w-[40ch]">{{ t.contratLead }}</p>
+      <div>
+        @for (jeton of jetons(); track jeton.nom) {
+          <div
+            class="jeton"
+            #ligne
+            [attr.data-jeton]="jeton.nom"
+            [class.is-actif]="actifs().has(jeton.nom)"
+          >
+            <span class="jeton__nom">{{ jeton.nom }}</span>
+            @if (jeton.valeur) {
+              <span class="jeton__valeur">{{ jeton.valeur }}</span>
+            }
+            <p class="jeton__role">{{ jeton.role }}</p>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="lg:col-span-5 lg:col-start-8">
+      <div class="temoin" data-temoin>
+        <p class="ngs-label m-0">{{ t.contratTemoin }}</p>
+        <div class="temoin__scene" [style]="reglagesTemoins() ?? null">
+          @for (temoin of temoins; track temoin.piece.slug) {
+            <app-piece-vitrine
+              [piece]="temoin.piece"
+              [reglages]="reglagesTemoins()"
+              [ratio]="temoin.ratio"
+              [etiquette]="false"
+            />
+          }
+        </div>
+        <a
+          class="ngs-link ngs-link--rest inline-flex items-center gap-2 justify-self-start"
+          routerLink="/composants/calendrier/calendrier"
+        >
+          <span>{{ t.gestesEssai }}</span>
+          <svg appIcone="arrow-right" taille="sm" class="ngs-icon--move"></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

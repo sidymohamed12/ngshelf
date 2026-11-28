@@ -5,6 +5,7 @@
   catalogue.css : mise en page de la page catalogue (colonne de filtres, planche), tirée de la maquette.
   vitrine.css : pièces posées dans les pages vitrines (accueil, « À propos »).
   a-propos.css : mise en page de la page « À propos » (maquette a-propos.html).
+  accueil.css : mise en page de la page d'accueil (maquette index.html).
   Le contrat de tokens des ressources (src/styles/contrat/) n'est pas chargé par le site.
 */
 @import 'tailwindcss';
@@ -14,6 +15,7 @@
 @import './styles/fiche.css';
 @import './styles/vitrine.css';
 @import './styles/a-propos.css';
+@import './styles/accueil.css';
 /* Lenis : règles du défilement doux (inactives tant que Lenis n'a pas posé sa classe sur <html>). */
 @import 'lenis/dist/lenis.css';
 
