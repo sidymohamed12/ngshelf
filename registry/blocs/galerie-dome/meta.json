@@ -94,7 +94,7 @@
       "defaut": true
     }
   ],
-  "tailleCase": "large-haute",
+  "rendu": "grand-ecran",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

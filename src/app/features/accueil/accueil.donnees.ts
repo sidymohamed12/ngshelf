@@ -1,6 +1,5 @@
 import { OptionSegment } from '@shared/components/choix-segment/choix-segment.component';
 import { PieceVitrine } from '@shared/components/piece-vitrine/piece-vitrine.component';
-import { TailleCase } from '@shared/models/taxonomie.model';
 
 /** Les trois designs du catalogue : un seul endroit pour leur nom (noms propres, non traduits). */
 export const DESIGNS_ACCUEIL = ['planche', 'fleuve', 'laterite'] as const;
@@ -36,24 +35,22 @@ export const PIECES_HERO = {
 } as const satisfies Record<string, PieceVitrine>;
 
 /**
- * Disposition de la planche de l'accueil : composée à la main (maquette accueil.js), pas celle du catalogue.
- * L'ordre et la taille de chaque case viennent d'ici ; le contenu vient du registre.
+ * Pièces de la planche de l'accueil, dans l'ordre d'affichage : la même grille uniforme que le catalogue
+ * (ADR 0026). Douze, pour que la dernière rangée soit pleine à 1, 2, 3 et 4 colonnes. Le contenu vient du registre.
  */
-export const DISPOSITION_PLANCHE: readonly {
-  readonly slug: string;
-  readonly taille: TailleCase;
-}[] = [
-  { slug: 'calendrier', taille: 'large-haute' },
-  { slug: 'interrupteur', taille: 'normale' },
-  { slug: 'carte-sejour', taille: 'haute' },
-  { slug: 'curseur', taille: 'normale' },
-  { slug: 'notifications', taille: 'large' },
-  { slug: 'boutons', taille: 'large' },
-  { slug: 'questions-frequentes', taille: 'large-haute' },
-  { slug: 'champ-email', taille: 'normale' },
-  { slug: 'fleuve', taille: 'normale' },
-  { slug: 'planche', taille: 'normale' },
-  { slug: 'laterite', taille: 'normale' },
+export const SLUGS_PLANCHE: readonly string[] = [
+  'calendrier',
+  'interrupteur',
+  'carte-sejour',
+  'curseur',
+  'notifications',
+  'boutons',
+  'questions-frequentes',
+  'champ-email',
+  'galerie-dome',
+  'fleuve',
+  'planche',
+  'laterite',
 ];
 
 /** Ressources montrées dans le panneau de chaque famille (les designs et les templates ont leur propre vue). */

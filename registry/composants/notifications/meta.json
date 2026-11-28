@@ -19,7 +19,6 @@
     "moments": ["entree", "sortie"],
     "technique": "animate.enter / animate.leave d’Angular, @keyframes CSS"
   },
-  "tailleCase": "large",
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

@@ -14,7 +14,6 @@ const CARTE: EntreeIndex = {
   tags: [],
   contratTokens: 1,
   animee: false,
-  tailleCase: 'normale',
   statut: 'provisoire',
   ajouteLe: '2026-11-26',
 };
@@ -50,6 +49,8 @@ describe('PlancheComponent', () => {
     const el = afficher(undefined, { chargement: true });
     expect(el.querySelector('[role="status"]')?.textContent).toContain(TEXTES.etats.chargement);
     expect(el.querySelector('ul')).toBeNull();
+    expect(el.querySelectorAll('app-squelette').length).toBeGreaterThan(6);
+    expect(el.querySelector('.ngs-case__stage svg')).toBeNull();
   });
 
   it('affiche une erreur annoncée, avec un bouton qui relance le chargement', () => {
@@ -102,13 +103,24 @@ describe('PlancheComponent', () => {
     expect(el.querySelector(`#${id}`)?.textContent).toContain('Une carte cliquable.');
   });
 
-  it('donne à la case la taille du registre et le badge « Animée »', () => {
-    const el = afficher([{ ...CARTE, animee: true, tailleCase: 'large-haute' }]);
-    const classes = el.querySelector('.ngs-case')?.classList;
-    expect(classes).toContain('ngs-case--wide');
-    expect(classes).toContain('ngs-case--tall');
+  it('affiche le badge « Animée » et donne la même forme à toutes les cases', () => {
+    const el = afficher([{ ...CARTE, animee: true }]);
     expect(el.querySelector('.ngs-badge--anime')?.textContent).toContain(TEXTES_LISTE.anime);
     expect(afficher([CARTE]).querySelector('.ngs-badge--anime')).toBeNull();
+  });
+
+  it('garde la même zone d’aperçu pour toutes les cases, quelle que soit la taille déclarée', () => {
+    const el = afficher([
+      CARTE,
+      { ...CARTE, slug: 'large', apercuCase: { largeur: 960, hauteur: 540 } },
+    ]);
+    const scenes = el.querySelectorAll<HTMLElement>('.ngs-case__stage');
+    expect(scenes).toHaveLength(2);
+    for (const scene of Array.from(scenes)) {
+      expect(scene.style.aspectRatio).toBe('');
+      expect(scene.classList).not.toContain('ngs-case__stage--ratio');
+    }
+    expect(el.querySelector('.ngs-case--wide, .ngs-case--tall')).toBeNull();
   });
 
   it('ne charge aucun aperçu live : pas d’iframe, de ressource embarquée ni d’image', () => {

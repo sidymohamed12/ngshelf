@@ -17,9 +17,8 @@ import { PlancheComponent } from '@shared/components/planche/planche.component';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
 import { RegistreService } from '@core/registre/registre.service';
-import { parametresVersRecherche } from '@shared/apercu/parametres';
-import { ecrireRechercheApercu } from '@shared/apercu/reglages-url';
-import { ApercuFrameComponent, urlApercu } from '../components/apercu-frame.component';
+import { ApercuAgrandiComponent } from '../components/apercu-agrandi.component';
+import { ApercuFrameComponent } from '../components/apercu-frame.component';
 import { BarreApercuComponent } from '../components/barre-apercu.component';
 import { FicheIdentiteComponent } from '../components/fiche-identite.component';
 import { CodeFicheComponent } from '../components/code-fiche.component';
@@ -48,6 +47,7 @@ const NOMBRE_AUTRES = 3;
     IconeComponent,
     PlancheComponent,
     ApercuFrameComponent,
+    ApercuAgrandiComponent,
     BarreApercuComponent,
     FicheIdentiteComponent,
     ReglagesFicheComponent,
@@ -82,6 +82,8 @@ export class RessourceComponent {
     return r.etat === 'ok' ? r.fiche : null;
   });
   protected readonly rechargement = signal(0);
+  /** Fenêtre modale de l'aperçu agrandi (ADR 0022). */
+  protected readonly agrandi = signal(false);
   protected readonly sortie = signal<{ id: number; classes: string } | null>(null);
   protected readonly telechargement = signal<EtatTelechargement>('repos');
   protected readonly copie = signal(false);
@@ -96,24 +98,6 @@ export class RessourceComponent {
       { libelle: LIBELLES_CATEGORIE[m.categorie].pluriel, chemin: cheminCategorie(m.categorie) },
       { libelle: LIBELLES_TYPE[m.type], chemin: cheminType(m.categorie, m.type) },
     ];
-  });
-  /** Adresse de la page d'aperçu autonome, avec le design, le mode et les réglages courants (ADR 0016). */
-  protected readonly urlAutonome = computed(() => {
-    const slug = this.meta()?.slug;
-    if (!slug) return '';
-    const recherche = new URLSearchParams();
-    ecrireRechercheApercu(
-      {
-        design: this.etat.design(),
-        mode: this.etat.mode(),
-        animations: this.etat.animationsPermises(),
-        reglages: this.etat.reglages(),
-      },
-      recherche,
-    );
-    parametresVersRecherche(this.etat.definitionsParametres(), this.etat.parametres(), recherche);
-    const texte = recherche.toString();
-    return texte ? `${urlApercu(slug)}?${texte}` : urlApercu(slug);
   });
   protected readonly versionAngular = computed(() => this.meta()?.angularMin.split('.')[0] ?? '');
   protected readonly etapes = computed(() => {

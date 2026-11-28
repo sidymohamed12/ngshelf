@@ -4,10 +4,11 @@ import { validerParametres } from './valider-parametres.ts';
 import { validerSources } from './valider-sources.ts';
 import { MOMENTS } from '../../src/app/shared/models/motion.model.ts';
 import {
+  BORNES_APERCU_CASE,
   CATEGORIES,
+  RENDUS_APERCU,
   SECTEURS,
   SEGMENT_CATEGORIE,
-  TAILLES_CASE,
   TYPES_PAR_CATEGORIE,
 } from '../../src/app/shared/models/taxonomie.model.ts';
 
@@ -79,7 +80,8 @@ const CLES_RESSOURCE = [
   'designsMisEnAvant',
   'motion',
   'parametres',
-  'tailleCase',
+  'apercuCase',
+  'rendu',
   'modifieLe',
   'anciensChemins',
 ];
@@ -256,11 +258,39 @@ function validerMotion(meta: Objet, rapport: Rapport): void {
   }
 }
 
+function validerApercuCase(valeur: unknown, rapport: Rapport): void {
+  const { min, max } = BORNES_APERCU_CASE;
+  if (!estObjet(valeur)) {
+    rapport.signaler('« apercuCase » doit être { "largeur": …, "hauteur": … } en pixels');
+    return;
+  }
+  for (const cle of ['largeur', 'hauteur']) {
+    const nombre = valeur[cle];
+    if (!Number.isInteger(nombre) || (nombre as number) < min || (nombre as number) > max) {
+      rapport.signaler(`« apercuCase.${cle} » doit être un entier de ${min} à ${max}`);
+    }
+  }
+  for (const cle of Object.keys(valeur)) {
+    if (cle !== 'largeur' && cle !== 'hauteur')
+      rapport.signaler(`« apercuCase » : champ inconnu « ${cle} »`);
+  }
+}
+
+function validerRendu(meta: Objet, rapport: Rapport): void {
+  if (!inclus(RENDUS_APERCU, meta['rendu'])) {
+    rapport.signaler(`« rendu » doit valoir l'une de ces valeurs : ${RENDUS_APERCU.join(', ')}`);
+  }
+  if (meta['apercuCase'] !== undefined) {
+    rapport.signaler(
+      '« rendu » et « apercuCase » sont exclusifs : le rendu fixe la taille de l’aperçu',
+    );
+  }
+}
+
 function validerOptionsPlanche(meta: Objet, rapport: Rapport): void {
   validerMotion(meta, rapport);
-  if (meta['tailleCase'] !== undefined && !inclus(TAILLES_CASE, meta['tailleCase'])) {
-    rapport.signaler(`« tailleCase » doit être l'une de : ${TAILLES_CASE.join(', ')}`);
-  }
+  if (meta['apercuCase'] !== undefined) validerApercuCase(meta['apercuCase'], rapport);
+  if (meta['rendu'] !== undefined) validerRendu(meta, rapport);
 }
 
 function validerDependances(valeur: unknown, rapport: Rapport): void {

@@ -8,22 +8,17 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { ApercuService } from './apercu.service';
-import { BarreAutonome } from './barre-autonome';
 import { TEXTES_APERCU } from './textes';
 
 /**
- * Coquille de l'aperçu. Dans une iframe : une scène centrée, rien d'autre (pas d'en-tête, pas de style du
- * site). Ouverte seule (nouvel onglet) : la barre de réglages au-dessus de la scène, avec les états de
- * chargement et d'erreur (ADR 0016). Les liens des ressources sont neutralisés dans la scène : un clic
+ * Coquille de l'aperçu : une scène centrée, rien d'autre (pas d'en-tête, pas de style du site), servie dans
+ * l'iframe de la fiche, de la fenêtre d'aperçu agrandi ou d'une case (ADR 0022), avec un état d'erreur. Les liens des ressources sont neutralisés dans la scène : un clic
  * dans l'aperçu ne doit jamais faire naviguer la page. Seuls les liens marqués `data-sortie` naviguent.
  */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BarreAutonome],
+  imports: [RouterOutlet],
   template: `
-    @if (contexte.autonome()) {
-      <app-barre-autonome />
-    }
     <main class="compo" [attr.aria-busy]="chargement()">
       @if (erreur()) {
         <div class="ap-etat" role="alert">
@@ -32,11 +27,6 @@ import { TEXTES_APERCU } from './textes';
           <button class="ap-bouton" type="button" (click)="recharger()">
             {{ textes.recharger }}
           </button>
-        </div>
-      } @else if (chargement() && contexte.autonome()) {
-        <div class="ap-etat" role="status">
-          <span class="ap-squelette" aria-hidden="true"></span>
-          <p>{{ textes.chargement }}</p>
         </div>
       }
       <router-outlet />

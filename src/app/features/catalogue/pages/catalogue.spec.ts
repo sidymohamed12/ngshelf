@@ -253,7 +253,6 @@ describe('page catalogue avec beaucoup de ressources', () => {
     tags: [],
     contratTokens: 1,
     animee: false,
-    tailleCase: 'normale',
     statut: 'publie',
     ajouteLe: '2026-01-01',
   }));

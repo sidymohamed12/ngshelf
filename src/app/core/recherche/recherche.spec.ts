@@ -18,7 +18,6 @@ function entree(partiel: Partial<EntreeIndex> & Pick<EntreeIndex, 'slug'>): Entr
     tags: [],
     contratTokens: 1,
     animee: false,
-    tailleCase: 'normale',
     statut: 'publie',
     ajouteLe: '2026-01-01',
     ...partiel,

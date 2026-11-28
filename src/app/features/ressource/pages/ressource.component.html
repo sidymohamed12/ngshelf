@@ -39,7 +39,7 @@
         <h2 class="sr-only" id="apercu-titre">{{ textes.apercu.titre }}</h2>
         <app-barre-apercu
           [motion]="motion()"
-          [urlAutonome]="urlAutonome()"
+          (agrandir)="agrandi.set(true)"
           (rejouerEntree)="rejouerEntree()"
           (rejouerSortie)="rejouerSortie()"
         />
@@ -57,6 +57,7 @@
         <app-reglages-fiche />
       </div>
     </div>
+    <app-apercu-agrandi [slug]="f.meta.slug" [titre]="f.meta.titre.fr" [(ouvert)]="agrandi" />
 
     <div class="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-12">
       <div class="fiche-code lg:col-span-8">

@@ -1,7 +1,8 @@
 <div
   #scene
   class="ngs-preview__stage app-apercu-scene"
-  [style.height.px]="hauteurScene()"
+  [class.app-apercu-scene--plein]="remplir()"
+  [style.height.px]="remplir() ? null : hauteurScene()"
   [attr.aria-busy]="etat() === 'chargement'"
 >
   <div
@@ -22,9 +23,7 @@
     ></iframe>
   </div>
   @if (etat() === 'chargement') {
-    <div class="ngs-skeleton app-apercu-attente" role="status">
-      <span class="sr-only">{{ textes.chargement }}</span>
-    </div>
+    <app-squelette class="app-apercu-attente" [libelle]="textes.chargement" />
   }
   @if (etat() === 'erreur') {
     <div class="ngs-state ngs-state--error" role="alert">

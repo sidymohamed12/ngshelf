@@ -51,10 +51,17 @@ export const TEXTES_FICHE = {
     mode: $localize`:@@ressource.mode:Mode de l’aperçu`,
     clair: $localize`:@@ressource.mode.clair:Clair`,
     sombre: $localize`:@@ressource.mode.sombre:Sombre`,
-    ouvrir: $localize`:@@ressource.apercu.ouvrir:Ouvrir l’aperçu seul`,
-    nouvelOnglet: $localize`:@@ressource.apercu.nouvel-onglet:(s’ouvre dans un nouvel onglet)`,
+    ouvrir: $localize`:@@ressource.apercu.ouvrir:Agrandir l’aperçu`,
     rejouerEntree: $localize`:@@ressource.rejouer.entree:Rejouer l’entrée`,
     rejouerSortie: $localize`:@@ressource.rejouer.sortie:Rejouer la sortie`,
+  },
+  /** Fenêtre modale de l'aperçu agrandi (ADR 0022). */
+  agrandi: {
+    label: (titre: string) =>
+      $localize`:@@ressource.agrandi.label:Aperçu agrandi de ${titre}:titre:`,
+    fermer: $localize`:@@ressource.agrandi.fermer:Fermer l’aperçu agrandi`,
+    retourDebut: $localize`:@@ressource.agrandi.retour-debut:Revenir au bouton de fermeture`,
+    sansAnimation: $localize`:@@ressource.agrandi.sans-animation:animations coupées`,
   },
   /** Barre d'outils au-dessus de l'aperçu : taille et mode (le reste est dans le panneau de réglages). */
   barre: {
