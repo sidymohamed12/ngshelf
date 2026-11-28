@@ -1,4 +1,4 @@
-import { IMAGE_LOADER, ImageLoaderConfig, NgOptimizedImage } from '@angular/common';
+import { ImageLoaderConfig } from '@angular/common';
 import { Component, computed, effect, inject, input, model, signal } from '@angular/core';
 import { TEXTES_FICHE } from '@core/i18n/textes-fiche';
 import { TEXTES_APROPOS } from '@core/i18n/textes-apropos';
@@ -34,26 +34,48 @@ export function chargeurImages(config: ImageLoaderConfig): string {
 
 interface Point {
   readonly icone: NomIcone;
+  readonly titre: string;
   readonly texte: string;
+  readonly numero: string;
 }
 
 const POINTS: readonly Point[] = [
-  { icone: 'code', texte: TEXTES_APROPOS.comment1 },
-  { icone: 'rows', texte: TEXTES_APROPOS.comment2 },
-  { icone: 'sliders-horizontal', texte: TEXTES_APROPOS.comment3 },
-  { icone: 'wave-sine', texte: TEXTES_APROPOS.comment5 },
+  {
+    icone: 'code',
+    titre: TEXTES_APROPOS.comment1Titre,
+    texte: TEXTES_APROPOS.comment1,
+    numero: '01',
+  },
+  {
+    icone: 'rows',
+    titre: TEXTES_APROPOS.comment2Titre,
+    texte: TEXTES_APROPOS.comment2,
+    numero: '02',
+  },
+  {
+    icone: 'sliders-horizontal',
+    titre: TEXTES_APROPOS.comment3Titre,
+    texte: TEXTES_APROPOS.comment3,
+    numero: '03',
+  },
+  {
+    icone: 'wave-sine',
+    titre: TEXTES_APROPOS.comment5Titre,
+    texte: TEXTES_APROPOS.comment5,
+    numero: '04',
+  },
 ];
 
 /**
- * « Comment c'est fait » : une photo, un panneau posé dessus et quatre points. Chaque point montre un panneau
+ * « Comment c'est fait » : une scène sombre (« atelier ») qui change de teinte à chaque étape, un panneau
+ * dedans et quatre étapes numérotées. Chaque point montre un panneau
  * en vrai : le code (extrait du vrai fichier), la version Tailwind ou CSS, les trois designs, l'interrupteur
  * d'animations. Choisi au clic (clavier compris) ; la page le fait aussi suivre le défilement à partir de
  * 1024 px (`point` est un `model`). Les panneaux sont empilés dans la même cellule : hauteur constante.
  */
 @Component({
   selector: 'app-comment-a-propos',
-  imports: [NgOptimizedImage, IconeComponent, ChoixSegmentComponent, PieceVitrineComponent],
-  providers: [{ provide: IMAGE_LOADER, useValue: chargeurImages }],
+  imports: [IconeComponent, ChoixSegmentComponent, PieceVitrineComponent],
   templateUrl: './comment-a-propos.component.html',
 })
 export class CommentAProposComponent {
@@ -64,6 +86,7 @@ export class CommentAProposComponent {
   protected readonly t = TEXTES_APROPOS;
   protected readonly textesFiche = TEXTES_FICHE;
   protected readonly points = POINTS;
+  protected readonly nombreEtapes = POINTS.length;
   protected readonly pieces = PIECES_HABIT.slice(0, 2);
   protected readonly notifications = PIECE_NOTIFICATIONS;
   protected readonly optionsVersion = [

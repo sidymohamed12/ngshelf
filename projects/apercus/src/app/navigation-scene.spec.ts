@@ -6,9 +6,7 @@ function garde(navigated: boolean): boolean | unknown {
   TestBed.configureTestingModule({
     providers: [{ provide: Router, useValue: { navigated } }],
   });
-  return TestBed.runInInjectionContext(() =>
-    premiereNavigationSeulement({} as never, {} as never),
-  );
+  return TestBed.runInInjectionContext(() => premiereNavigationSeulement({} as never, {} as never));
 }
 
 describe('premiereNavigationSeulement', () => {
