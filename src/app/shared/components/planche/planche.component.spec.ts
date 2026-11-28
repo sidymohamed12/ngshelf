@@ -111,6 +111,16 @@ describe('PlancheComponent', () => {
     expect(afficher([CARTE]).querySelector('.ngs-badge--anime')).toBeNull();
   });
 
+  it('donne à la scène le rapport de l’aperçu déclaré, sans minimum de hauteur', () => {
+    const el = afficher([{ ...CARTE, apercuCase: { largeur: 960, hauteur: 540 } }]);
+    const scene = el.querySelector<HTMLElement>('.ngs-case__stage');
+    expect(scene?.classList).toContain('ngs-case__stage--ratio');
+    expect(scene?.style.aspectRatio.replace(/\s/g, '')).toBe('960/540');
+    const sans = afficher([CARTE]).querySelector<HTMLElement>('.ngs-case__stage');
+    expect(sans?.classList).not.toContain('ngs-case__stage--ratio');
+    expect(sans?.style.aspectRatio).toBe('');
+  });
+
   it('ne charge aucun aperçu live : pas d’iframe, de ressource embarquée ni d’image', () => {
     const el = afficher([CARTE, DESIGN]);
     expect(el.querySelector('iframe, img, object, embed')).toBeNull();

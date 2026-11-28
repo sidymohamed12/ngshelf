@@ -31,12 +31,18 @@ function designMisEnAvant(meta: MetaRegistre): Pick<EntreeIndex, 'designMisEnAva
   return slug === undefined ? {} : { designMisEnAvant: slug };
 }
 
+function apercuCase(meta: MetaRegistre): Pick<EntreeIndex, 'apercuCase'> {
+  const dimensions = meta.categorie === 'design' ? undefined : meta.apercuCase;
+  return dimensions === undefined ? {} : { apercuCase: dimensions };
+}
+
 function versEntree(meta: MetaRegistre): EntreeIndex {
   return {
     slug: meta.slug,
     categorie: meta.categorie,
     ...champsPropres(meta),
     ...designMisEnAvant(meta),
+    ...apercuCase(meta),
     titre: meta.titre,
     description: meta.description,
     secteurs: meta.secteurs,

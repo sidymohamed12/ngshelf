@@ -6,6 +6,7 @@
     class="ngs-vignette__cadre"
     [style.width.px]="dimensions().largeur"
     [style.height.px]="dimensions().hauteur"
+    [style.top.px]="decalageHaut()"
     [style.transform]="'scale(' + dimensions().echelle + ')'"
   >
     <iframe

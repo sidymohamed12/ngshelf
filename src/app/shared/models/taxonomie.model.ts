@@ -109,3 +109,14 @@ export type Secteur = (typeof SECTEURS)[number];
  */
 export const TAILLES_CASE = ['normale', 'large', 'haute', 'large-haute'] as const;
 export type TailleCase = (typeof TAILLES_CASE)[number];
+
+/**
+ * Taille de rendu de l'aperçu d'une case, en pixels (largeur × hauteur de l'iframe, marge de 16 px comprise) :
+ * la case prend ce rapport et l'aperçu est mis à l'échelle pour la remplir, sans rien couper ni laisser de vide.
+ */
+export interface ApercuCase {
+  readonly largeur: number;
+  readonly hauteur: number;
+}
+/** Bornes acceptées pour `apercuCase` : au-dessous, un aperçu illisible ; au-dessus, une case démesurée. */
+export const BORNES_APERCU_CASE = { min: 240, max: 1600 } as const;

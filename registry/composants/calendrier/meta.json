@@ -19,7 +19,8 @@
     "moments": ["changement"],
     "technique": "[animate.enter] d’Angular sur la grille du mois, @keyframes CSS"
   },
-  "tailleCase": "large-haute",
+  "tailleCase": "normale",
+  "apercuCase": { "largeur": 520, "hauteur": 454 },
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

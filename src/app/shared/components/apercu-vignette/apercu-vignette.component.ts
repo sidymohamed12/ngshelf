@@ -20,6 +20,7 @@ import { ThemeService } from '@core/theme/theme.service';
 import { lireMessageVersSite, messageReglages, vientDeLApercu } from '@shared/apercu/protocole';
 import { ecrireRechercheApercu } from '@shared/apercu/reglages-url';
 import { ValeursContrat } from '@shared/livraison/livraison';
+import { ApercuCase } from '@shared/models/taxonomie.model';
 import { IconeComponent } from '../icone/icone.component';
 import { NomIcone } from '../icone/icones';
 
@@ -58,8 +59,17 @@ export function urlVignette(options: {
 export function dimensionsVignette(
   largeur: number,
   hauteur: number,
+  reference?: ApercuCase,
 ): { readonly largeur: number; readonly hauteur: number; readonly echelle: number } {
   if (largeur <= 0 || hauteur <= 0) return { largeur: 0, hauteur: 0, echelle: 1 };
+  // Taille de rendu déclarée (ADR 0023) : l'aperçu garde ses dimensions et rétrécit pour remplir la case.
+  if (reference) {
+    return {
+      largeur: reference.largeur,
+      hauteur: reference.hauteur,
+      echelle: largeur / reference.largeur,
+    };
+  }
   const largeurIframe = Math.max(largeur, LARGEUR_NOMINALE_PX);
   const echelle = largeur / largeurIframe;
   return { largeur: largeurIframe, hauteur: hauteur / echelle, echelle };
@@ -105,6 +115,8 @@ export class ApercuVignetteComponent {
    * l'habillage de l'accueil et les témoins du contrat. Absentes, l'aperçu garde le design de l'adresse.
    */
   readonly reglages = input<ValeursContrat>();
+  /** Taille de rendu de la ressource (meta.json) : l'aperçu la garde et rétrécit, centré dans la case. */
+  readonly apercuCase = input<ApercuCase>();
   /** Faux : les animations de la ressource sont coupées (interrupteur « Animations » de À propos). Le mouvement réduit les coupe toujours. */
   readonly animations = input(true);
   /** Vrai : aperçu manipulable avec son bouton « Manipuler l'aperçu » ; faux : décor sans interaction. */
@@ -134,8 +146,14 @@ export class ApercuVignetteComponent {
   #urlChargee = '';
 
   protected readonly dimensions = computed(() =>
-    dimensionsVignette(this.#disponible().largeur, this.#disponible().hauteur),
+    dimensionsVignette(this.#disponible().largeur, this.#disponible().hauteur, this.apercuCase()),
   );
+  /** Avec une taille déclarée, l'aperçu est centré si la case est plus haute (rangée étirée par sa voisine). */
+  protected readonly decalageHaut = computed(() => {
+    if (!this.apercuCase()) return 0;
+    const d = this.dimensions();
+    return Math.max(0, Math.round((this.#disponible().hauteur - d.hauteur * d.echelle) / 2));
+  });
   protected readonly url = computed(() =>
     urlVignette({
       slug: this.slug(),

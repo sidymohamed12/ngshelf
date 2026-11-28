@@ -23,7 +23,8 @@
       "sortie": "hero-sortie"
     }
   },
-  "tailleCase": "large-haute",
+  "tailleCase": "large",
+  "apercuCase": { "largeur": 720, "hauteur": 394 },
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

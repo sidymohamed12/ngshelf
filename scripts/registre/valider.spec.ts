@@ -115,6 +115,25 @@ describe('validerRegistre', () => {
     expect(valider(ressource({ motion }))).toEqual([]);
   });
 
+  it('accepte une taille de rendu d’aperçu de case', () => {
+    expect(valider(ressource({ apercuCase: { largeur: 960, hauteur: 540 } }))).toEqual([]);
+  });
+
+  it('refuse une taille de rendu d’aperçu hors bornes, incomplète ou inconnue', () => {
+    expect(valider(ressource({ apercuCase: { largeur: 100, hauteur: 540 } }))).toEqual([
+      expect.stringContaining('« apercuCase.largeur » doit être un entier de 240 à 1600'),
+    ]);
+    expect(valider(ressource({ apercuCase: { largeur: 960 } }))).toEqual([
+      expect.stringContaining('« apercuCase.hauteur »'),
+    ]);
+    expect(valider(ressource({ apercuCase: { largeur: 960, hauteur: 540, ratio: 2 } }))).toEqual([
+      expect.stringContaining('champ inconnu « ratio »'),
+    ]);
+    expect(valider(ressource({ apercuCase: '16/9' }))).toEqual([
+      expect.stringContaining('« apercuCase » doit être'),
+    ]);
+  });
+
   it('refuse une taille de case inconnue', () => {
     expect(valider(ressource({ tailleCase: 'geante' }))).toEqual([
       expect.stringContaining(

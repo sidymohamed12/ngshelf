@@ -20,6 +20,7 @@
     "technique": "transition CSS sur ::details-content (interpolate-size), @keyframes"
   },
   "tailleCase": "large",
+  "apercuCase": { "largeur": 720, "hauteur": 330 },
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

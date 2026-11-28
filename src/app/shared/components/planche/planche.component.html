@@ -45,7 +45,12 @@
   <ul class="ngs-planche m-0 list-none p-0" [class.catalogue-grille]="avecFacettes()">
     @for (ressource of cases(); track ressource.entree.slug) {
       <li class="ngs-case" [class]="ressource.classes" [attr.data-slug]="ressource.entree.slug">
-        <div class="ngs-case__stage" [attr.aria-hidden]="ressource.apercu ? null : 'true'">
+        <div
+          class="ngs-case__stage"
+          [class.ngs-case__stage--ratio]="ressource.entree.apercuCase"
+          [style.aspect-ratio]="ressource.ratio"
+          [attr.aria-hidden]="ressource.apercu ? null : 'true'"
+        >
           @if (ressource.apercu) {
             @defer (on viewport) {
               <app-apercu-vignette
@@ -53,6 +58,7 @@
                 [titre]="ressource.entree.titre.fr"
                 [icone]="ressource.icone"
                 [design]="ressource.entree.designMisEnAvant"
+                [apercuCase]="ressource.entree.apercuCase"
                 [reglages]="reglages()[ressource.entree.slug]"
                 [interactif]="true"
               />

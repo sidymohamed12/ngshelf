@@ -94,7 +94,8 @@
       "defaut": true
     }
   ],
-  "tailleCase": "large-haute",
+  "tailleCase": "large",
+  "apercuCase": { "largeur": 720, "hauteur": 592 },
   "variantes": ["tailwind", "css"],
   "angularMin": "22.0",
   "licence": "MIT",

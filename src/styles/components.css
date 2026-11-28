@@ -297,6 +297,8 @@
     overflow: hidden;
   }
   .ngs-case__stage > * { max-width: 100%; min-width: 0; }
+  /* Taille de rendu déclarée (ADR 0023) : la hauteur vient du rapport (aspect-ratio en ligne), pas d'un minimum. */
+  .ngs-case__stage--ratio { min-height: 0; flex: 1 0 auto; }
 
   /* ---------- Aperçu vivant d'une case (ADR 0015) : l'iframe est rendue à une largeur de test puis réduite ---------- */
   .ngs-vignette { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; }

@@ -48,6 +48,12 @@ describe('dimensionsVignette', () => {
     expect(dimensionsVignette(900, 300)).toEqual({ largeur: 900, hauteur: 300, echelle: 1 });
   });
 
+  it('avec une taille déclarée, garde ses dimensions et remplit la case sans rien couper', () => {
+    const d = dimensionsVignette(480, 270, { largeur: 960, hauteur: 540 });
+    expect(d).toEqual({ largeur: 960, hauteur: 540, echelle: 0.5 });
+    expect(d.hauteur * d.echelle).toBe(270);
+  });
+
   it('renvoie des dimensions nulles tant que la case n’est pas mesurée', () => {
     expect(dimensionsVignette(0, 0)).toEqual({ largeur: 0, hauteur: 0, echelle: 1 });
   });

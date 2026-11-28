@@ -21,6 +21,8 @@ import { ICONE_CATEGORIE, ICONE_SECTEUR, classeCategorie } from '@shared/utils/t
 const CASES_CHARGEMENT = [1, 2, 3, 4, 5, 6] as const;
 
 interface CaseRessource {
+  /** Valeur CSS d'`aspect-ratio` de la scène quand la ressource déclare la taille de son aperçu. */
+  readonly ratio: string | null;
   readonly entree: EntreeIndex;
   /** Classes de la case : couleur de famille et taille (registre). */
   readonly classes: string;
@@ -76,6 +78,9 @@ export class PlancheComponent {
       entree,
       classes: `${classeCategorie(entree.categorie)} ${CLASSES_TAILLE_CASE[entree.tailleCase]}`,
       icone: ICONE_CATEGORIE[entree.categorie],
+      ratio: entree.apercuCase
+        ? `${entree.apercuCase.largeur} / ${entree.apercuCase.hauteur}`
+        : null,
       libelle: entree.type
         ? LIBELLES_TYPE[entree.type]
         : LIBELLES_CATEGORIE[entree.categorie].singulier,

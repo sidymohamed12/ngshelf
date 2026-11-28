@@ -4,6 +4,7 @@ import { validerParametres } from './valider-parametres.ts';
 import { validerSources } from './valider-sources.ts';
 import { MOMENTS } from '../../src/app/shared/models/motion.model.ts';
 import {
+  BORNES_APERCU_CASE,
   CATEGORIES,
   SECTEURS,
   SEGMENT_CATEGORIE,
@@ -80,6 +81,7 @@ const CLES_RESSOURCE = [
   'motion',
   'parametres',
   'tailleCase',
+  'apercuCase',
   'modifieLe',
   'anciensChemins',
 ];
@@ -256,8 +258,27 @@ function validerMotion(meta: Objet, rapport: Rapport): void {
   }
 }
 
+function validerApercuCase(valeur: unknown, rapport: Rapport): void {
+  const { min, max } = BORNES_APERCU_CASE;
+  if (!estObjet(valeur)) {
+    rapport.signaler('« apercuCase » doit être { "largeur": …, "hauteur": … } en pixels');
+    return;
+  }
+  for (const cle of ['largeur', 'hauteur']) {
+    const nombre = valeur[cle];
+    if (!Number.isInteger(nombre) || (nombre as number) < min || (nombre as number) > max) {
+      rapport.signaler(`« apercuCase.${cle} » doit être un entier de ${min} à ${max}`);
+    }
+  }
+  for (const cle of Object.keys(valeur)) {
+    if (cle !== 'largeur' && cle !== 'hauteur')
+      rapport.signaler(`« apercuCase » : champ inconnu « ${cle} »`);
+  }
+}
+
 function validerOptionsPlanche(meta: Objet, rapport: Rapport): void {
   validerMotion(meta, rapport);
+  if (meta['apercuCase'] !== undefined) validerApercuCase(meta['apercuCase'], rapport);
   if (meta['tailleCase'] !== undefined && !inclus(TAILLES_CASE, meta['tailleCase'])) {
     rapport.signaler(`« tailleCase » doit être l'une de : ${TAILLES_CASE.join(', ')}`);
   }
