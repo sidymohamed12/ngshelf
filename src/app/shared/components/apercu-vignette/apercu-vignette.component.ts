@@ -95,6 +95,8 @@ export class ApercuVignetteComponent {
    * l'habillage de l'accueil et les témoins du contrat. Absentes, l'aperçu garde le design de l'adresse.
    */
   readonly reglages = input<ValeursContrat>();
+  /** Faux : les animations de la ressource sont coupées (interrupteur « Animations » de À propos). Le mouvement réduit les coupe toujours. */
+  readonly animations = input(true);
 
   protected readonly etat = signal<EtatVignette>('veille');
   protected readonly textes = TEXTES.vignette;
@@ -124,7 +126,7 @@ export class ApercuVignetteComponent {
       slug: this.slug(),
       design: this.design(),
       mode: this.#mode(),
-      animations: !this.#mouvementReduit(),
+      animations: this.animations() && !this.#mouvementReduit(),
     }),
   );
   protected readonly titreIframe = computed(() => this.textes.iframe(this.titre()));
@@ -192,7 +194,11 @@ export class ApercuVignetteComponent {
     if (!vars || !fenetre || this.etat() !== 'pret') return;
     // Origine opaque (sandbox sans allow-same-origin) : '*' est le seul targetOrigin possible, rien de secret.
     fenetre.postMessage(
-      messageReglages({ vars, mode: this.#mode(), animations: !this.#mouvementReduit() }),
+      messageReglages({
+        vars,
+        mode: this.#mode(),
+        animations: this.animations() && !this.#mouvementReduit(),
+      }),
       '*',
     );
   }

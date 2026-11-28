@@ -1,4 +1,8 @@
-<section class="ngs-container grid content-start gap-6 py-16" aria-labelledby="titre">
-  <h1 class="ngs-h2 m-0 max-w-[20ch]" id="titre">{{ textes.h1 }}</h1>
-  <p class="ngs-lead m-0 max-w-prose">{{ textes.lead }}</p>
-</section>
+<app-hero-a-propos />
+<app-chiffres-a-propos [fiche]="fiche()" />
+<app-gestes-a-propos [fiche]="fiche()" [reglages]="reglagesGestes()" [nomDesign]="nomDesign()" />
+<app-pourquoi-a-propos />
+<app-pour-qui-a-propos />
+<app-comment-a-propos [fiche]="fiche()" [(point)]="pointComment" />
+<app-contribuer-a-propos />
+<app-qui-a-propos />

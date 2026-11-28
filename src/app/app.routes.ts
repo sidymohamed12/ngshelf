@@ -4,6 +4,7 @@ import { LIBELLES_CATEGORIE, LIBELLES_SECTEUR, LIBELLES_TYPE, TEXTES } from '@co
 import { SEGMENT_SECTEURS } from '@core/registre/chemins';
 import { FicheService } from '@features/ressource/services/fiche.service';
 import { ficheResolver } from '@features/ressource/services/ressource.resolver';
+import { ficheVitrineResolver } from '@shared/vitrine/donnees-vitrine';
 import {
   CATEGORIES,
   CATEGORIES_TYPEES,
@@ -83,6 +84,7 @@ export const routes: Routes = [
       {
         path: 'a-propos',
         title: TEXTES.pages.apropos.titrePage,
+        resolve: { fiche: ficheVitrineResolver },
         loadComponent: () =>
           import('@features/a-propos/pages/a-propos.component').then((m) => m.AProposComponent),
       },

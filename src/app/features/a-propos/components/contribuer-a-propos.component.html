@@ -1,0 +1,50 @@
+<section class="ngs-container ap-section" aria-labelledby="contribuer-titre" id="contribuer">
+  <div class="ap-contribuer">
+    <div class="grid content-center gap-6" data-ap-contribuer>
+      <h2 class="ngs-h2 ap-titre m-0" id="contribuer-titre">{{ t.contribuerH2 }}</h2>
+      <p class="ngs-lead m-0">{{ t.contribuerTexte }}</p>
+      <div class="flex flex-wrap gap-3">
+        @if (depot) {
+          <a class="ngs-btn" [href]="depot" target="_blank" rel="noopener">
+            <svg appIcone="github-logo"></svg><span>{{ t.contribuerCta }}</span>
+          </a>
+        }
+        <a class="ngs-btn ngs-btn--secondary" routerLink="/" fragment="contribuer">{{
+          t.contribuerCta2
+        }}</a>
+      </div>
+      @if (!depot) {
+        <p class="ngs-small ngs-muted m-0">{{ t.contribuerProvisoire }}</p>
+      }
+    </div>
+    <div class="ap-dossier" data-ap-dossier>
+      <div class="ngs-code">
+        <div class="ngs-code__bar">
+          <span class="ngs-code__file min-w-0 flex-1 truncate">{{ t.contribuerDossier }}</span>
+        </div>
+        <div class="ap-arbre">
+          <p class="ap-arbre__racine m-0">
+            <svg appIcone="package" taille="sm"></svg><span>{{ dossier.racine }}</span>
+          </p>
+          <ul class="ap-arbre__liste">
+            @for (fichier of dossier.fichiers; track fichier; let dernier = $last) {
+              <li data-ap-arbre-ligne>
+                <span class="ap-arbre__trait" aria-hidden="true">{{ dernier ? '└─' : '├─' }}</span>
+                <svg appIcone="code" taille="sm"></svg>
+                <span>{{ fichier }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+      <ol class="ap-parcours" data-ap-parcours [attr.aria-label]="t.parcours">
+        @for (etape of etapes; track etape; let i = $index) {
+          <li>
+            <span class="ap-parcours__num" aria-hidden="true">{{ i + 1 }}</span>
+            <span>{{ etape }}</span>
+          </li>
+        }
+      </ol>
+    </div>
+  </div>
+</section>

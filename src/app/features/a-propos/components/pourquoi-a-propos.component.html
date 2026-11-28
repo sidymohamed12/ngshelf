@@ -1,0 +1,16 @@
+<section class="ngs-container ap-section" aria-labelledby="pourquoi-titre">
+  <div class="grid gap-10 lg:grid-cols-12">
+    <div class="grid content-start gap-5 lg:col-span-5">
+      <h2 class="ngs-h2 ap-titre m-0" id="pourquoi-titre">{{ t.pourquoiH2 }}</h2>
+      <p class="ngs-lead m-0">{{ t.pourquoiTexte }}</p>
+    </div>
+    <dl class="ap-promesses self-end lg:col-span-6 lg:col-start-7" data-ap-promesses>
+      @for (promesse of promesses; track promesse.titre) {
+        <div>
+          <dt>{{ promesse.titre }}</dt>
+          <dd>{{ promesse.texte }}</dd>
+        </div>
+      }
+    </dl>
+  </div>
+</section>

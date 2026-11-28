@@ -67,4 +67,6 @@ export const TEXTES_APROPOS = {
   lienInstagram: $localize`:@@apropos.lien.instagram:Instagram`,
   lienTiktok: $localize`:@@apropos.lien.tiktok:TikTok`,
   lienEmail: $localize`:@@apropos.lien.email:E-mail`,
+  /** Texte alternatif de la photo de « Comment c'est fait » (JS de la maquette, ILLUSTRATION.alt) : clé ajoutée, absente de textes.fr.js. */
+  commentPhotoAlt: $localize`:@@apropos.comment.photo.alt:Ordinateur portable ouvert sur un éditeur de code et un terminal, à Lagos.`,
 } as const;

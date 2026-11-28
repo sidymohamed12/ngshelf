@@ -6,15 +6,18 @@
       [icone]="icone()"
       [design]="design()"
       [reglages]="reglages()"
+      [animations]="animations()"
     />
   } @placeholder {
     <svg [appIcone]="icone()" class="ngs-piece__icone"></svg>
   }
 </div>
-<a
-  class="ngs-etiquette"
-  [class.ngs-etiquette--droite]="coin() === 'droite'"
-  [routerLink]="chemin()"
->
-  {{ libelle() }}
-</a>
+@if (etiquette()) {
+  <a
+    class="ngs-etiquette"
+    [class.ngs-etiquette--droite]="coin() === 'droite'"
+    [routerLink]="chemin()"
+  >
+    {{ libelle() }}
+  </a>
+}

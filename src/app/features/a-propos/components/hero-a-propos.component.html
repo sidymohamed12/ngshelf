@@ -1,0 +1,43 @@
+<section class="ap-hero" aria-labelledby="apropos-titre">
+  <div class="ngs-container ap-hero__grille">
+    <div class="ap-hero__texte grid content-start gap-6" data-ap-texte>
+      <h1 class="ngs-display ap-hero__titre" id="apropos-titre">{{ page.h1 }}</h1>
+      <p class="ngs-lead m-0 max-w-[46ch]">{{ page.lead }}</p>
+      <div class="flex flex-wrap gap-3">
+        <a class="ngs-btn ngs-btn--lg" routerLink="/catalogue">{{ cta }}</a>
+        <a
+          class="ngs-btn ngs-btn--lg ngs-btn--secondary"
+          routerLink="/a-propos"
+          fragment="gestes"
+          >{{ t.heroCta2 }}</a
+        >
+      </div>
+    </div>
+    <div class="ap-apesanteur" role="group" aria-labelledby="apesanteur-titre" data-ap-apesanteur>
+      <p class="sr-only" id="apesanteur-titre">{{ t.heroPieces }}</p>
+      @for (p of pieces; track p.piece.slug) {
+        <div
+          class="ap-piece"
+          [class]="'ap-piece--' + p.classe"
+          data-ap-piece
+          [attr.data-profondeur]="p.profondeur"
+          [attr.data-rotation]="p.rotation"
+          [attr.data-depart]="p.depart.join(',')"
+        >
+          <app-piece-vitrine [piece]="p.piece" [ratio]="p.ratio" />
+        </div>
+      }
+      @for (fait of faits; track fait.classe) {
+        <span
+          class="ap-fait"
+          [class]="'ap-fait--' + fait.classe"
+          data-ap-fait
+          [attr.data-profondeur]="fait.profondeur"
+        >
+          <svg appIcone="check" taille="sm"></svg>
+          <span>{{ fait.texte }}</span>
+        </span>
+      }
+    </div>
+  </div>
+</section>

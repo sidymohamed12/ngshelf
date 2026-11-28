@@ -1,0 +1,47 @@
+<section class="ap-qui-bande" data-theme="sombre" aria-labelledby="qui-titre">
+  <div class="ngs-container ap-qui">
+    <figure class="ap-portrait" data-ap-portrait>
+      <div class="ap-portrait__cadre" data-ap-portrait-cadre>
+        <img
+          ngSrc="sidy"
+          ngSrcset="360w, 540w"
+          sizes="(min-width: 768px) 22rem, 80vw"
+          width="540"
+          height="675"
+          [alt]="nomComplet"
+          data-ap-portrait-img
+        />
+      </div>
+      <span class="ap-portrait__marque" aria-hidden="true" data-ap-marque>
+        <span class="ngs-cat-composants"></span><span class="ngs-cat-blocs"></span
+        ><span class="ngs-cat-templates"></span><span class="ngs-cat-designs"></span>
+      </span>
+    </figure>
+    <div class="grid min-w-0 content-center gap-6">
+      <div class="grid gap-3">
+        <h2 class="ngs-label ngs-muted m-0" id="qui-titre">{{ t.quiH2 }}</h2>
+        <p class="ap-nom" data-ap-nom>{{ nom }}</p>
+        <p class="ngs-lead m-0">{{ t.quiRole }}</p>
+      </div>
+      <ul class="ap-liens" data-ap-liens [attr.aria-label]="t.quiSuivre">
+        @for (lien of liens; track lien.libelle) {
+          <li>
+            <a
+              class="ap-lien"
+              [href]="lien.href"
+              [attr.target]="lien.externe ? '_blank' : null"
+              [attr.rel]="lien.externe ? 'me noopener' : null"
+            >
+              <svg [appIcone]="lien.icone" taille="lg"></svg>
+              <span class="ap-lien__texte"
+                ><strong>{{ lien.libelle }}</strong
+                ><small>{{ lien.detail }}</small></span
+              >
+              <svg appIcone="arrow-up-right" class="ap-lien__fleche"></svg>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>
