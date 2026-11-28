@@ -1,0 +1,98 @@
+<section
+  class="group/galerie grid justify-items-center gap-[calc(var(--ngs-density)*8px)] overflow-hidden bg-ngs-surface py-[calc(var(--ngs-density)*16px)] [--w:clamp(11rem,21cqw,24rem)] @max-[40rem]:[--w:58cqw] [--hc:calc(var(--w)*.8)] [--r:calc(var(--w)*1.72)] [--d:calc(var(--w)*3.3)]"
+  aria-roledescription="carrousel"
+  [attr.aria-label]="libelle()"
+  [attr.data-reflet]="reflet()"
+  (keydown)="surTouche($event)"
+  (focusin)="focaliser(true)"
+  (focusout)="focaliser(false)"
+>
+  <div
+    class="relative h-[calc(var(--hc)*2_+_4.5rem)] w-full touch-pan-y select-none [perspective-origin:50%_calc(var(--hc)*.5_+_var(--hc)/2)] [perspective:var(--d)]"
+    (pointerenter)="survoler(true)"
+    (pointerleave)="survoler(false)"
+    (pointerdown)="debutGlisse($event)"
+    (pointermove)="glisser($event)"
+    (pointerup)="finGlisse()"
+    (pointercancel)="finGlisse()"
+  >
+    <div class="absolute inset-0 [transform-style:preserve-3d]" aria-hidden="true">
+      @for (element of elements(); track $index) {
+        <button
+          #carte
+          type="button"
+          tabindex="-1"
+          class="group/carte absolute top-[calc(var(--hc)*.5)] left-1/2 -ml-[calc(var(--w)/2)] block w-(--w) cursor-pointer border-0 bg-transparent p-0 text-center font-[inherit] text-inherit opacity-[clamp(0,3_-_var(--ka),1)] will-change-transform [--k:0] [--ka:9] [transform:translateZ(var(--r))_rotateY(calc(var(--k)*-34deg))_translateZ(calc(var(--r)*-1))] data-[active=true]:cursor-default data-[visible=false]:pointer-events-none"
+          [attr.data-active]="$index === actif()"
+          (click)="choisir($index)"
+        >
+          <span
+            class="block aspect-[5/4] overflow-hidden rounded-[calc(var(--ngs-radius)*1.4)] bg-ngs-surface-alt [filter:brightness(calc(1_-_.1*var(--ka)*var(--ka)))] group-data-[reflet=true]/galerie:[-webkit-box-reflect:below_10px_linear-gradient(transparent_70%,rgb(0_0_0/.14))]"
+          >
+            <img
+              class="block size-full object-cover select-none [-webkit-user-drag:none]"
+              [src]="element.image"
+              alt=""
+              draggable="false"
+            />
+          </span>
+          <span
+            class="mt-[calc(var(--ngs-density)*18px)] grid gap-[.2rem] opacity-[clamp(0,1_-_1.15*var(--ka),1)]"
+          >
+            <span class="text-[.95rem] font-semibold text-ngs-text">{{ element.titre }}</span>
+            @if (element.legende) {
+              <span class="text-[.8rem] text-ngs-text-muted">{{ element.legende }}</span>
+            }
+          </span>
+        </button>
+      }
+    </div>
+  </div>
+  <div class="flex items-center gap-[calc(var(--ngs-density)*20px)]">
+    <button
+      type="button"
+      class="grid size-11 cursor-pointer place-items-center rounded-full border border-ngs-border bg-ngs-surface-alt p-0 text-ngs-text transition-colors duration-ngs hover:bg-ngs-border focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ngs-action"
+      [attr.aria-label]="textes.precedent"
+      [attr.aria-controls]="id"
+      (click)="precedent()"
+    >
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <path
+          d="M10 3 5 8l5 5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+    <p
+      class="m-0 min-w-18 text-center text-[.85rem] text-ngs-text-muted tabular-nums"
+      aria-hidden="true"
+    >
+      <span class="font-semibold text-ngs-text">{{ numero() }}</span> / {{ total() }}
+    </p>
+    <button
+      type="button"
+      class="grid size-11 cursor-pointer place-items-center rounded-full border border-ngs-border bg-ngs-surface-alt p-0 text-ngs-text transition-colors duration-ngs hover:bg-ngs-border focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ngs-action"
+      [attr.aria-label]="textes.suivant"
+      [attr.aria-controls]="id"
+      (click)="suivant()"
+    >
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <path
+          d="m6 3 5 5-5 5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+  </div>
+  <p class="sr-only" [attr.aria-live]="enLecture() ? 'off' : 'polite'" [id]="id">
+    {{ annonce() }}
+  </p>
+</section>

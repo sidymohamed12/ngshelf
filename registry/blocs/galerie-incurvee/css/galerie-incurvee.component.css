@@ -1,0 +1,156 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+  width: 100%;
+  container-type: inline-size;
+  font-family: var(--ngs-font-family, system-ui, sans-serif);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+/*
+  Les cartes sont posées sur l'intérieur d'un cylindre de rayon --r, vu à la distance --d (mesures prises
+  sur le modèle : rayon 1,72 et distance 3,3 largeurs de carte, 34° entre deux cartes, ce qui laisse le même
+  petit écart entre toutes les cartes). Chaque carte lit --k, sa place (0 au centre, négative à gauche, à
+  virgule pendant le mouvement), et --ka, sa distance au centre ; le composant les écrit à chaque image.
+*/
+.galerie {
+  --w: clamp(11rem, 21cqw, 24rem);
+  --hc: calc(var(--w) * 0.8);
+  --r: calc(var(--w) * 1.72);
+  --d: calc(var(--w) * 3.3);
+  display: grid;
+  justify-items: center;
+  gap: calc(var(--ngs-density, 1) * 8px);
+  padding-block: calc(var(--ngs-density, 1) * 16px);
+  overflow: hidden;
+  background: var(--ngs-color-surface, #ffffff);
+}
+@container (max-width: 40rem) {
+  .galerie {
+    --w: 58cqw;
+  }
+}
+.galerie__scene {
+  position: relative;
+  width: 100%;
+  height: calc(var(--hc) * 2 + 4.5rem);
+  perspective: var(--d);
+  perspective-origin: 50% calc(var(--hc) * 0.5 + var(--hc) / 2);
+  touch-action: pan-y;
+  user-select: none;
+}
+.galerie__piste {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.galerie__carte {
+  --k: 0;
+  --ka: 9;
+  position: absolute;
+  top: calc(var(--hc) * 0.5);
+  left: 50%;
+  display: block;
+  width: var(--w);
+  margin: 0 0 0 calc(var(--w) / -2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  opacity: clamp(0, 3 - var(--ka), 1);
+  transform: translateZ(var(--r)) rotateY(calc(var(--k) * -34deg)) translateZ(calc(var(--r) * -1));
+  will-change: transform;
+}
+.galerie__carte[data-active='true'] {
+  cursor: default;
+}
+.galerie__carte[data-visible='false'] {
+  pointer-events: none;
+}
+.galerie__cadre {
+  display: block;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  border-radius: calc(var(--ngs-radius, 10px) * 1.4);
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+  filter: brightness(calc(1 - 0.1 * var(--ka) * var(--ka)));
+}
+.galerie[data-reflet='true'] .galerie__cadre {
+  -webkit-box-reflect: below 10px linear-gradient(transparent 70%, rgb(0 0 0 / 0.14));
+}
+.galerie__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* Le titre et la légende suivent leur carte et s'effacent à mesure qu'elle quitte le centre. */
+.galerie__legende {
+  display: grid;
+  gap: 0.2rem;
+  margin-top: calc(var(--ngs-density, 1) * 18px);
+  opacity: clamp(0, 1 - 1.15 * var(--ka), 1);
+}
+.galerie__titre {
+  color: var(--ngs-color-text, #0b0b0c);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.galerie__sous-titre {
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-size: 0.8rem;
+}
+.galerie__commandes {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--ngs-density, 1) * 20px);
+}
+.galerie__fleche {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--ngs-color-border, #d4d4d8);
+  border-radius: 999px;
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+  color: var(--ngs-color-text, #0b0b0c);
+  cursor: pointer;
+  transition: background-color var(--ngs-duration, 160ms) ease;
+}
+.galerie__fleche:hover {
+  background: var(--ngs-color-border, #d4d4d8);
+}
+.galerie__fleche:focus-visible {
+  outline: 2px solid var(--ngs-color-action, #0b0b0c);
+  outline-offset: 3px;
+}
+.galerie__compteur {
+  min-width: 4.5rem;
+  margin: 0;
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.galerie__compteur-actif {
+  color: var(--ngs-color-text, #0b0b0c);
+  font-weight: 600;
+}
+.galerie__annonce {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

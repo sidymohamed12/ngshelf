@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "slug": "galerie-incurvee",
+  "categorie": "bloc",
+  "type": "galerie",
+  "titre": {
+    "fr": "Galerie incurvée"
+  },
+  "description": {
+    "fr": "Des images sur l'intérieur d'un cylindre, la carte active au centre avec son titre, un reflet au sol. Défilement automatique lent, flèches, glissé."
+  },
+  "secteurs": ["creatif", "immobilier"],
+  "tags": ["galerie", "carrousel", "3d", "perspective", "cylindre", "reflet"],
+  "contratTokens": 1,
+  "motion": {
+    "resume": {
+      "fr": "Sans interaction, le cylindre tourne lentement et en continu ; les titres apparaissent et s'effacent selon la distance au centre. Une flèche ou un clic l'amène en douceur sur l'image voulue ; il s'arrête au survol et reprend progressivement."
+    },
+    "moments": ["changement", "survol"],
+    "technique": "CSS 3D (perspective, translateZ, rotateY) lu dans --k et --ka, écrites à chaque image par une boucle requestAnimationFrame (défilement, transitions, glissé) ; -webkit-box-reflect pour le reflet ; aucune bibliothèque"
+  },
+  "parametres": [
+    {
+      "nom": "defilementAuto",
+      "genre": "interrupteur",
+      "libelle": {
+        "fr": "Défilement automatique"
+      },
+      "defaut": true
+    },
+    {
+      "nom": "vitesse",
+      "genre": "nombre",
+      "libelle": {
+        "fr": "Durée par image"
+      },
+      "min": 3,
+      "max": 15,
+      "pas": 1,
+      "unite": "s",
+      "defaut": 7
+    },
+    {
+      "nom": "reflet",
+      "genre": "interrupteur",
+      "libelle": {
+        "fr": "Reflet au sol"
+      },
+      "defaut": true
+    }
+  ],
+  "rendu": "grand-ecran",
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-28",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

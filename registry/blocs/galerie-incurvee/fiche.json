@@ -1,0 +1,53 @@
+{
+  "usage": "<ngs-galerie-incurvee\n  libelle=\"Nos réalisations\"\n  [elements]=\"[\n    { image: '/images/patio.webp', titre: 'Patio', legende: 'Deux pins, un mur' },\n    { image: '/images/treillis.webp', titre: 'Treillis', legende: 'Une façade qui grimpe dans le bleu' }\n  ]\"\n  (changement)=\"surChangement($event)\"\n/>",
+  "api": [
+    {
+      "nom": "elements",
+      "type": "input.required<readonly ElementGalerie[]>()",
+      "defaut": "—",
+      "role": "Images de la galerie : { image, titre, legende? }. Les images sont décoratives ; le titre et la légende de l’image active sont annoncés aux lecteurs d’écran. Six images au moins pour une boucle sans à-coup."
+    },
+    {
+      "nom": "libelle",
+      "type": "input<string>()",
+      "defaut": "'Galerie'",
+      "role": "Nom de la galerie pour les lecteurs d’écran."
+    },
+    {
+      "nom": "depart",
+      "type": "input<number>()",
+      "defaut": "0",
+      "role": "Image active au départ (à partir de 0)."
+    },
+    {
+      "nom": "defilementAuto",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Défilement automatique, lent et continu, quand personne n’interagit. Il s’arrête au survol, au focus clavier et pendant un glissé, puis reprend progressivement après 2,5 s."
+    },
+    {
+      "nom": "vitesse",
+      "type": "input<number>()",
+      "defaut": "7",
+      "role": "Durée du défilement automatique d’une image à la suivante, en secondes."
+    },
+    {
+      "nom": "reflet",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Reflet des images au sol (Chrome, Edge et Safari ; ignoré ailleurs)."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : changements immédiats et pas de défilement automatique (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    },
+    {
+      "nom": "changement",
+      "type": "output<number>()",
+      "defaut": "—",
+      "role": "Émis avec l’index de la nouvelle image au centre (défilement automatique compris)."
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+<section
+  class="galerie"
+  aria-roledescription="carrousel"
+  [attr.aria-label]="libelle()"
+  [attr.data-reflet]="reflet()"
+  (keydown)="surTouche($event)"
+  (focusin)="focaliser(true)"
+  (focusout)="focaliser(false)"
+>
+  <div
+    class="galerie__scene"
+    (pointerenter)="survoler(true)"
+    (pointerleave)="survoler(false)"
+    (pointerdown)="debutGlisse($event)"
+    (pointermove)="glisser($event)"
+    (pointerup)="finGlisse()"
+    (pointercancel)="finGlisse()"
+  >
+    <div class="galerie__piste" aria-hidden="true">
+      @for (element of elements(); track $index) {
+        <button
+          #carte
+          type="button"
+          tabindex="-1"
+          class="galerie__carte"
+          [attr.data-active]="$index === actif()"
+          (click)="choisir($index)"
+        >
+          <span class="galerie__cadre">
+            <img class="galerie__image" [src]="element.image" alt="" draggable="false" />
+          </span>
+          <span class="galerie__legende">
+            <span class="galerie__titre">{{ element.titre }}</span>
+            @if (element.legende) {
+              <span class="galerie__sous-titre">{{ element.legende }}</span>
+            }
+          </span>
+        </button>
+      }
+    </div>
+  </div>
+  <div class="galerie__commandes">
+    <button
+      type="button"
+      class="galerie__fleche"
+      [attr.aria-label]="textes.precedent"
+      [attr.aria-controls]="id"
+      (click)="precedent()"
+    >
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <path
+          d="M10 3 5 8l5 5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+    <p class="galerie__compteur" aria-hidden="true">
+      <span class="galerie__compteur-actif">{{ numero() }}</span> / {{ total() }}
+    </p>
+    <button
+      type="button"
+      class="galerie__fleche"
+      [attr.aria-label]="textes.suivant"
+      [attr.aria-controls]="id"
+      (click)="suivant()"
+    >
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <path
+          d="m6 3 5 5-5 5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+  </div>
+  <p class="galerie__annonce" [attr.aria-live]="enLecture() ? 'off' : 'polite'" [id]="id">
+    {{ annonce() }}
+  </p>
+</section>
