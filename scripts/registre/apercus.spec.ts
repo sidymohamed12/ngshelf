@@ -39,12 +39,11 @@ const DESIGN = {
 } as unknown as DesignContrat;
 
 describe('construireApercus', () => {
-  const sorties = construireApercus(
-    [{ slug: 'barre', avecMotion: true, fichiers: FICHIERS }],
-    DESIGN,
-    '/* pont */',
-    'NgShelf',
-  );
+  const sorties = construireApercus([{ slug: 'barre', avecMotion: true, fichiers: FICHIERS }], {
+    design: DESIGN,
+    pont: '/* pont */',
+    nomSite: 'NgShelf',
+  });
 
   it('assemble les fichiers de la variante Tailwind, tels que livrés, et la scène', () => {
     expect([...sorties.keys()].sort()).toEqual([
@@ -73,6 +72,28 @@ describe('construireApercus', () => {
     expect(scenes).toContain(
       "'barre': () => import('./barre/demo/demo.component').then((m) => m.DemoComponent),",
     );
+  });
+
+  it('déclare les paramètres réglables par ressource, et seulement ceux des ressources qui en ont', () => {
+    const avec = construireApercus(
+      [
+        {
+          slug: 'barre',
+          avecMotion: false,
+          fichiers: FICHIERS,
+          parametres: [
+            { nom: 'legendes', genre: 'interrupteur', libelle: { fr: 'Légendes' }, defaut: true },
+          ],
+        },
+        { slug: 'autre', avecMotion: false, fichiers: FICHIERS },
+      ],
+      { design: DESIGN, pont: '', nomSite: 'NgShelf' },
+    );
+    const scenes = avec.get('scenes.ts') ?? '';
+    expect(scenes).toContain('export const PARAMETRES_APERCUS');
+    expect(scenes).toContain('\'barre\': [{"nom":"legendes"');
+    expect(scenes).not.toContain("'autre': [{");
+    expect(sorties.get('scenes.ts')).toContain('PARAMETRES_APERCUS');
   });
 
   it('charge le même tokens.css et le même pont que ceux livrés', () => {

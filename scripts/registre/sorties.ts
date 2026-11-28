@@ -26,11 +26,17 @@ function champsPropres(meta: MetaRegistre): Pick<EntreeIndex, 'type' | 'animee' 
   };
 }
 
+function designMisEnAvant(meta: MetaRegistre): Pick<EntreeIndex, 'designMisEnAvant'> {
+  const slug = meta.categorie === 'design' ? undefined : meta.designsMisEnAvant?.[0];
+  return slug === undefined ? {} : { designMisEnAvant: slug };
+}
+
 function versEntree(meta: MetaRegistre): EntreeIndex {
   return {
     slug: meta.slug,
     categorie: meta.categorie,
     ...champsPropres(meta),
+    ...designMisEnAvant(meta),
     titre: meta.titre,
     description: meta.description,
     secteurs: meta.secteurs,

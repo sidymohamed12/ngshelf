@@ -1,0 +1,52 @@
+<div
+  #racine
+  class="extensible"
+  [attr.data-defilement]="defilement()"
+  [style.--ngs-defil]="distance()"
+  [style.--ngs-pause]="maintien()"
+  [style.--ngs-lg]="largeurDepart()"
+  [style.--ngs-ht]="hauteurDepart()"
+  [style.--ngs-zoom]="zoomDepart()"
+  [style.--ngs-voile]="voile()"
+>
+  <div #piste class="extensible__piste">
+    <div #scene class="extensible__scene">
+      <div class="extensible__cadre">
+        @if (typeMedia() === 'video') {
+          <video
+            class="extensible__media"
+            [src]="src()"
+            [poster]="poster()"
+            [attr.aria-label]="alt() || null"
+            autoplay
+            muted
+            loop
+            playsinline
+          ></video>
+        } @else {
+          <img class="extensible__media" [src]="src()" [alt]="alt()" draggable="false" />
+        }
+        <div class="extensible__voile"></div>
+        <div class="extensible__contenu" [attr.inert]="contenuVisible() ? null : ''">
+          <ng-content />
+        </div>
+      </div>
+      @if (titre()) {
+        @if (niveauTitre() === 1) {
+          <h1 class="extensible__titre">
+            <span class="extensible__plaque">{{ titre() }}</span>
+          </h1>
+        } @else {
+          <h2 class="extensible__titre">
+            <span class="extensible__plaque">{{ titre() }}</span>
+          </h2>
+        }
+      }
+      @if (indice()) {
+        <p class="extensible__indice" aria-hidden="true">
+          {{ indice() }}
+        </p>
+      }
+    </div>
+  </div>
+</div>

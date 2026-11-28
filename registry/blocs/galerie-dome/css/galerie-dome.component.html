@@ -1,0 +1,85 @@
+<div
+  #scene
+  class="dome"
+  role="group"
+  [attr.aria-label]="libelle()"
+  [attr.data-gris]="nuancesDeGris()"
+  [style.height.px]="hauteur()"
+  [style.--ngs-segments]="segments()"
+  [style.--ngs-rayon.px]="rayon()"
+  [style.--ngs-marge.px]="marge()"
+  [style.--ngs-taille-ouverte.px]="tailleOuverte()"
+  [style.--ngs-rx.deg]="rotation().x"
+  [style.--ngs-ry.deg]="rotation().y"
+>
+  <div class="dome__principal" (pointerdown)="glisserDebut($event)">
+    <div class="dome__scene" aria-hidden="true">
+      <div class="dome__sphere">
+        @for (tuile of tuiles(); track $index) {
+          <div class="dome__tuile" [style.--ngs-ox]="tuile.x" [style.--ngs-oy]="tuile.y">
+            <button
+              class="dome__image"
+              type="button"
+              tabindex="-1"
+              (click)="ouvrir($event, tuile.image)"
+            >
+              <img
+                class="dome__vignette"
+                [src]="tuile.image.src"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="dome__voile"></div>
+    <div class="dome__flou"></div>
+    <div class="dome__bord dome__bord--haut"></div>
+    <div class="dome__bord dome__bord--bas"></div>
+  </div>
+  <ul class="dome__acces">
+    @for (image of distinctes(); track image.src) {
+      <li>
+        <button type="button" (click)="ouvrir($event, image)">{{ image.alt }}</button>
+      </li>
+    }
+  </ul>
+  @if (ouverte(); as agrandissement) {
+    <div class="dome__visionneuse" (keydown.escape)="fermer()">
+      <button
+        class="dome__fond"
+        type="button"
+        aria-label="Fermer l’image"
+        (click)="fermer()"
+      ></button>
+      <figure
+        #agrandie
+        class="dome__agrandie"
+        role="dialog"
+        aria-modal="true"
+        tabindex="-1"
+        [attr.aria-label]="agrandissement.image.alt"
+      >
+        <img
+          class="dome__photo"
+          [src]="agrandissement.image.src"
+          [alt]="agrandissement.image.alt"
+        />
+        <button class="dome__fermer" type="button" aria-label="Fermer" (click)="fermer()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="m6 6 12 12M18 6 6 18"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </figure>
+    </div>
+  }
+</div>

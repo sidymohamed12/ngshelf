@@ -1,0 +1,71 @@
+{
+  "usage": "<ngs-galerie-dome\n  libelle=\"Portfolio\"\n  [images]=\"images\"\n  [hauteur]=\"560\"\n  [tailleOuverte]=\"400\"\n/>\n\n// images : { src, alt }[] (une dizaine suffit : elles se répètent sur le dôme)\nimages = [\n  { src: '/images/a.webp', alt: 'Description de l’image.' },\n];",
+  "api": [
+    {
+      "nom": "images",
+      "type": "input.required<readonly ImageDome[]>()",
+      "defaut": "—",
+      "role": "Les images : src et alt, obligatoires. Elles se répartissent sur 5 tuiles par colonne, sans voisines identiques."
+    },
+    {
+      "nom": "libelle",
+      "type": "input<string>()",
+      "defaut": "'Galerie en dôme'",
+      "role": "Nom accessible de la galerie."
+    },
+    {
+      "nom": "hauteur",
+      "type": "input<number>()",
+      "defaut": "560",
+      "role": "Hauteur du dôme en pixels."
+    },
+    {
+      "nom": "segments",
+      "type": "input<number>()",
+      "defaut": "35",
+      "role": "Nombre de colonnes de tuiles sur le tour du dôme (8 au minimum) : plus il est grand, plus les tuiles sont petites."
+    },
+    {
+      "nom": "ajustement",
+      "type": "input<number>()",
+      "defaut": "0.5",
+      "role": "Taille du dôme par rapport à la largeur du composant, bornée entre 0,3 et 1."
+    },
+    {
+      "nom": "sensibilite",
+      "type": "input<number>()",
+      "defaut": "20",
+      "role": "Pixels de glisser pour un degré de rotation : plus c’est grand, plus la rotation est lente."
+    },
+    {
+      "nom": "amortissement",
+      "type": "input<number>()",
+      "defaut": "0.8",
+      "role": "Durée de l’inertie après un lancer (0 = s’arrête net, 1 = glisse longtemps)."
+    },
+    {
+      "nom": "inclinaisonMax",
+      "type": "input<number>()",
+      "defaut": "5",
+      "role": "Inclinaison verticale maximale du dôme, en degrés."
+    },
+    {
+      "nom": "tailleOuverte",
+      "type": "input<number>()",
+      "defaut": "400",
+      "role": "Côté de l’image agrandie, en pixels."
+    },
+    {
+      "nom": "nuancesDeGris",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "Images en nuances de gris, sur le dôme comme agrandies."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : ni inertie ni transition d’ouverture (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

@@ -44,7 +44,20 @@
     @for (ressource of cases(); track ressource.entree.slug) {
       <li class="ngs-case" [class]="ressource.classes" [attr.data-slug]="ressource.entree.slug">
         <div class="ngs-case__stage" aria-hidden="true">
-          <svg [appIcone]="ressource.icone" class="size-14 text-(--cat)"></svg>
+          @if (ressource.apercu) {
+            @defer (on viewport) {
+              <app-apercu-vignette
+                [slug]="ressource.entree.slug"
+                [titre]="ressource.entree.titre.fr"
+                [icone]="ressource.icone"
+                [design]="ressource.entree.designMisEnAvant"
+              />
+            } @placeholder {
+              <svg [appIcone]="ressource.icone" class="size-14 text-(--cat)"></svg>
+            }
+          } @else {
+            <svg [appIcone]="ressource.icone" class="size-14 text-(--cat)"></svg>
+          }
         </div>
         <div class="ngs-case__foot">
           <div class="grid min-w-0 gap-1.5">

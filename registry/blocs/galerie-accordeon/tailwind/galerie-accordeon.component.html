@@ -1,0 +1,54 @@
+<ul
+  #liste
+  class="group/galerie m-0 flex h-[calc(var(--ngs-hauteur)*1px)] list-none gap-ngs-2 p-0 [--axe:100cqw] [perspective:1400px] data-[orientation=vertical]:h-[calc(var(--ngs-hauteur)*1.6px)] data-[orientation=vertical]:flex-col data-[orientation=vertical]:[--axe:calc(var(--ngs-hauteur)*1.6px)]"
+  [attr.aria-label]="libelle()"
+  [attr.data-orientation]="orientationEffective()"
+  [attr.data-gris]="nuancesDeGris()"
+  [style.--ngs-hauteur]="hauteur()"
+  [style.--ngs-ratio]="ratio()"
+  [style.--ngs-parallaxe]="parallaxe()"
+>
+  @for (panneau of panneaux(); track $index; let i = $index) {
+    <li
+      class="group/element relative min-h-0 min-w-0 flex-[1_1_0] overflow-hidden rounded-[calc(var(--ngs-radius)*1.6)] bg-ngs-surface-alt shadow-[inset_0_0_0_1px_var(--color-ngs-border)] [transform-style:preserve-3d] [transform:rotateY(calc(var(--ngs-incl)*1deg))] group-data-[orientation=vertical]/galerie:[transform:rotateX(calc(var(--ngs-incl)*-1deg))] motion-safe:transition-[flex-grow,transform] motion-safe:duration-[calc(var(--ngs-duration)*3.75)] motion-safe:ease-[cubic-bezier(.22,1,.36,1)] in-[.ngs-sans-animation]:transition-none!"
+      [attr.data-actif]="panneau.ouvert"
+      [style.flex-grow]="panneau.croissance"
+      [style.--ngs-incl]="panneau.inclinaison"
+      [style.--ngs-derive]="panneau.derive"
+    >
+      <button
+        class="absolute inset-0 m-0 block cursor-pointer border-0 bg-transparent p-0 text-left text-inherit [font:inherit] focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ngs-action"
+        type="button"
+        [attr.aria-expanded]="panneau.ouvert"
+        [attr.tabindex]="panneau.ouvert ? 0 : -1"
+        (click)="ouvrir(i)"
+        (pointerenter)="survoler(i)"
+        (focus)="ouvrir(i)"
+        (keydown)="touche($event)"
+      >
+        <span
+          class="absolute top-0 bottom-0 left-1/2 block w-[max(8.75rem,calc(var(--axe)*var(--ngs-ratio)*1.22))] [translate:calc(-50%+var(--ngs-derive)*var(--ngs-parallaxe)*var(--axe)*var(--ngs-ratio)*1.22*.06)_0] group-data-[actif=false]/element:[filter:grayscale(1)_brightness(.7)] group-data-[actif=false]/element:group-data-[gris=false]/galerie:[filter:brightness(.7)] group-data-[actif=true]/element:[translate:-50%_0] group-data-[orientation=vertical]/galerie:top-1/2 group-data-[orientation=vertical]/galerie:right-0 group-data-[orientation=vertical]/galerie:bottom-auto group-data-[orientation=vertical]/galerie:left-0 group-data-[orientation=vertical]/galerie:h-[max(8.75rem,calc(var(--axe)*var(--ngs-ratio)*1.22))] group-data-[orientation=vertical]/galerie:w-auto group-data-[orientation=vertical]/galerie:[translate:0_calc(-50%+var(--ngs-derive)*var(--ngs-parallaxe)*var(--axe)*var(--ngs-ratio)*1.22*.06)] group-data-[orientation=vertical]/galerie:group-data-[actif=true]/element:[translate:0_-50%] motion-safe:transition-[translate,filter] motion-safe:duration-[calc(var(--ngs-duration)*3.75)] motion-safe:ease-[cubic-bezier(.22,1,.36,1)] in-[.ngs-sans-animation]:transition-none!"
+        >
+          <img
+            class="block size-full [-webkit-user-drag:none] object-cover select-none"
+            [src]="panneau.element.image"
+            [alt]="panneau.element.alt ?? panneau.element.legende ?? ''"
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+          />
+        </span>
+        @if (legendes() && panneau.element.legende) {
+          <span
+            class="pointer-events-none absolute right-ngs-5 bottom-ngs-5 left-ngs-5 flex opacity-0 [translate:-14px_0] group-data-[actif=true]/element:opacity-100 group-data-[actif=true]/element:[translate:0_0] motion-safe:transition-[opacity,translate] motion-safe:duration-[calc(var(--ngs-duration)*3)] motion-safe:ease-[cubic-bezier(.22,1,.36,1)] motion-safe:group-data-[actif=true]/element:delay-[calc(var(--ngs-duration)*1.5)] in-[.ngs-sans-animation]:transition-none!"
+          >
+            <span
+              class="max-w-full truncate rounded-ngs bg-ngs-action px-ngs-3 py-ngs-2 text-[clamp(1rem,1.4cqw+.6rem,1.4rem)] font-semibold tracking-[.01em] text-ngs-on-action"
+              >{{ panneau.element.legende }}</span
+            >
+          </span>
+        }
+      </button>
+    </li>
+  }
+</ul>

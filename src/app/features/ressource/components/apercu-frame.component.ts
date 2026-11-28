@@ -15,7 +15,7 @@ import { TEXTES } from '@core/i18n/textes.fr';
 import { TEXTES_FICHE } from '@core/i18n/textes-fiche';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import {
-  MessageReglages,
+  ReglagesEnvoyes,
   lireMessageVersSite,
   messageReglages,
   messageSortie,
@@ -57,7 +57,7 @@ export class ApercuFrameComponent {
   readonly slug = input.required<string>();
   readonly titre = input.required<string>();
   readonly largeur = input<LargeurCadre>('auto');
-  readonly reglages = input<Omit<MessageReglages, 'v' | 'type'> | null>(null);
+  readonly reglages = input<ReglagesEnvoyes | null>(null);
   /** Chaque nouvelle valeur recharge l'aperçu (rejouer l'entrée, animations changées). */
   readonly rechargement = input(0);
   /** Chaque nouvelle demande joue la sortie (classe posée sur l'hôte de la ressource). */
@@ -165,7 +165,7 @@ export class ApercuFrameComponent {
     if (reglages) this.#envoyerReglages(reglages);
   }
 
-  #envoyerReglages(reglages: Omit<MessageReglages, 'v' | 'type'>): void {
+  #envoyerReglages(reglages: ReglagesEnvoyes): void {
     this.#poster(messageReglages(reglages));
   }
 

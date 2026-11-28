@@ -2,6 +2,7 @@ import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import compteurs from '@generated/registre/compteurs.json';
 import { routes } from '../../../app.routes';
 import { TEXTES, TEXTES_CATALOGUE } from '@core/i18n/textes.fr';
 import { CHARGEUR_INDEX, ChargeurIndex, chargerIndexGenere } from '@core/registre/registre.donnees';
@@ -27,7 +28,7 @@ describe('pages de liste', () => {
     await ouvrir('/composants');
     const page = principal();
     expect(page.querySelector('h1')?.textContent).toBe('Composants');
-    expect(page.querySelectorAll('li.ngs-case')).toHaveLength(7);
+    expect(page.querySelectorAll('li.ngs-case')).toHaveLength(compteurs.categories.composant);
     const types = [...page.querySelectorAll('nav a.ngs-chip')].map((a) => a.getAttribute('href'));
     expect(types).toContain('/composants/champ');
     expect(types).not.toContain('/composants/modale');
@@ -75,6 +76,6 @@ describe('pages de liste', () => {
     echec = false;
     page.querySelector<HTMLButtonElement>('[role="alert"] button')?.click();
     await TestBed.inject(ApplicationRef).whenStable();
-    expect(page.querySelectorAll('li.ngs-case')).toHaveLength(3);
+    expect(page.querySelectorAll('li.ngs-case')).toHaveLength(compteurs.categories.bloc);
   });
 });

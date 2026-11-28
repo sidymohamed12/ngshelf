@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "slug": "media-extensible",
+  "categorie": "bloc",
+  "type": "hero",
+  "titre": {
+    "fr": "Média extensible au défilement"
+  },
+  "description": {
+    "fr": "Un cadre arrondi au centre grandit jusqu'à remplir l'écran pendant le défilement, puis le contenu apparaît sur l'image."
+  },
+  "secteurs": ["voyage", "creatif"],
+  "tags": ["hero", "défilement", "scroll", "plein-écran", "image"],
+  "contratTokens": 1,
+  "designsMisEnAvant": ["laterite"],
+  "motion": {
+    "resume": {
+      "fr": "En défilant, le cadre grandit jusqu'au plein écran et ses coins s'effacent, l'image se dézoome, le titre s'efface en montant, puis le contenu apparaît en glissant de 18 px."
+    },
+    "moments": ["ouverture"],
+    "technique": "variable CSS --ngs-p (progression du défilement, lissée en requestAnimationFrame) lue par des calc() ; clip-path, transform et opacité, aucune bibliothèque d'animation"
+  },
+  "parametres": [
+    {
+      "nom": "pilotage",
+      "genre": "choix",
+      "libelle": { "fr": "Pilotage" },
+      "options": [
+        { "valeur": "defilement", "libelle": { "fr": "Défilement" } },
+        { "valeur": "manuel", "libelle": { "fr": "Manuel" } }
+      ],
+      "defaut": "defilement"
+    },
+    {
+      "nom": "progression",
+      "genre": "nombre",
+      "libelle": { "fr": "Progression (pilotage manuel)" },
+      "min": 0,
+      "max": 1,
+      "pas": 0.05,
+      "defaut": 0.5
+    },
+    {
+      "nom": "largeurDepart",
+      "genre": "nombre",
+      "libelle": { "fr": "Largeur du cadre au départ" },
+      "min": 30,
+      "max": 70,
+      "pas": 2,
+      "unite": "%",
+      "defaut": 42
+    },
+    {
+      "nom": "hauteurDepart",
+      "genre": "nombre",
+      "libelle": { "fr": "Hauteur du cadre au départ" },
+      "min": 40,
+      "max": 80,
+      "pas": 2,
+      "unite": "%",
+      "defaut": 58
+    },
+    {
+      "nom": "zoomDepart",
+      "genre": "nombre",
+      "libelle": { "fr": "Zoom de l'image au départ" },
+      "min": 1,
+      "max": 2,
+      "pas": 0.05,
+      "defaut": 1.35
+    },
+    {
+      "nom": "voile",
+      "genre": "nombre",
+      "libelle": { "fr": "Voile sous le contenu" },
+      "min": 0,
+      "max": 1,
+      "pas": 0.05,
+      "defaut": 0.55
+    }
+  ],
+  "tailleCase": "large",
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-28",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

@@ -1,4 +1,5 @@
 import { TOKENS_CONTRAT, TokenContrat } from '../livraison/livraison';
+import { ParametresBruts, filtrerParametresBruts } from './parametres';
 
 /**
  * Protocole `postMessage` entre le site et l'aperçu isolé d'une ressource (ADR 0003 et 0010). Partagé
@@ -24,13 +25,17 @@ const CLASSES_VALIDES = /^[a-z0-9_-]+(?: [a-z0-9_-]+)*$/i;
 const LONGUEUR_MAX_CLASSES = 80;
 const HAUTEUR_MAX = 20_000;
 
-/** Site vers aperçu : design (valeurs des tokens), mode clair ou sombre, animations permises. */
+/**
+ * Site vers aperçu : design (valeurs des tokens), mode clair ou sombre, animations permises, et les
+ * paramètres propres de la ressource (ADR 0014). `params` est facultatif à la réception.
+ */
 export interface MessageReglages {
   readonly v: typeof VERSION_PROTOCOLE;
   readonly type: 'ngs-reglages';
   readonly vars: Readonly<Partial<Record<TokenContrat, string>>>;
   readonly mode: ModeApercu;
   readonly animations: boolean;
+  readonly params: ParametresBruts;
 }
 
 /** Site vers aperçu : joue la sortie en posant ces classes sur l'hôte (« Rejouer la sortie »). */
@@ -99,6 +104,7 @@ function lireReglages(m: Readonly<Record<string, unknown>>): MessageReglages | n
     vars: filtrerReglages(m['vars']),
     mode: m['mode'],
     animations: m['animations'],
+    params: filtrerParametresBruts(m['params']),
   };
 }
 
@@ -181,10 +187,13 @@ export function vientDuSite(
   );
 }
 
-export function messageReglages(
-  reglages: Readonly<Omit<MessageReglages, 'v' | 'type'>>,
-): MessageReglages {
-  return { v: VERSION_PROTOCOLE, type: 'ngs-reglages', ...reglages };
+/** Réglages à envoyer : `params` est facultatif (une ressource sans paramètre propre n'en a pas). */
+export type ReglagesEnvoyes = Omit<MessageReglages, 'v' | 'type' | 'params'> & {
+  readonly params?: ParametresBruts;
+};
+
+export function messageReglages(reglages: Readonly<ReglagesEnvoyes>): MessageReglages {
+  return { v: VERSION_PROTOCOLE, type: 'ngs-reglages', params: {}, ...reglages };
 }
 
 export function messageSortie(classes: string): MessageSortie {

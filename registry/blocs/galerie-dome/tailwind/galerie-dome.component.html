@@ -1,0 +1,113 @@
+<div
+  #scene
+  class="group/dome relative w-full overflow-hidden rounded-[calc(var(--ngs-radius)*2)] border border-ngs-border bg-ngs-surface text-ngs-text [--circ:calc(var(--ngs-rayon)*3.14)] [--cote:calc(var(--circ)/var(--ngs-segments)*2)] [--rot:calc(180deg/var(--ngs-segments))] has-[ul_button:focus-visible]:outline-2 has-[ul_button:focus-visible]:outline-offset-2 has-[ul_button:focus-visible]:outline-ngs-action"
+  role="group"
+  [attr.aria-label]="libelle()"
+  [attr.data-gris]="nuancesDeGris()"
+  [style.height.px]="hauteur()"
+  [style.--ngs-segments]="segments()"
+  [style.--ngs-rayon.px]="rayon()"
+  [style.--ngs-marge.px]="marge()"
+  [style.--ngs-taille-ouverte.px]="tailleOuverte()"
+  [style.--ngs-rx.deg]="rotation().x"
+  [style.--ngs-ry.deg]="rotation().y"
+>
+  <div
+    class="absolute inset-0 grid touch-pan-y place-items-center overflow-hidden select-none"
+    (pointerdown)="glisserDebut($event)"
+  >
+    <div
+      class="grid size-full place-items-center [contain:layout_paint_size] [perspective-origin:50%_50%] [perspective:calc(var(--ngs-rayon)*2)]"
+      aria-hidden="true"
+    >
+      <div
+        class="[transform-style:preserve-3d] [transform:translateZ(calc(var(--ngs-rayon)*-1))_rotateX(var(--ngs-rx))_rotateY(var(--ngs-ry))] will-change-transform"
+      >
+        @for (tuile of tuiles(); track $index) {
+          <div
+            class="absolute -inset-[999px] m-auto size-(--cote) origin-center [backface-visibility:hidden] [transform-style:preserve-3d] [transform:rotateY(calc(var(--rot)*(var(--ngs-ox)_+_.5)))_rotateX(calc(var(--rot)*(var(--ngs-oy)_-_.5)))_translateZ(var(--ngs-rayon))]"
+            [style.--ngs-ox]="tuile.x"
+            [style.--ngs-oy]="tuile.y"
+          >
+            <button
+              class="absolute inset-2.5 block touch-manipulation overflow-hidden rounded-[calc(var(--ngs-radius)*2)] border-0 bg-ngs-surface-alt p-0 [backface-visibility:hidden] [transform:translateZ(0)] cursor-pointer"
+              type="button"
+              tabindex="-1"
+              (click)="ouvrir($event, tuile.image)"
+            >
+              <img
+                class="pointer-events-none size-full object-cover [backface-visibility:hidden] group-data-[gris=true]/dome:grayscale"
+                [src]="tuile.image.src"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+    <div
+      class="pointer-events-none absolute inset-0 z-[3] [background:radial-gradient(transparent_65%,var(--color-ngs-surface)_100%)]"
+    ></div>
+    <div
+      class="pointer-events-none absolute inset-0 z-[3] backdrop-blur-[3px] [mask-image:radial-gradient(transparent_70%,var(--color-ngs-text)_90%)]"
+    ></div>
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 z-[5] h-[120px] bg-linear-to-t from-transparent to-ngs-surface"
+    ></div>
+    <div
+      class="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[120px] bg-linear-to-b from-transparent to-ngs-surface"
+    ></div>
+  </div>
+  <ul class="sr-only">
+    @for (image of distinctes(); track image.src) {
+      <li>
+        <button type="button" (click)="ouvrir($event, image)">{{ image.alt }}</button>
+      </li>
+    }
+  </ul>
+  @if (ouverte(); as agrandissement) {
+    <div
+      class="absolute inset-0 z-20 grid place-items-center p-(--ngs-marge)"
+      (keydown.escape)="fermer()"
+    >
+      <button
+        class="absolute inset-0 cursor-zoom-out border-0 bg-[color-mix(in_srgb,var(--color-ngs-surface)_78%,transparent)] p-0 backdrop-blur-[3px]"
+        type="button"
+        aria-label="Fermer l’image"
+        (click)="fermer()"
+      ></button>
+      <figure
+        #agrandie
+        class="relative m-0 aspect-square h-[min(var(--ngs-taille-ouverte),100%)] origin-top-left overflow-hidden rounded-[calc(var(--ngs-radius)*2)] bg-ngs-surface-alt shadow-[0_0_0_1px_var(--color-ngs-border),0_10px_30px_color-mix(in_srgb,var(--color-ngs-text)_25%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ngs-action"
+        role="dialog"
+        aria-modal="true"
+        tabindex="-1"
+        [attr.aria-label]="agrandissement.image.alt"
+      >
+        <img
+          class="size-full object-cover group-data-[gris=true]/dome:grayscale"
+          [src]="agrandissement.image.src"
+          [alt]="agrandissement.image.alt"
+        />
+        <button
+          class="absolute top-ngs-2 right-ngs-2 inline-grid size-11 cursor-pointer place-items-center rounded-ngs border-0 bg-ngs-action p-0 text-ngs-on-action focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ngs-text"
+          type="button"
+          aria-label="Fermer"
+          (click)="fermer()"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="m6 6 12 12M18 6 6 18"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </figure>
+    </div>
+  }
+</div>

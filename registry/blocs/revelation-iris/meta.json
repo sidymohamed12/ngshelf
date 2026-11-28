@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "slug": "revelation-iris",
+  "categorie": "bloc",
+  "type": "section-contenu",
+  "titre": {
+    "fr": "Révélation en iris au défilement"
+  },
+  "description": {
+    "fr": "Un disque au bord flou s'ouvre depuis le centre jusqu'à révéler l'image plein écran, puis le texte apparaît : lié au défilement, dans les deux sens."
+  },
+  "secteurs": ["creatif", "evenementiel"],
+  "tags": ["défilement", "scroll", "iris", "révélation", "image", "plein-écran"],
+  "contratTokens": 1,
+  "designsMisEnAvant": ["fleuve"],
+  "motion": {
+    "resume": {
+      "fr": "En défilant, un disque flou s'ouvre depuis le centre et révèle l'image pendant qu'elle se dézoome ; le texte apparaît net à la fin, et l'indice en bas s'efface dès les premiers pixels."
+    },
+    "moments": ["ouverture"],
+    "technique": "variable CSS --ngs-p (progression du défilement, lissée en requestAnimationFrame) lue par des calc() ; mask-image radial, transform, opacité et flou, aucune bibliothèque d'animation"
+  },
+  "parametres": [
+    {
+      "nom": "pilotage",
+      "genre": "choix",
+      "libelle": { "fr": "Pilotage" },
+      "options": [
+        { "valeur": "defilement", "libelle": { "fr": "Défilement" } },
+        { "valeur": "manuel", "libelle": { "fr": "Manuel" } }
+      ],
+      "defaut": "defilement"
+    },
+    {
+      "nom": "progression",
+      "genre": "nombre",
+      "libelle": { "fr": "Progression (pilotage manuel)" },
+      "min": 0,
+      "max": 1,
+      "pas": 0.05,
+      "defaut": 0.5
+    },
+    {
+      "nom": "longueur",
+      "genre": "nombre",
+      "libelle": { "fr": "Longueur du défilement" },
+      "min": 2,
+      "max": 5,
+      "pas": 0.5,
+      "defaut": 3
+    },
+    {
+      "nom": "hauteur",
+      "genre": "nombre",
+      "libelle": { "fr": "Hauteur de la zone épinglée" },
+      "min": 60,
+      "max": 100,
+      "pas": 5,
+      "unite": "%",
+      "defaut": 100
+    },
+    {
+      "nom": "zoomDepart",
+      "genre": "nombre",
+      "libelle": { "fr": "Zoom de l'image au départ" },
+      "min": 1,
+      "max": 2.4,
+      "pas": 0.1,
+      "defaut": 1.6
+    },
+    {
+      "nom": "douceur",
+      "genre": "nombre",
+      "libelle": { "fr": "Douceur du bord du disque" },
+      "min": 0,
+      "max": 200,
+      "pas": 10,
+      "unite": "px",
+      "defaut": 90
+    },
+    {
+      "nom": "arrondi",
+      "genre": "interrupteur",
+      "libelle": { "fr": "Coins arrondis" },
+      "defaut": false
+    }
+  ],
+  "tailleCase": "large",
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-28",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

@@ -2,17 +2,21 @@ import { Service, afterNextRender, computed, inject, signal } from '@angular/cor
 import { CookieService } from '@core/cookies/cookie.service';
 import { MotionService } from '@core/motion/motion.service';
 import { ThemeService } from '@core/theme/theme.service';
-import { ModeApercu, MessageReglages } from '@shared/apercu/protocole';
+import { parametresParDefaut, resoudreParametres } from '@shared/apercu/parametres';
+import { ModeApercu, ReglagesEnvoyes } from '@shared/apercu/protocole';
+import { ReglagesVisiteur, versSurcharges } from '@shared/apercu/reglages-url';
 import {
   DesignContrat,
-  Surcharges,
-  TokenContrat,
   VarianteLivree,
   contraste,
   genererTokensCss,
   valeursDuDesign,
 } from '@shared/livraison/livraison';
 import { FicheRessource } from '@shared/models/fiche.model';
+import { ParametreReglable, ValeurParametre } from '@shared/models/parametre.model';
+
+export { POLICES, versSurcharges } from '@shared/apercu/reglages-url';
+export type { PoliceReglee, ReglagesVisiteur } from '@shared/apercu/reglages-url';
 
 export const COOKIE_VARIANTE = 'ngs_variante';
 const DUREE_COOKIE_VARIANTE_SECONDES = 31_536_000;
@@ -20,13 +24,6 @@ const DESIGN_PAR_DEFAUT = 'planche';
 const CONTRASTE_AA = 4.5;
 
 export type LargeurApercu = 'auto' | 390 | 768 | 1280;
-export type PoliceReglee = 'systeme' | 'arrondie' | 'serif';
-
-export const POLICES: Readonly<Record<PoliceReglee, string>> = {
-  systeme: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-  arrondie: 'ui-rounded, system-ui, sans-serif',
-  serif: 'ui-serif, Georgia, "Times New Roman", serif',
-};
 
 /** Pastilles de couleur d'action proposées (maquette ressource.js), en plus de celle du design. */
 export const COULEURS_ACTION = [
@@ -35,23 +32,6 @@ export const COULEURS_ACTION = [
   { id: 'framboise', couleur: '#b0005e' },
   { id: 'ambre', couleur: '#8a5300' },
 ] as const;
-
-export interface ReglagesVisiteur {
-  readonly couleur?: string;
-  readonly rayon?: number;
-  readonly densite?: number;
-  readonly police?: PoliceReglee;
-}
-
-/** Réglages du visiteur vers les tokens du contrat qu'ils surchargent. */
-export function versSurcharges(reglages: ReglagesVisiteur): Surcharges {
-  const surcharges: Partial<Record<TokenContrat, string>> = {};
-  if (reglages.couleur !== undefined) surcharges['--ngs-color-action'] = reglages.couleur;
-  if (reglages.rayon !== undefined) surcharges['--ngs-radius'] = `${reglages.rayon}px`;
-  if (reglages.densite !== undefined) surcharges['--ngs-density'] = String(reglages.densite);
-  if (reglages.police !== undefined) surcharges['--ngs-font-family'] = POLICES[reglages.police];
-  return surcharges;
-}
 
 /**
  * État de la fiche, propre à chaque page (jamais partagé entre deux fiches) : design, mode, réglages,
@@ -70,6 +50,8 @@ export class EtatFiche {
   readonly largeur = signal<LargeurApercu>('auto');
   readonly variante = signal<VarianteLivree>('tailwind');
   readonly reglages = signal<ReglagesVisiteur>({});
+  /** Valeurs des paramètres propres de la ressource (ADR 0014), toujours résolues sur leur définition. */
+  readonly parametres = signal<Readonly<Record<string, ValeurParametre>>>({});
 
   constructor() {
     // Le prérendu ne connaît pas le cookie : la variante est lue après le premier rendu.
@@ -83,6 +65,7 @@ export class EtatFiche {
     this.fiche.set(fiche);
     this.design.set(this.#designInitial(fiche));
     this.reglages.set({});
+    this.parametres.set(parametresParDefaut(fiche.meta.parametres ?? []));
     this.animations.set(true);
   }
 
@@ -95,6 +78,11 @@ export class EtatFiche {
     const fiche = this.fiche();
     return fiche?.designs.find((d) => d.slug === this.design()) ?? fiche?.designs[0] ?? null;
   });
+
+  /** Paramètres propres réglables de la ressource ouverte (vide si elle n'a que les 12 tokens). */
+  readonly definitionsParametres = computed<readonly ParametreReglable[]>(
+    () => this.fiche()?.meta.parametres ?? [],
+  );
 
   readonly surcharges = computed(() => versSurcharges(this.reglages()));
 
@@ -131,10 +119,15 @@ export class EtatFiche {
     () => this.animations() && !this.#motion.mouvementReduit(),
   );
 
-  readonly messageApercu = computed<Omit<MessageReglages, 'v' | 'type'> | null>(() => {
+  readonly messageApercu = computed<ReglagesEnvoyes | null>(() => {
     const valeurs = this.valeurs();
     if (!valeurs) return null;
-    return { vars: valeurs, mode: this.mode(), animations: this.animationsPermises() };
+    return {
+      vars: valeurs,
+      mode: this.mode(),
+      animations: this.animationsPermises(),
+      params: this.parametres(),
+    };
   });
 
   choisirVariante(variante: VarianteLivree): void {
@@ -146,6 +139,15 @@ export class EtatFiche {
 
   regler(partiel: ReglagesVisiteur): void {
     this.reglages.update((actuels) => ({ ...actuels, ...partiel }));
+  }
+
+  /** Règle un paramètre propre : la valeur est résolue sur sa définition (bornes, liste, type). */
+  reglerParametre(nom: string, valeur: ValeurParametre): void {
+    const resolues = resoudreParametres(this.definitionsParametres(), {
+      ...this.parametres(),
+      [nom]: valeur,
+    });
+    this.parametres.set(resolues);
   }
 
   choisirDesign(slug: string): void {

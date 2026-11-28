@@ -24,6 +24,7 @@ export class ReglagesFicheComponent {
   protected readonly polices = Object.keys(POLICES) as PoliceReglee[];
 
   protected readonly motion = computed(() => this.etat.fiche()?.meta.motion ?? null);
+  protected readonly definitions = this.etat.definitionsParametres;
   protected readonly designs = computed(() => this.etat.fiche()?.designs ?? []);
   protected readonly valeurs = computed(() => this.etat.valeurs());
   protected readonly rayonCourant = computed(() =>
@@ -58,6 +59,10 @@ export class ReglagesFicheComponent {
   protected libelleAnimations(): string {
     if (!this.motion()) return this.textes.animationsAucune;
     return this.etat.animations() ? this.textes.animationsOn : this.textes.animationsOff;
+  }
+
+  protected surNombre(nom: string, valeur: string): void {
+    this.etat.reglerParametre(nom, Number(valeur));
   }
 
   protected surRayon(valeur: string): void {

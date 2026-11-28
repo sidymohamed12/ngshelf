@@ -62,8 +62,20 @@ describe('fichiersVariante', () => {
     const fichiers = fichiersVariante(avec, 'tailwind', true);
     expect(fichiers.map((f) => f.nom)).toContain('barre.component.css');
     expect(fichiers[1].code).toContain(
-      "host: { class: 'block font-ngs', '[class.ngs-sans-animation]': '!animations()' },\n  styleUrl: './barre.component.css', // @keyframes seulement",
+      "host: { class: 'block font-ngs', '[class.ngs-sans-animation]': '!animations()' },\n  encapsulation: ViewEncapsulation.None,\n  styleUrl: './barre.component.css', // @keyframes seulement",
     );
+  });
+
+  it('variante Tailwind : les @keyframes sont globaux et ViewEncapsulation est importé', () => {
+    const avec = { ...BASE, 'tailwind/barre.component.css': '@keyframes a { }\n' };
+    const code = fichiersVariante(avec, 'tailwind', true)[1].code;
+    expect(code).toMatch(/import \{[^}]*ViewEncapsulation[^}]*\} from '@angular\/core';/);
+    expect(code.match(/ViewEncapsulation/g)).toHaveLength(2);
+  });
+
+  it('variante CSS : les @keyframes restent dans la feuille du composant, encapsulation par défaut', () => {
+    const avec = { ...BASE, 'tailwind/barre.component.css': '@keyframes a { }\n' };
+    expect(fichiersVariante(avec, 'css', true)[1].code).not.toContain('ViewEncapsulation');
   });
 
   it('ne laisse pas de ligne vide quand rien ne remplace le marqueur', () => {

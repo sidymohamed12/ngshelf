@@ -1,0 +1,74 @@
+<div
+  class="roue"
+  role="group"
+  [attr.aria-label]="libelle()"
+  [style.height.px]="hauteur()"
+  (pointerenter)="survoler(true)"
+  (pointerleave)="survoler(false)"
+  (focusin)="focaliser(true)"
+  (focusout)="focaliser(false)"
+>
+  <div class="roue__scene">
+    <div class="roue__media">
+      @for (noeud of noeuds(); track $index; let i = $index) {
+        <img
+          class="roue__image"
+          [attr.data-actif]="i === actif()"
+          [src]="noeud.element.image"
+          [alt]="noeud.element.alt ?? noeud.element.titre"
+          [attr.aria-hidden]="i === actif() ? null : 'true'"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
+      }
+    </div>
+    <ul
+      #liste
+      class="roue__liste"
+      (wheel)="surMolette($event)"
+      (pointerdown)="toucherDebut($event)"
+      (pointerup)="toucherFin($event)"
+    >
+      @for (noeud of noeuds(); track $index; let i = $index) {
+        <li
+          class="roue__item"
+          [style.--ngs-x.px]="noeud.x"
+          [style.--ngs-y.px]="noeud.y"
+          [style.--ngs-th.deg]="noeud.angle"
+          [style.--ngs-op]="noeud.base"
+          [style.--ngs-act]="noeud.presence"
+          [style.--ngs-p]="noeud.progression"
+        >
+          <button
+            class="roue__bouton"
+            type="button"
+            [attr.aria-current]="i === actif() ? 'true' : null"
+            [attr.tabindex]="i === actif() ? 0 : -1"
+            [attr.aria-hidden]="noeud.cache ? 'true' : null"
+            [disabled]="noeud.cache"
+            (click)="cliquer(i)"
+            (keydown)="touche($event)"
+          >
+            <svg class="roue__chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="m9 5 7 7-7 7"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span class="roue__titre roue__titre--base">{{ noeud.element.titre }}</span>
+            <span class="roue__titre roue__titre--accent" aria-hidden="true">{{
+              noeud.element.titre
+            }}</span>
+            @if (noeud.element.sousTitre) {
+              <span class="roue__sous">{{ noeud.element.sousTitre }}</span>
+            }
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

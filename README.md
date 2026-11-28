@@ -54,6 +54,10 @@ Sorties, dans `src/generated/registre/` (non versionnées) : un index par catég
 - `npm run registre:build` assemble les sources de l'aperçu (`projects/apercus/src/generated`, ignoré par git) depuis `registry/` : exactement les fichiers Tailwind livrés, plus `demo/` (scène non livrée), et produit fiches JSON, fragments de code CSS et zips (`src/generated/`).
 - `npm run build` construit le site, les aperçus, puis les assemble dans `dist/ngshelf/browser/apercu`. `npm run verifier:dist` refuse tout script en ligne dans `dist/`.
 - Développement : `npm run start:apercus` (port 4201) en plus de `npm start` ; `proxy.conf.json` relaie `/apercu`.
+- **Paramètres propres** (ADR 0014) : le champ facultatif `parametres` du `meta.json` (choix, nombre, interrupteur) déclare les inputs réglables d'une ressource, en plus des 12 tokens ; chacun doit figurer dans le tableau `api` de `fiche.json`. La fiche les règle, `ngs-reglages` les transmet (`params`), l'aperçu ne retient que ce que la définition prévoit. Les scènes de `demo/` les lisent par `ApercuService.choix`, `nombre` et `booleen`.
+- **Page d'aperçu autonome** (ADR 0016) : « Ouvrir l'aperçu seul » ouvre `/apercu/<slug>?design=…&mode=…&p.<nom>=…` dans un nouvel onglet ; hors d'une iframe, l'aperçu affiche sa barre (retour à la fiche, design, mode, animations, paramètres).
+- **Vignettes vivantes** (ADR 0015) : chaque case de la planche charge, par `@defer (on viewport)`, une iframe de `/apercu/<slug>?vignette=1` (8 au plus en même temps, détruites hors viewport, jamais en économie de données).
+- Tests d'une ressource : `registry/<categorie>/<slug>/demo/<slug>.component.spec.ts` (non livré), exécuté dans le projet `apercus` contre la variante Tailwind.
 
 ## Structure
 

@@ -297,6 +297,16 @@
     overflow: hidden;
   }
   .ngs-case__stage > * { max-width: 100%; min-width: 0; }
+
+  /* ---------- Aperçu vivant d'une case (ADR 0015) : l'iframe est rendue à une largeur de test puis réduite ---------- */
+  .ngs-vignette { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; }
+  .ngs-vignette > .ngs-vignette__icone { width: 3.5rem; height: 3.5rem; color: var(--cat); }
+  .ngs-vignette__cadre { position: absolute; inset: 0 auto auto 0; transform-origin: 0 0; opacity: 0; }
+  .ngs-vignette__cadre iframe { display: block; width: 100%; height: 100%; border: 0; background: transparent; pointer-events: none; }
+  .ngs-vignette[data-etat="pret"] .ngs-vignette__cadre { opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .ngs-vignette__cadre { transition: opacity var(--duration-out) var(--ease-out); }
+  }
   .ngs-case__foot {
     display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.875rem 0.75rem 1rem;
     border-top: 1px solid var(--color-border); background: var(--color-canvas);

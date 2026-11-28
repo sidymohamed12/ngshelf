@@ -1,5 +1,6 @@
 import { CategorieTypee, Secteur, TailleCase, TypeRessource } from './taxonomie.model';
 import { Motion } from './motion.model';
+import { ParametreReglable } from './parametre.model';
 import { Texte } from './texte.model';
 
 /** Cycle de vie d'une ressource ; `provisoire` affiche le badge « Démo provisoire ». */
@@ -46,6 +47,11 @@ export interface MetaRessource {
   readonly motion: Motion | null;
   /** Taille de sa case dans la planche du catalogue (absent = « normale », 1×1). */
   readonly tailleCase?: TailleCase;
+  /**
+   * Paramètres propres réglables dans la fiche (ADR 0014), en plus des 12 tokens : chacun est un input
+   * du composant, documenté dans le tableau « Paramètres » de `fiche.json`.
+   */
+  readonly parametres?: readonly ParametreReglable[];
   readonly variantes: readonly VarianteStyle[];
   readonly angularMin: string;
   readonly licence: 'MIT';

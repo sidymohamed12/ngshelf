@@ -51,6 +51,8 @@ export const TEXTES_FICHE = {
     mode: $localize`:@@ressource.mode:Mode de l’aperçu`,
     clair: $localize`:@@ressource.mode.clair:Clair`,
     sombre: $localize`:@@ressource.mode.sombre:Sombre`,
+    ouvrir: $localize`:@@ressource.apercu.ouvrir:Ouvrir l’aperçu seul`,
+    nouvelOnglet: $localize`:@@ressource.apercu.nouvel-onglet:(s’ouvre dans un nouvel onglet)`,
     rejouerEntree: $localize`:@@ressource.rejouer.entree:Rejouer l’entrée`,
     rejouerSortie: $localize`:@@ressource.rejouer.sortie:Rejouer la sortie`,
   },
@@ -79,6 +81,8 @@ export const TEXTES_FICHE = {
     animationsAide: $localize`:@@ressource.reglages.animations.aide:Coupées ici, elles le sont aussi dans votre code avec [animations]="false", ou avec la classe .ngs-sans-animation sur un parent.`,
     animationsSans: $localize`:@@ressource.reglages.animations.sans:Cette ressource n’a pas d’animation propre : rien à couper.`,
     animationsReduit: $localize`:@@ressource.reglages.animations.reduit:Votre système demande moins de mouvement : l’aperçu garde les animations coupées.`,
+    parametres: $localize`:@@ressource.reglages.parametres:Paramètres de la ressource`,
+    parametresAide: $localize`:@@ressource.reglages.parametres.aide:Ce sont les paramètres du composant, décrits dans le tableau plus bas. Ils ne changent pas le tokens.css.`,
     reinitialiser: $localize`:@@ressource.reglages.reinitialiser:Réinitialiser les réglages`,
     contraste: (rapport: string) =>
       $localize`:@@ressource.contraste:Contraste du texte sur l’action : ${rapport}:r:`,
