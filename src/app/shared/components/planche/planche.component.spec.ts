@@ -68,15 +68,32 @@ describe('PlancheComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Pas encore de template');
   });
 
-  it('affiche une case par ressource : lien de fiche, type, secteur, vignette décorative', () => {
+  it('affiche une case par ressource : lien de fiche, type, secteur, scène exposée (aperçu manipulable)', () => {
     const el = afficher([CARTE]);
     const lien = el.querySelector<HTMLAnchorElement>('h3 a');
     expect(lien?.getAttribute('href')).toBe('/composants/carte/carte-sejour');
     expect(lien?.textContent).toContain('Carte de séjour');
     expect(el.querySelector('.ngs-badge')?.textContent).toContain('Carte');
     expect(el.querySelector('.ngs-badge--secteur')?.textContent).toContain('Voyage');
-    expect(el.querySelector('.ngs-case__stage')?.getAttribute('aria-hidden')).toBe('true');
+    expect(el.querySelector('.ngs-case__stage')?.hasAttribute('aria-hidden')).toBe(false);
     expect(el.querySelector('.ngs-case')?.classList).toContain('ngs-cat-composants');
+  });
+
+  it('ne met aucun élément interactif sous un lien : la scène est hors du lien, qui couvre le pied', () => {
+    const el = afficher([CARTE]);
+    const lien = el.querySelector('a.ngs-case__link');
+    expect(lien?.closest('.ngs-case__foot')).not.toBeNull();
+    expect(lien?.closest('.ngs-case__stage')).toBeNull();
+    expect(el.querySelector('.ngs-case__stage a, .ngs-case__stage button')).toBeNull();
+    expect(el.querySelectorAll('a')).toHaveLength(1);
+  });
+
+  it('montre le repère « Voir la fiche » dans le pied, sans second lien', () => {
+    const el = afficher([CARTE]);
+    const repere = el.querySelector('.ngs-case__foot .ngs-case__open');
+    expect(repere?.textContent).toContain(TEXTES_LISTE.voirFiche);
+    expect(repere?.getAttribute('aria-hidden')).toBe('true');
+    expect(repere?.closest('a')).toBeNull();
   });
 
   it('décrit le lien de la case par la description de la ressource', () => {
@@ -110,6 +127,7 @@ describe('PlancheComponent', () => {
     const el = afficher([DESIGN]);
     expect(el.querySelector('h3 a')).toBeNull();
     expect(el.querySelector('.ngs-case__open')).toBeNull();
+    expect(el.querySelector('.ngs-case__stage')?.getAttribute('aria-hidden')).toBe('true');
     expect(el.querySelector('h3')?.textContent).toContain('Design Fleuve');
     expect(el.querySelector('.ngs-badge')?.textContent).toContain('Design');
   });

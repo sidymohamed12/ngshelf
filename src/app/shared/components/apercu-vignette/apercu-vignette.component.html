@@ -18,3 +18,22 @@
     ></iframe>
   </div>
 }
+@if (interactif() && etat() === 'pret') {
+  <div class="ngs-vignette__outils">
+    <button
+      #declencheur
+      class="ngs-vignette__manip"
+      type="button"
+      [attr.aria-pressed]="manipule()"
+      [attr.aria-label]="nomBouton()"
+      (click)="manipuler()"
+    >
+      <svg appIcone="cursor-click" taille="sm"></svg>
+      <span>{{ textes.manipuler }}</span>
+    </button>
+    @if (manipule()) {
+      <span class="ngs-vignette__indice" aria-hidden="true">{{ textes.quitter }}</span>
+    }
+  </div>
+  <span class="sr-only" role="status">{{ annonce() }}</span>
+}

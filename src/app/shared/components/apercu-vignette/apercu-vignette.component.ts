@@ -76,13 +76,23 @@ let compteur = 0;
  * `/apercu/<slug>?vignette=1`, comme celle de la fiche, calée sur la case. Elle n'existe que quand la case
  * est visible (300 ms, jamais pendant un défilement rapide), dans la limite de places de `VignettesService`,
  * et disparaît quand la case sort du viewport. Sans place, avec « économie de données » ou après un échec,
- * la case garde son icône. Décorative : la case entière est le lien vers la fiche.
+ * la case garde son icône.
+ *
+ * `interactif` (planche, ADR 0017) : l'aperçu est manipulable (clic, glisser, saisie, survol) ; la molette et le
+ * clavier restent à la page jusqu'à ce que le visiteur prenne la main (clic dans l'aperçu ou bouton « Manipuler
+ * l'aperçu », seul arrêt de tabulation ajouté). Échap, un clic ailleurs ou un Tab hors de l'aperçu la rendent.
+ * Sans `interactif` (vitrines d'accueil), l'aperçu reste décoratif, sans pointeur ni focus.
  */
 @Component({
   selector: 'app-apercu-vignette',
   imports: [IconeComponent],
   templateUrl: './apercu-vignette.component.html',
-  host: { class: 'ngs-vignette', '[attr.data-etat]': 'etat()' },
+  host: {
+    class: 'ngs-vignette',
+    '[class.ngs-vignette--interactif]': 'interactif()',
+    '[class.ngs-vignette--actif]': 'manipule()',
+    '[attr.data-etat]': 'etat()',
+  },
 })
 export class ApercuVignetteComponent {
   readonly slug = input.required<string>();
@@ -97,6 +107,8 @@ export class ApercuVignetteComponent {
   readonly reglages = input<ValeursContrat>();
   /** Faux : les animations de la ressource sont coupées (interrupteur « Animations » de À propos). Le mouvement réduit les coupe toujours. */
   readonly animations = input(true);
+  /** Vrai : aperçu manipulable avec son bouton « Manipuler l'aperçu » ; faux : décor sans interaction. */
+  readonly interactif = input(false);
 
   protected readonly etat = signal<EtatVignette>('veille');
   protected readonly textes = TEXTES.vignette;
@@ -107,7 +119,10 @@ export class ApercuVignetteComponent {
   readonly #mouvementReduit = inject(MotionService).mouvementReduit;
   readonly #destroyRef = inject(DestroyRef);
   readonly #id = `vignette-${compteur++}`;
+  /** Vrai quand l'aperçu a la main (annoncé par l'aperçu lui-même : le focus est dans l'iframe). */
+  protected readonly manipule = signal(false);
   private readonly iframe = viewChild<ElementRef<HTMLIFrameElement>>('cadre');
+  private readonly declencheur = viewChild<ElementRef<HTMLButtonElement>>('declencheur');
 
   readonly #visible = signal(false);
   readonly #economie = signal(false);
@@ -129,7 +144,13 @@ export class ApercuVignetteComponent {
       animations: this.animations() && !this.#mouvementReduit(),
     }),
   );
-  protected readonly titreIframe = computed(() => this.textes.iframe(this.titre()));
+  protected readonly titreIframe = computed(() =>
+    this.interactif()
+      ? this.textes.iframeInteractif(this.titre())
+      : this.textes.iframe(this.titre()),
+  );
+  protected readonly nomBouton = computed(() => this.textes.manipulerPour(this.titre()));
+  protected readonly annonce = computed(() => (this.manipule() ? this.textes.actifAnnonce : ''));
 
   constructor() {
     afterNextRender(() => {
@@ -172,6 +193,7 @@ export class ApercuVignetteComponent {
     this.#minuteurDemarrage = undefined;
     this.#urlChargee = '';
     this.actif.set(false);
+    this.manipule.set(false);
     this.etat.set('veille');
     this.#vignettes.liberer(this.#id);
   }
@@ -181,6 +203,7 @@ export class ApercuVignetteComponent {
     const url = this.url();
     if (!iframe || !this.actif() || url === this.#urlChargee) return;
     this.#urlChargee = url;
+    this.manipule.set(false);
     this.etat.set('chargement');
     clearTimeout(this.#minuteurEchec);
     this.#minuteurEchec = setTimeout(() => this.#echouer(), DELAI_VIGNETTE_MS);
@@ -201,6 +224,11 @@ export class ApercuVignetteComponent {
       }),
       '*',
     );
+  }
+
+  /** Bouton « Manipuler l'aperçu » : donne le focus à l'iframe, qui prend alors la main et le dit au site. */
+  protected manipuler(): void {
+    this.iframe()?.nativeElement.focus();
   }
 
   #echouer(): void {
@@ -240,9 +268,15 @@ export class ApercuVignetteComponent {
     const surMessage = (evenement: MessageEvent<unknown>): void => {
       const cible = this.iframe()?.nativeElement.contentWindow;
       if (!vientDeLApercu(evenement, cible)) return;
-      if (lireMessageVersSite(evenement.data)?.type !== 'ngs-pret') return;
-      clearTimeout(this.#minuteurEchec);
-      this.etat.set('pret');
+      const message = lireMessageVersSite(evenement.data);
+      if (message?.type === 'ngs-pret') {
+        clearTimeout(this.#minuteurEchec);
+        this.etat.set('pret');
+      } else if (message?.type === 'ngs-manipulation' && this.interactif()) {
+        this.manipule.set(message.actif);
+        // Échap dans l'aperçu : le focus revient au bouton, pour ne pas le laisser dans un document qui l'a rendu.
+        if (message.echap) this.declencheur()?.nativeElement.focus();
+      }
     };
     fenetre.addEventListener('message', surMessage);
     this.#destroyRef.onDestroy(() => fenetre.removeEventListener('message', surMessage));

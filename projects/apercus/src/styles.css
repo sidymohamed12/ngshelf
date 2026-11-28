@@ -345,7 +345,7 @@ html.ap-autonome .compo {
   }
 }
 
-/* ───── Vignette d'une case de la planche (ADR 0015) : la scène seule, sans interaction ───── */
+/* ───── Vignette d'une case de la planche (ADR 0015 et 0017) : la scène seule, manipulable ───── */
 
 html.ap-vignette,
 html.ap-vignette body {
@@ -356,7 +356,28 @@ html.ap-vignette body {
   padding: 16px;
 }
 
-html.ap-vignette .compo {
-  pointer-events: none;
-  user-select: none;
+/*
+  Tant que le visiteur n'a pas pris la main, le défilement vertical appartient à la page du site : une
+  ressource ne peut pas le retenir (la touche ne bloque que les gestes horizontaux, le tactile aussi).
+  Le survol, le clic et le glisser, eux, fonctionnent d'emblée.
+*/
+html.ap-vignette:not(.ap-actif) .compo * {
+  touch-action: pan-y !important;
+}
+
+/*
+  Main prise : l'aperçu défile pour de vrai (hero extensible, iris), sans barre visible. Pas de
+  overscroll-behavior: à la fin de la course, la page reprend le défilement.
+*/
+html.ap-vignette.ap-actif {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+html.ap-vignette.ap-actif body {
+  overflow: visible;
+}
+
+html.ap-vignette.ap-actif::-webkit-scrollbar {
+  display: none;
 }

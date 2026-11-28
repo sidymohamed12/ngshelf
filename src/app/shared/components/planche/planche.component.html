@@ -45,7 +45,7 @@
   <ul class="ngs-planche m-0 list-none p-0" [class.catalogue-grille]="avecFacettes()">
     @for (ressource of cases(); track ressource.entree.slug) {
       <li class="ngs-case" [class]="ressource.classes" [attr.data-slug]="ressource.entree.slug">
-        <div class="ngs-case__stage" aria-hidden="true">
+        <div class="ngs-case__stage" [attr.aria-hidden]="ressource.apercu ? null : 'true'">
           @if (ressource.apercu) {
             @defer (on viewport) {
               <app-apercu-vignette
@@ -54,6 +54,7 @@
                 [icone]="ressource.icone"
                 [design]="ressource.entree.designMisEnAvant"
                 [reglages]="reglages()[ressource.entree.slug]"
+                [interactif]="true"
               />
             } @placeholder {
               <svg [appIcone]="ressource.icone" class="size-14 text-(--cat)"></svg>
@@ -67,7 +68,7 @@
             <h3 class="ngs-case__title">
               @if (ressource.chemin) {
                 <a
-                  class="ngs-case__link after:inset-0 after:h-auto after:rounded-(--radius-case)"
+                  class="ngs-case__link"
                   [routerLink]="ressource.chemin"
                   #lien
                   (click)="ouvrirFiche(lien)"
@@ -98,9 +99,10 @@
             </div>
           </div>
           @if (ressource.chemin) {
-            <span class="ngs-case__open" aria-hidden="true"
-              ><svg appIcone="arrow-up-right"></svg
-            ></span>
+            <span class="ngs-case__open" aria-hidden="true">
+              <span class="ngs-case__open-libelle">{{ textes.voirFiche }}</span>
+              <svg appIcone="arrow-up-right"></svg>
+            </span>
           }
         </div>
       </li>

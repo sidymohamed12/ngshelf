@@ -15,7 +15,7 @@ const DEUX_PI = 2 * Math.PI;
 
 /**
  * Progression qui va et vient entre 0 et 1, pour les ressources pilotées par le défilement : une vignette
- * de planche n'a pas de défilement, elle rejoue donc l'effet en boucle. Figée à mi-parcours quand les
+ * de planche n'a pas de défilement tant que le visiteur ne l'a pas activée (ADR 0017), elle rejoue donc l'effet en boucle. Figée à mi-parcours quand les
  * animations sont coupées (réglage de la fiche, ou mouvement réduit du système). Navigateur seulement.
  */
 export function creerProgressionAuto(): Signal<number> {
@@ -33,7 +33,8 @@ export function creerProgressionAuto(): Signal<number> {
   effect(() => {
     arreter();
     const fenetre = document.defaultView;
-    if (!pret() || !fenetre) return;
+    // Le visiteur a pris la main (défilement réel) : la boucle automatique s'arrête.
+    if (!pret() || !fenetre || contexte.manipulation()) return;
     if (!contexte.animations()) {
       valeur.set(PROGRESSION_FIGEE);
       return;

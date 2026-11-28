@@ -5,8 +5,8 @@ import { creerProgressionAuto } from '@apercus/progression-auto';
 import { RevelationIrisComponent } from '../revelation-iris.component';
 
 /**
- * Scène de l'aperçu : un carnet de voyage. Sans défilement possible (vignette d'une case), la progression
- * va et vient d'elle-même (non livrée).
+ * Scène de l'aperçu : un carnet de voyage. Dans une case que le visiteur n'a pas activée, la progression
+ * va et vient d'elle-même (non livrée) ; activée, la scène défile pour de vrai.
  */
 @Component({
   selector: 'ngs-demo',
@@ -36,8 +36,10 @@ export class DemoComponent {
   protected readonly image = imagesDemo('revelation-iris')[0] ?? { src: '', alt: '' };
   protected readonly contexte = inject(ApercuService);
   readonly #auto = creerProgressionAuto();
+  /** Case de la planche que le visiteur n'a pas activée : boucle automatique ; activée : vrai défilement. */
+  readonly #enBoucle = computed(() => this.contexte.vignette() && !this.contexte.manipulation());
   protected readonly pilotage = computed(() =>
-    this.contexte.vignette()
+    this.#enBoucle()
       ? ('manuel' as const)
       : this.contexte.choix<'defilement' | 'manuel'>(
           'pilotage',
@@ -46,6 +48,6 @@ export class DemoComponent {
         ),
   );
   protected readonly progression = computed(() =>
-    this.contexte.vignette() ? this.#auto() : this.contexte.nombre('progression', 0.5),
+    this.#enBoucle() ? this.#auto() : this.contexte.nombre('progression', 0.5),
   );
 }

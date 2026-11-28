@@ -2,7 +2,7 @@
 
 ## Statut
 
-proposé (2026-11-28, phase 5). Remplace la ligne « Accueil, grille du catalogue » du tableau de l'ADR 0003 (Shadow DOM, variante CSS) ; le reste de l'ADR 0003 et l'ADR 0010 sont inchangés.
+proposé (2026-11-28, phase 5). **Amendé par l'ADR 0017** : la décision 4 (pas d'interaction, la case entière est le lien) est remplacée, le plafond de la décision 2 passe à 12. Remplace la ligne « Accueil, grille du catalogue » du tableau de l'ADR 0003 (Shadow DOM, variante CSS) ; le reste de l'ADR 0003 et l'ADR 0010 sont inchangés.
 
 ## Contexte
 
