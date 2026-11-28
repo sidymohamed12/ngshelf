@@ -42,13 +42,13 @@
 
 @layer components {
   /* ---------- Conteneur ---------- */
+  /* Pleine largeur (ADR 0018) : seule la gouttière --space-inline borde la page ; --container-site vaut none. */
   .ngs-container {
     width: 100%;
     max-width: var(--container-site);
     margin-inline: auto;
     padding-inline: var(--space-inline);
   }
-  @media (min-width: 120rem) { .ngs-container { max-width: var(--container-wide); } }
 
   /* ---------- Lien d'évitement ---------- */
   .ngs-skip {
@@ -338,6 +338,9 @@
   @media (min-width: 40rem) { .ngs-planche { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 64rem) { .ngs-planche { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (min-width: 80rem) { .ngs-planche { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  /* Pleine largeur : la planche gagne des colonnes sur les très grands écrans au lieu d'étirer les cases. */
+  @media (min-width: 120rem) { .ngs-planche { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  @media (min-width: 160rem) { .ngs-planche { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
   @media (max-width: 39.99rem) { .ngs-case--wide { grid-column: auto; } .ngs-case--tall { grid-row: auto; } }
 
   /* ---------- Onglets avec indicateur glissant ---------- */

@@ -41,6 +41,12 @@
   .accueil-planche .ngs-case__stage {
     min-height: 12rem;
   }
+  /* Disposition composée à la main pour 4 colonnes (accueil.donnees.ts) : elle garde 4 colonnes sur les très grands écrans, plus larges. */
+  @media (min-width: 120rem) {
+    .accueil-planche .ngs-planche {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
 
   /* Vitrine du hero : les pièces sont des aperçus en vignette, calés par leur rapport largeur / hauteur */
   .ngs-vitrine__flottant--toast {

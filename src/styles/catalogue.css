@@ -43,4 +43,15 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
+  /* Pleine largeur (ADR 0018) : une colonne de plus à 2240 px, encore une à 2560 px, au lieu d'étirer les cases. */
+  @media (min-width: 140rem) {
+    .catalogue-grille {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 160rem) {
+    .catalogue-grille {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
 }

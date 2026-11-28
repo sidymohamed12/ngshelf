@@ -167,8 +167,9 @@
   --space-inline: clamp(1rem, 0.5rem + 3vw, 3rem);
 
   /* ---------- Conteneur et grille ---------- */
-  --container-site: 90rem;
-  --container-wide: 112rem; /* ≥ 1920 px : la planche s'élargit (4 colonnes plus larges) */
+  /* Pleine largeur (ADR 0018) : le conteneur n'a plus de largeur maximale ; la gouttière latérale est
+     --space-inline. La lisibilité du texte courant tient à --container-prose et aux largeurs en ch. */
+  --container-site: none;
   --container-prose: 42rem;
   --breakpoint-sm: 40rem;
   --breakpoint-md: 48rem;
