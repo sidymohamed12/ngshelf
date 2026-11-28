@@ -124,7 +124,7 @@
   }
 }
 
-/* Barre de l'aperçu : taille et mode à gauche, rejouer et « Ouvrir l'aperçu seul » à droite. */
+/* Barre de l'aperçu : taille et mode à gauche, rejouer et « Agrandir l'aperçu » à droite. */
 .fiche-barre {
   gap: 0.5rem 1rem;
 }
@@ -268,5 +268,74 @@ app-barre-apercu {
     flex: 1;
     max-height: none;
     min-width: 0;
+  }
+}
+
+/* Aperçu agrandi (ADR 0022) : <dialog> natif quasi plein écran, aperçu à sa pleine taille. */
+.apercu-agrandi {
+  box-sizing: border-box;
+  width: min(100vw - 1.5rem, 120rem);
+  height: min(100dvh - 1.5rem, 90rem);
+  max-width: none;
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: var(--color-canvas);
+  color: var(--color-text);
+  box-shadow: var(--shadow-overlay);
+  overflow: hidden;
+}
+.apercu-agrandi[open] {
+  display: flex;
+  flex-direction: column;
+}
+.apercu-agrandi::backdrop {
+  background: var(--color-backdrop);
+}
+.apercu-agrandi__tete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.75rem 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.apercu-agrandi__titre {
+  margin: 0;
+  font-weight: 620;
+  overflow-wrap: anywhere;
+}
+.apercu-agrandi__resume {
+  margin: 0;
+}
+.apercu-agrandi__corps {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}
+.apercu-agrandi__cadre {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+/* Scène qui remplit le dialogue au lieu de suivre la hauteur du contenu. */
+.app-apercu-scene--plein {
+  min-height: 0;
+  height: auto;
+  flex: 1;
+}
+html:has(dialog.apercu-agrandi[open]) {
+  overflow: hidden;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .apercu-agrandi[open] {
+    animation: ngs-dialog-in var(--duration-panel-in) var(--ease-enter);
+  }
+  .apercu-agrandi[open]::backdrop {
+    animation: ngs-fade-in var(--duration-panel-in) var(--ease-out);
   }
 }

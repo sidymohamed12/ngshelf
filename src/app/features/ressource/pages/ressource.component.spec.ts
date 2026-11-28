@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { TEXTES } from '@core/i18n/textes.fr';
+import { TEXTES_FICHE } from '@core/i18n/textes-fiche';
 import { RessourceComponent } from './ressource.component';
 
 function creer(donnees: unknown): HTMLElement {
@@ -89,6 +90,14 @@ describe('fiche : disposition (ADR 0019 et 0020)', () => {
     expect(barre?.compareDocumentPosition(el.querySelector('app-apercu-frame') as Node)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
+  });
+
+  it('propose « Agrandir l’aperçu » en bouton (fenêtre modale), jamais en lien vers une autre page', () => {
+    const el = page();
+    const bouton = el.querySelector('.fiche-barre button[aria-haspopup="dialog"]');
+    expect(bouton?.textContent).toContain(TEXTES_FICHE.apercu.ouvrir);
+    expect(bouton?.querySelector('use')?.getAttribute('href')).toContain('#arrows-out');
+    expect(el.querySelector('.fiche-barre a[target="_blank"]')).toBeNull();
   });
 
   it('ne duplique aucun réglage : design et animations sont dans le panneau seul, une fois', () => {

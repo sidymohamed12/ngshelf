@@ -1,7 +1,8 @@
 <div
   #scene
   class="ngs-preview__stage app-apercu-scene"
-  [style.height.px]="hauteurScene()"
+  [class.app-apercu-scene--plein]="remplir()"
+  [style.height.px]="remplir() ? null : hauteurScene()"
   [attr.aria-busy]="etat() === 'chargement'"
 >
   <div

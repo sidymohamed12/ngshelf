@@ -16,17 +16,14 @@ import {
   parametresParDefaut,
   resoudreParametres,
 } from '@shared/apercu/parametres';
-import type {
-  ParametreReglable,
-  ValeurParametre,
-  ValeursParametres,
-} from '@shared/models/parametre.model';
+import type { ParametreReglable, ValeursParametres } from '@shared/models/parametre.model';
 import {
   MessageReglages,
   MessageSortie,
   ModeApercu,
   lireMessageVersApercu,
   messageHauteur,
+  messageManipulation,
   messagePret,
   messageSortieFin,
   vientDuSite,
@@ -35,7 +32,6 @@ import { suivreManipulation } from './manipulation';
 import { ORIGINES_SITE } from './origines';
 
 const CLASSE_SOMBRE = 'dark';
-const CLASSE_AUTONOME = 'ap-autonome';
 const CLASSE_VIGNETTE = 'ap-vignette';
 const CLASSE_SANS_ANIMATION = 'ngs-sans-animation';
 const SELECTEUR_HOTES = '[data-hote]';
@@ -63,12 +59,10 @@ export class ApercuService {
   readonly #titre = inject(Title);
   readonly #mouvementReduit = signal(false);
   readonly #slug = signal<string | null>(null);
-  readonly #autonome = signal(false);
   readonly #vignette = signal(false);
   readonly #manipulation = signal(false);
   readonly #design = signal<string | undefined>(undefined);
   readonly #reglagesVisiteur = signal<ReglagesVisiteur>({});
-  readonly #definitionsSignal = signal<readonly ParametreReglable[]>([]);
 
   /** Animations permises : les scènes la passent à l'input `animations` de leur ressource. */
   readonly animations = this.#animations.asReadonly();
@@ -76,8 +70,6 @@ export class ApercuService {
   /** Paramètres propres de la ressource montrée (ADR 0014) : défauts, puis URL, puis messages du site. */
   readonly parametres = this.#parametres.asReadonly();
 
-  /** Vrai quand la page est ouverte seule (nouvel onglet), faux dans l'iframe de la fiche ou d'une case. */
-  readonly autonome = this.#autonome.asReadonly();
   /** Vrai pour l'aperçu d'une case de la planche : calé sur la case, sans barre ni message de hauteur (ADR 0017). */
   readonly vignette = this.#vignette.asReadonly();
   /**
@@ -86,13 +78,10 @@ export class ApercuService {
    * (hero extensible, iris) passent de leur boucle automatique au vrai défilement.
    */
   readonly manipulation = this.#manipulation.asReadonly();
-  /** Titre et chemin de la fiche de la ressource montrée (null avant la route ou pour un slug inconnu). */
-  readonly info = computed(() => INFOS_APERCUS[this.#slug() ?? ''] ?? null);
-  readonly definitions = this.#definitionsSignal.asReadonly();
-  /** Préférence du système (`prefers-reduced-motion`) : sur la page autonome, elle coupe les animations. */
+  /** Préférence du système (`prefers-reduced-motion`) : elle coupe les animations. */
   readonly mouvementReduit = this.#mouvementReduit.asReadonly();
   readonly designs = DESIGNS_APERCUS;
-  /** Slug du design réglé ; Planche tant que ni l'URL ni la page autonome n'en ont choisi un autre. */
+  /** Slug du design réglé ; Planche tant que l'URL n'en a pas choisi un autre. */
   readonly design = computed(() => this.#design() ?? this.designs[0]?.slug ?? '');
 
   constructor() {
@@ -102,7 +91,6 @@ export class ApercuService {
   /** Appelé par la route de la scène : fixe la liste blanche des paramètres et leurs valeurs de départ. */
   ouvrir(slug: string): void {
     this.#definitions = PARAMETRES_APERCUS[slug] ?? [];
-    this.#definitionsSignal.set(this.#definitions);
     this.#parametres.set(
       this.#demarre
         ? parametresDepuisRecherche(
@@ -116,39 +104,9 @@ export class ApercuService {
     if (info) this.#titre.setTitle(`Aperçu : ${info.titre} | NgShelf`);
   }
 
-  /** Recharge la page (état d'erreur de la page autonome). */
+  /** Recharge la page (état d'erreur de l'aperçu). */
   recharger(): void {
     this.#document.defaultView?.location.reload();
-  }
-
-  choisirDesign(slug: string): void {
-    this.#design.set(slug);
-    this.#poserVariables();
-  }
-
-  choisirMode(mode: ModeApercu): void {
-    this.#appliquerMode(mode);
-    this.#poserVariables();
-  }
-
-  choisirAnimations(permises: boolean): void {
-    this.#appliquerAnimations(permises && !this.#mouvementReduit());
-  }
-
-  reglerParametre(nom: string, valeur: ValeurParametre): void {
-    this.#parametres.set(
-      resoudreParametres(this.#definitions, { ...this.#parametres(), [nom]: valeur }),
-    );
-  }
-
-  /** « Réinitialiser » de la page autonome : défauts des paramètres, design et mode de départ. */
-  reinitialiser(): void {
-    this.#parametres.set(parametresParDefaut(this.#definitions));
-    this.#reglagesVisiteur.set({});
-    this.#design.set(undefined);
-    this.#appliquerMode('clair');
-    this.#appliquerAnimations(!this.#mouvementReduit());
-    this.#poserVariables();
   }
 
   /** Un choix parmi `valides` : la scène re-vérifie, le type du résultat est donc sûr sans conversion. */
@@ -171,9 +129,6 @@ export class ApercuService {
     const fenetre = this.#document.defaultView;
     if (!fenetre) return;
     const initial = lireRechercheApercu(fenetre.location.search);
-    const autonome = fenetre.parent === fenetre && !initial.vignette;
-    this.#autonome.set(autonome);
-    this.#document.documentElement.classList.toggle(CLASSE_AUTONOME, autonome);
     this.#vignette.set(initial.vignette);
     this.#document.documentElement.classList.toggle(CLASSE_VIGNETTE, initial.vignette);
     const reduit = fenetre.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
@@ -206,8 +161,23 @@ export class ApercuService {
       this.#destroyRef.onDestroy(arreter);
     } else {
       this.#suivreHauteur(fenetre);
+      this.#signalerEchap(fenetre);
     }
     this.#envoyer(fenetre, messagePret());
+  }
+
+  /**
+   * Échap tapé dans l'aperçu de la fiche : le focus est dans l'iframe, le <dialog> de l'aperçu agrandi ne le
+   * reçoit pas. Le site est prévenu (même message que la prise de main des cases) et ferme la fenêtre.
+   */
+  #signalerEchap(fenetre: Window): void {
+    const surTouche = (evenement: KeyboardEvent): void => {
+      if (evenement.key === 'Escape' && !evenement.defaultPrevented) {
+        this.#envoyer(fenetre, messageManipulation(false, true));
+      }
+    };
+    fenetre.addEventListener('keydown', surTouche);
+    this.#destroyRef.onDestroy(() => fenetre.removeEventListener('keydown', surTouche));
   }
 
   #envoyer(fenetre: Window, message: object): void {
@@ -224,7 +194,7 @@ export class ApercuService {
   }
 
   /**
-   * Pose les 12 variables du design réglé (page autonome ou URL d'une fiche) : même calcul que la fiche
+   * Pose les 12 variables du design réglé (URL de l'aperçu) : même calcul que la fiche
    * (`valeursDuDesign`). Les messages du site, eux, posent directement les valeurs qu'il a calculées.
    */
   #poserVariables(): void {
