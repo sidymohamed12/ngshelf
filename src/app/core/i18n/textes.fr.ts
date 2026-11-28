@@ -94,6 +94,10 @@ export const TEXTES = {
     erreurTexte: $localize`:@@etat.erreur.texte:Vérifiez votre connexion, puis réessayez.`,
     reessayer: $localize`:@@etat.reessayer:Réessayer`,
   },
+  /** Aperçu vivant d'une case de la planche (décoratif : la case entière est le lien vers la fiche). */
+  vignette: {
+    iframe: (titre: string) => $localize`:@@vignette.iframe:Aperçu de ${titre}:titre:`,
+  },
   pages: {
     accueil: {
       titrePage: $localize`:@@accueil.titre-page:${NOM}:nom: — composants Angular à copier ou télécharger`,

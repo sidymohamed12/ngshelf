@@ -9,6 +9,7 @@ import {
 } from '@core/i18n/textes.fr';
 import { MorphApercuService } from '@core/motion/morph-apercu.service';
 import { cheminFiche } from '@core/registre/chemins';
+import { ApercuVignetteComponent } from '@shared/components/apercu-vignette/apercu-vignette.component';
 import { IconeComponent } from '@shared/components/icone/icone.component';
 import { NomIcone } from '@shared/components/icone/icones';
 import { EntreeIndex } from '@shared/models/index-catalogue.model';
@@ -26,6 +27,8 @@ interface CaseRessource {
   /** Le type de la ressource, ou sa catégorie pour un design (qui n'a pas de type). */
   readonly libelle: string;
   readonly chemin: string | null;
+  /** Vrai si la case peut montrer l'aperçu vivant de la ressource (tout sauf un design). */
+  readonly apercu: boolean;
   readonly secteurs: readonly { readonly libelle: string; readonly icone: NomIcone }[];
   readonly idDescription: string;
 }
@@ -33,12 +36,13 @@ interface CaseRessource {
 /**
  * Planche du catalogue (DESIGN.md « Case de planche ») : la grille de cases `ngs-case` de toutes les
  * pages de liste (catalogue, catégorie, type, secteur). Gère tous ses états : chargement, erreur avec
- * « Réessayer », vide, planche. La vignette d'une case est statique (ADR 0003 : les aperçus live
- * viennent avec la fiche) ; la case entière ouvre la fiche.
+ * « Réessayer », vide, planche. La vignette d'une case est l'aperçu vivant de la ressource, chargé quand la
+ * case entre dans le viewport (`@defer`, ADR 0015), l'icône de sa catégorie sinon (design, hors place,
+ * échec, économie de données) ; la case entière ouvre la fiche.
  */
 @Component({
   selector: 'app-planche',
-  imports: [RouterLink, IconeComponent],
+  imports: [RouterLink, IconeComponent, ApercuVignetteComponent],
   templateUrl: './planche.component.html',
 })
 export class PlancheComponent {
@@ -71,6 +75,7 @@ export class PlancheComponent {
         ? LIBELLES_TYPE[entree.type]
         : LIBELLES_CATEGORIE[entree.categorie].singulier,
       chemin: cheminFiche(entree),
+      apercu: entree.categorie !== 'design',
       secteurs: entree.secteurs.map((s) => ({
         libelle: LIBELLES_SECTEUR[s],
         icone: ICONE_SECTEUR[s],
