@@ -1,0 +1,175 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+  width: 100%;
+  font-family: var(--ngs-font-family, system-ui, sans-serif);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+/*
+  Toute la mise en scène est lue dans --ngs-p, la progression de 0 à 1 que le composant mesure : le disque
+  s'ouvre pendant les 80 premiers % (m), l'image se dézoome en 90 % (zt), le texte arrive de 60 à 90 % (c).
+  Chaque rampe est bornée puis adoucie (3t² − 2t³).
+*/
+.iris {
+  --ngs-p: 0;
+  --m: clamp(0, var(--ngs-p) / 0.8, 1);
+  --m-e: calc(var(--m) * var(--m) * (3 - 2 * var(--m)));
+  --zt: clamp(0, var(--ngs-p) / 0.9, 1);
+  --c: clamp(0, (var(--ngs-p) - 0.6) / 0.3, 1);
+  --c-e: calc(var(--c) * var(--c) * (3 - 2 * var(--c)));
+  --zoom-eff: var(--ngs-zoom);
+  --decal: 14px;
+  --flou: 6px;
+  position: relative;
+  width: 100%;
+  height: calc(var(--ngs-longueur) * 100svh);
+  background: var(--ngs-color-surface, #ffffff);
+  color: var(--ngs-color-text, #0b0b0c);
+}
+/* Zone « épinglée » : reste à l'écran pendant que la section défile. */
+.iris__scene {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: calc(var(--ngs-haut) * 1svh);
+  overflow: hidden;
+  container-type: size;
+  background: var(--ngs-color-surface-alt, #f4f4f5);
+}
+.iris__scene[data-arrondi='true'] {
+  border-radius: calc(var(--ngs-radius, 10px) * 2.4);
+}
+/* Disque flou : son rayon va de 0 à la demi-diagonale de la zone, son bord flou jusqu'à --ngs-douceur px. */
+.iris__media {
+  --r: calc(var(--m-e) * (hypot(50cqw, 50cqh) + var(--ngs-douceur) * 1px));
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    var(--ngs-color-text, #0b0b0c)
+      max(0px, calc(var(--r) - min(calc(var(--r) * 0.3), calc(var(--ngs-douceur) * 1px)))),
+    transparent var(--r)
+  );
+}
+.iris__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.78);
+  transform-origin: center;
+  transform: scale(
+    calc(1 + (var(--zoom-eff) - 1) * (1 - var(--zt)) * (1 - var(--zt)) * (1 - var(--zt)))
+  );
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform;
+}
+.iris__copie {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  text-align: center;
+  pointer-events: none;
+  opacity: var(--c-e);
+  filter: blur(calc((1 - var(--c-e)) * var(--flou)));
+  transform: translateY(calc((1 - var(--c-e)) * var(--decal)));
+}
+/* Le texte est posé sur une plaque : lisible sur n'importe quelle image, dans les deux modes. */
+.iris__plaque {
+  display: grid;
+  gap: calc(var(--ngs-density, 1) * 12px);
+  justify-items: center;
+  max-width: min(100%, 34rem);
+  padding: calc(var(--ngs-density, 1) * 24px) calc(var(--ngs-density, 1) * 32px);
+  border-radius: calc(var(--ngs-radius, 10px) * 1.4);
+  background: color-mix(in srgb, var(--ngs-color-surface, #ffffff) 84%, transparent);
+}
+.iris__surtitre {
+  margin: 0;
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-size: 0.65rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+.iris__titre {
+  margin: 0;
+  color: var(--ngs-color-text, #0b0b0c);
+  font-size: clamp(1.75rem, 1.2rem + 2cqi, 2.6rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.iris__indice {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  pointer-events: none;
+  opacity: clamp(0, calc(1 - var(--ngs-p) * 10), 1);
+  transform: translateX(-50%);
+}
+.iris__indice-libelle {
+  margin-right: -0.42em;
+  color: var(--ngs-color-text-muted, #5f5f66);
+  font-size: 0.6rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+}
+.iris__indice-ligne {
+  display: block;
+  width: 1px;
+  height: 3.2rem;
+  background: var(--ngs-color-text-muted, #5f5f66);
+}
+/* Mouvement réduit ou animations coupées : la révélation suit toujours le défilement, sans zoom ni flou. */
+@media (prefers-reduced-motion: reduce) {
+  .iris {
+    --zoom-eff: 1;
+    --decal: 0px;
+    --flou: 0px;
+  }
+}
+:host(.ngs-sans-animation) .iris {
+  --zoom-eff: 1;
+  --decal: 0px;
+  --flou: 0px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :host(:not(.ngs-sans-animation)) .iris__indice-ligne {
+    animation: ngs-iris-ligne calc(var(--ngs-duration, 160ms) * 14) cubic-bezier(0.65, 0, 0.35, 1)
+      infinite;
+  }
+}
+@keyframes ngs-iris-ligne {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  50.01% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}

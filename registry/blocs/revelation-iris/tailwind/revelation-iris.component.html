@@ -1,0 +1,67 @@
+<section
+  #racine
+  class="relative h-[calc(var(--ngs-longueur)*100svh)] w-full bg-ngs-surface text-ngs-text [--c-e:calc(var(--c)*var(--c)*(3_-_2*var(--c)))] [--c:clamp(0,(var(--ngs-p)_-_.6)/.3,1)] [--decal:14px] [--flou:6px] [--m-e:calc(var(--m)*var(--m)*(3_-_2*var(--m)))] [--m:clamp(0,var(--ngs-p)/.8,1)] [--ngs-p:0] [--zoom-eff:var(--ngs-zoom)] [--zt:clamp(0,var(--ngs-p)/.9,1)] in-[.ngs-sans-animation]:[--decal:0px] in-[.ngs-sans-animation]:[--flou:0px] in-[.ngs-sans-animation]:[--zoom-eff:1] motion-reduce:[--decal:0px] motion-reduce:[--flou:0px] motion-reduce:[--zoom-eff:1]"
+  [attr.aria-labelledby]="id"
+  [style.--ngs-longueur]="longueur()"
+  [style.--ngs-haut]="hauteur()"
+  [style.--ngs-zoom]="zoomDepart()"
+  [style.--ngs-douceur]="douceur()"
+>
+  <div
+    #scene
+    class="sticky top-0 h-[calc(var(--ngs-haut)*1svh)] w-full overflow-hidden bg-ngs-surface-alt [container-type:size] data-[arrondi=true]:rounded-[calc(var(--ngs-radius)*2.4)]"
+    [attr.data-arrondi]="arrondi()"
+  >
+    <div
+      class="absolute inset-0 [--r:calc(var(--m-e)*(hypot(50cqw,50cqh)_+_var(--ngs-douceur)*1px))] [mask-image:radial-gradient(circle_at_50%_50%,var(--color-ngs-text)_max(0px,calc(var(--r)_-_min(calc(var(--r)*.3),calc(var(--ngs-douceur)*1px)))),transparent_var(--r))]"
+    >
+      <img
+        class="block size-full origin-center [-webkit-user-drag:none] [filter:brightness(.78)] [transform:scale(calc(1_+_(var(--zoom-eff)_-_1)*(1_-_var(--zt))*(1_-_var(--zt))*(1_-_var(--zt))))] object-cover select-none will-change-transform"
+        [src]="image()"
+        [alt]="alt()"
+        draggable="false"
+      />
+    </div>
+    <div
+      class="pointer-events-none absolute inset-0 z-[2] flex flex-col items-center justify-center px-6 text-center opacity-(--c-e) [filter:blur(calc((1_-_var(--c-e))*var(--flou)))] [transform:translateY(calc((1_-_var(--c-e))*var(--decal)))]"
+    >
+      <div
+        class="grid max-w-[min(100%,34rem)] justify-items-center gap-ngs-3 rounded-ngs-lg bg-[color-mix(in_srgb,var(--color-ngs-surface)_84%,transparent)] px-ngs-8 py-ngs-6"
+      >
+        @if (surtitre()) {
+          <p class="m-0 text-[.65rem] tracking-[.32em] text-ngs-text-muted uppercase">
+            {{ surtitre() }}
+          </p>
+        }
+        @if (niveauTitre() === 1) {
+          <h1
+            class="m-0 text-[clamp(1.75rem,1.2rem+2cqi,2.6rem)] leading-[1.12] font-medium tracking-[-.02em] text-balance text-ngs-text"
+            [id]="id"
+          >
+            {{ titre() }}
+          </h1>
+        } @else {
+          <h2
+            class="m-0 text-[clamp(1.75rem,1.2rem+2cqi,2.6rem)] leading-[1.12] font-medium tracking-[-.02em] text-balance text-ngs-text"
+            [id]="id"
+          >
+            {{ titre() }}
+          </h2>
+        }
+      </div>
+    </div>
+    @if (indice()) {
+      <div
+        class="pointer-events-none absolute bottom-0 left-1/2 z-[3] flex -translate-x-1/2 flex-col items-center gap-[1.1rem] opacity-[clamp(0,calc(1_-_var(--ngs-p)*10),1)]"
+        aria-hidden="true"
+      >
+        <span class="-mr-[.42em] text-[.6rem] tracking-[.42em] text-ngs-text-muted uppercase">{{
+          indice()
+        }}</span>
+        <span
+          class="block h-[3.2rem] w-px bg-ngs-text-muted motion-safe:animate-[ngs-iris-ligne_calc(var(--ngs-duration)*14)_cubic-bezier(.65,0,.35,1)_infinite] in-[.ngs-sans-animation]:animate-none!"
+        ></span>
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,39 @@
+<section
+  #racine
+  class="iris"
+  [attr.aria-labelledby]="id"
+  [style.--ngs-longueur]="longueur()"
+  [style.--ngs-haut]="hauteur()"
+  [style.--ngs-zoom]="zoomDepart()"
+  [style.--ngs-douceur]="douceur()"
+>
+  <div #scene class="iris__scene" [attr.data-arrondi]="arrondi()">
+    <div class="iris__media">
+      <img class="iris__image" [src]="image()" [alt]="alt()" draggable="false" />
+    </div>
+    <div class="iris__copie">
+      <div class="iris__plaque">
+        @if (surtitre()) {
+          <p class="iris__surtitre">
+            {{ surtitre() }}
+          </p>
+        }
+        @if (niveauTitre() === 1) {
+          <h1 class="iris__titre" [id]="id">
+            {{ titre() }}
+          </h1>
+        } @else {
+          <h2 class="iris__titre" [id]="id">
+            {{ titre() }}
+          </h2>
+        }
+      </div>
+    </div>
+    @if (indice()) {
+      <div class="iris__indice" aria-hidden="true">
+        <span class="iris__indice-libelle">{{ indice() }}</span>
+        <span class="iris__indice-ligne"></span>
+      </div>
+    }
+  </div>
+</section>

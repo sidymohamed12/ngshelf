@@ -1,0 +1,83 @@
+{
+  "usage": "<ngs-revelation-iris\n  image=\"/images/coucher-de-soleil.webp\"\n  alt=\"Le soleil se couche sur la lagune.\"\n  surtitre=\"Carnet de voyage\"\n  titre=\"Tout arrive d’un coup\"\n  indice=\"Défiler\"\n  [longueur]=\"3\"\n/>",
+  "api": [
+    {
+      "nom": "image",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Adresse de l’image révélée."
+    },
+    {
+      "nom": "alt",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Texte alternatif de l’image ; vide si elle est décorative."
+    },
+    {
+      "nom": "titre / niveauTitre / surtitre",
+      "type": "input.required<string>() / input<1 | 2>() / input<string>()",
+      "defaut": "— / 2 / ''",
+      "role": "Titre (h2 par défaut, h1 si le bloc ouvre la page) et petite ligne au-dessus. Le texte est posé sur une plaque lisible sur toute image."
+    },
+    {
+      "nom": "indice",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Indice en bas de l’écran, par exemple « Défiler » ; vide pour le masquer."
+    },
+    {
+      "nom": "longueur",
+      "type": "input<number>()",
+      "defaut": "3",
+      "role": "Longueur du défilement de la section en hauteurs d’écran : plus c’est grand, plus la révélation est lente."
+    },
+    {
+      "nom": "hauteur",
+      "type": "input<number>()",
+      "defaut": "100",
+      "role": "Hauteur de la zone épinglée, en pourcentage de la hauteur de l’écran."
+    },
+    {
+      "nom": "zoomDepart",
+      "type": "input<number>()",
+      "defaut": "1.6",
+      "role": "Zoom de l’image au départ (1 = aucun) ; il revient à 1 à la fin."
+    },
+    {
+      "nom": "douceur",
+      "type": "input<number>()",
+      "defaut": "90",
+      "role": "Largeur maximale du bord flou du disque, en pixels."
+    },
+    {
+      "nom": "arrondi",
+      "type": "input<boolean>()",
+      "defaut": "false",
+      "role": "Coins arrondis de la zone épinglée, selon le rayon du design."
+    },
+    {
+      "nom": "lissage",
+      "type": "input<number>()",
+      "defaut": "0.14",
+      "role": "Lissage de la progression (0,01 : quasi instantané)."
+    },
+    {
+      "nom": "pilotage",
+      "type": "input<'defilement' | 'manuel'>()",
+      "defaut": "'defilement'",
+      "role": "« manuel » : la progression vaut `progression` au lieu de suivre le défilement (aperçu, capture, démonstration)."
+    },
+    {
+      "nom": "progression",
+      "type": "input<number>()",
+      "defaut": "0",
+      "role": "Progression de 0 à 1 quand le pilotage est manuel."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : pas de lissage, de zoom ni de flou de texte, et la ligne de l’indice reste immobile (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système). La révélation suit toujours le défilement."
+    }
+  ]
+}
