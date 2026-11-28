@@ -143,4 +143,69 @@ describe('ApercuService', () => {
       expect(service.animations()).toBe(false);
     });
   });
+
+  describe('paramètres propres de la ressource', () => {
+    const SLUG = 'galerie-accordeon';
+
+    it('démarre sur les défauts de la ressource et expose des lecteurs sûrs', () => {
+      const service = demarrer();
+      service.ouvrir(SLUG);
+      expect(service.definitions().map((d) => d.nom)).toContain('orientation');
+      expect(service.choix('orientation', ['horizontal', 'vertical'], 'vertical')).toBe(
+        'horizontal',
+      );
+      expect(service.nombre('hauteur', 1)).toBe(460);
+      expect(service.booleen('legendes', false)).toBe(true);
+      // Valeur inconnue de la scène : le repli, jamais un cast.
+      expect(service.choix('orientation', ['a', 'b'], 'b')).toBe('b');
+    });
+
+    it('relit les paramètres de l’URL, même quand la route s’ouvre après le premier rendu', () => {
+      window.history.pushState({}, '', '/?p.orientation=vertical&p.hauteur=300&p.legendes=0');
+      const service = demarrer();
+      service.ouvrir(SLUG);
+      expect(service.parametres()).toMatchObject({
+        orientation: 'vertical',
+        hauteur: 300,
+        legendes: false,
+      });
+      window.history.pushState({}, '', '/');
+    });
+
+    it('applique les paramètres du message du site, sur la liste blanche de la ressource', () => {
+      const service = demarrer();
+      service.ouvrir(SLUG);
+      envoyer(
+        messageReglages({
+          vars: {},
+          mode: 'clair',
+          animations: true,
+          params: { orientation: 'vertical', hauteur: 99_999, intrus: 'x', legendes: 'oui' },
+        }),
+      );
+      expect(service.parametres()).toMatchObject({
+        orientation: 'vertical',
+        hauteur: 640,
+        legendes: true,
+      });
+      expect('intrus' in service.parametres()).toBe(false);
+    });
+
+    it('règle un paramètre depuis la barre et revient aux défauts à la réinitialisation', () => {
+      const service = demarrer();
+      service.ouvrir(SLUG);
+      service.reglerParametre('inclinaison', 15);
+      service.reglerParametre('declencheur', 'diagonale');
+      expect(service.parametres()).toMatchObject({ inclinaison: 15, declencheur: 'survol' });
+      service.reinitialiser();
+      expect(service.parametres()).toMatchObject({ inclinaison: 8 });
+    });
+
+    it('n’a aucun paramètre pour une ressource qui n’en déclare pas', () => {
+      const service = demarrer();
+      service.ouvrir('boutons');
+      expect(service.definitions()).toEqual([]);
+      expect(service.parametres()).toEqual({});
+    });
+  });
 });
