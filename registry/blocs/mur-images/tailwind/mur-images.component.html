@@ -1,0 +1,98 @@
+<section
+  class="relative flex items-center overflow-hidden bg-ngs-surface text-ngs-text"
+  [attr.aria-labelledby]="id"
+  [style.min-height.px]="hauteur()"
+  [style.--ngs-dur]="duree() + 's'"
+  [style.--ngs-par]="parLigne()"
+  [style.--ngs-persp.px]="perspective()"
+  [style.--ngs-rot.deg]="rotation()"
+>
+  <div
+    class="absolute inset-0 overflow-hidden [mask-image:linear-gradient(90deg,var(--color-ngs-text)_0%,var(--color-ngs-text)_28%,transparent_62%)] [perspective:var(--ngs-persp)] @max-[56rem]:opacity-40"
+    aria-hidden="true"
+  >
+    <div
+      class="absolute top-1/2 left-0 flex w-[170%] origin-[0_50%] flex-col gap-ngs-4 [transform:translateY(-50%)_rotateY(var(--ngs-rot))]"
+    >
+      @for (ligne of lignes(); track $index) {
+        <div
+          class="h-40 overflow-hidden even:[&>div]:[animation-delay:calc(var(--ngs-dur)*-.5/var(--ngs-par))]"
+        >
+          <div
+            class="flex w-max gap-ngs-4 will-change-transform motion-safe:animate-[ngs-mur-derive_var(--ngs-dur)_linear_infinite] in-[.ngs-sans-animation]:animate-none!"
+          >
+            @for (copie of copies; track copie) {
+              @for (src of ligne; track $index) {
+                <div
+                  class="h-40 w-64 flex-none overflow-hidden rounded-[calc(var(--ngs-radius)*1.6)] bg-ngs-surface-alt"
+                >
+                  <img
+                    class="block size-full [-webkit-user-drag:none] object-cover select-none"
+                    [src]="src"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+  <div
+    class="relative z-[2] ml-[58%] w-full max-w-[34rem] py-ngs-12 pr-ngs-6 @max-[56rem]:ml-0 @max-[56rem]:max-w-none @max-[56rem]:px-ngs-6"
+  >
+    @if (niveauTitre() === 1) {
+      <h1
+        class="m-0 text-[clamp(2.5rem,1.2rem+5cqi,4.2rem)] leading-[1.05] font-semibold tracking-[-.035em] text-balance"
+        [id]="id"
+      >
+        {{ titre() }}
+      </h1>
+    } @else {
+      <h2
+        class="m-0 text-[clamp(2.5rem,1.2rem+5cqi,4.2rem)] leading-[1.05] font-semibold tracking-[-.035em] text-balance"
+        [id]="id"
+      >
+        {{ titre() }}
+      </h2>
+    }
+    <p class="mt-ngs-6 mb-0 max-w-[27rem] text-[1.15rem] leading-relaxed text-ngs-text-muted">
+      {{ texte() }}
+    </p>
+    <div class="mt-ngs-9 flex flex-wrap items-center gap-ngs-6">
+      @if (action()) {
+        <a
+          class="inline-flex min-h-11 items-center justify-center rounded-ngs bg-ngs-action px-ngs-6 font-semibold text-ngs-on-action no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ngs-action"
+          [routerLink]="routeAction()"
+          >{{ action() }}</a
+        >
+      }
+      @if (lien()) {
+        <a
+          class="group inline-flex min-h-11 items-center gap-ngs-2 font-semibold text-ngs-text no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ngs-action"
+          [routerLink]="routeLien()"
+        >
+          {{ lien() }}
+          <svg
+            class="size-3.5 motion-safe:transition-transform motion-safe:duration-(--ngs-duration) group-hover:translate-x-[3px] in-[.ngs-sans-animation]:transition-none!"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M5 12h14m-6-6 6 6-6 6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      }
+    </div>
+  </div>
+</section>

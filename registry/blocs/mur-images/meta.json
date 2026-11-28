@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "slug": "mur-images",
+  "categorie": "bloc",
+  "type": "hero",
+  "titre": {
+    "fr": "Hero à mur d'images"
+  },
+  "description": {
+    "fr": "Un mur d'images en perspective dérive lentement et s'estompe avant le texte : titre, phrase et deux actions à droite."
+  },
+  "secteurs": ["creatif", "commerce"],
+  "tags": ["hero", "images", "perspective", "dérive", "accueil"],
+  "contratTokens": 1,
+  "designsMisEnAvant": ["planche"],
+  "motion": {
+    "resume": {
+      "fr": "Les rangées d'images dérivent vers la droite en boucle continue, une rangée sur deux décalée d'une demi-image ; la flèche du lien glisse de 3 px au survol."
+    },
+    "moments": ["entree", "survol"],
+    "technique": "@keyframes CSS en boucle (une animation par rangée, contenu dupliqué) ; transition CSS sur la flèche"
+  },
+  "parametres": [
+    {
+      "nom": "hauteur",
+      "genre": "nombre",
+      "libelle": { "fr": "Hauteur minimale" },
+      "min": 480,
+      "max": 760,
+      "pas": 40,
+      "unite": "px",
+      "defaut": 640
+    },
+    {
+      "nom": "nombreLignes",
+      "genre": "nombre",
+      "libelle": { "fr": "Rangées d'images" },
+      "min": 3,
+      "max": 7,
+      "pas": 1,
+      "defaut": 5
+    },
+    {
+      "nom": "duree",
+      "genre": "nombre",
+      "libelle": { "fr": "Durée d'une boucle" },
+      "min": 30,
+      "max": 240,
+      "pas": 10,
+      "unite": "s",
+      "defaut": 150
+    },
+    {
+      "nom": "perspective",
+      "genre": "nombre",
+      "libelle": { "fr": "Perspective" },
+      "min": 800,
+      "max": 2000,
+      "pas": 100,
+      "unite": "px",
+      "defaut": 1400
+    },
+    {
+      "nom": "rotation",
+      "genre": "nombre",
+      "libelle": { "fr": "Rotation du mur" },
+      "min": 0,
+      "max": 45,
+      "pas": 1,
+      "unite": "°",
+      "defaut": 28
+    }
+  ],
+  "tailleCase": "large",
+  "variantes": ["tailwind", "css"],
+  "angularMin": "22.0",
+  "licence": "MIT",
+  "auteur": {
+    "nom": "Sidy"
+  },
+  "statut": "provisoire",
+  "ajouteLe": "2026-11-28",
+  "dependances": {
+    "npm": [],
+    "ressources": []
+  }
+}

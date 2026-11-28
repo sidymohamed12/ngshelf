@@ -1,0 +1,71 @@
+{
+  "usage": "<ngs-mur-images\n  [images]=\"images\"\n  titre=\"Des paysages imprimés en grand.\"\n  texte=\"Tirages d’art sur commande, en six formats.\"\n  action=\"Voir les tirages\"\n  routeAction=\"/tirages\"\n  lien=\"Les formats\"\n  routeLien=\"/formats\"\n/>\n\n// images : string[] (adresses) ; huit à douze suffisent, elles se répètent\nimages = ['/images/a.webp', '/images/b.webp'];",
+  "api": [
+    {
+      "nom": "images",
+      "type": "input.required<readonly string[]>()",
+      "defaut": "—",
+      "role": "Adresses des images du mur. Elles décorent (alt vide) : le titre et le texte portent le sens."
+    },
+    {
+      "nom": "titre / texte",
+      "type": "input.required<string>()",
+      "defaut": "—",
+      "role": "Titre (h2 par défaut) et phrase d’accompagnement."
+    },
+    {
+      "nom": "niveauTitre",
+      "type": "input<1 | 2>()",
+      "defaut": "2",
+      "role": "h1 si ce hero ouvre la page."
+    },
+    {
+      "nom": "action / routeAction / lien / routeLien",
+      "type": "input<string>()",
+      "defaut": "''",
+      "role": "Action principale et lien secondaire (routerLink). Un libellé vide masque l’élément."
+    },
+    {
+      "nom": "hauteur",
+      "type": "input<number>()",
+      "defaut": "640",
+      "role": "Hauteur minimale de la section en pixels."
+    },
+    {
+      "nom": "nombreLignes",
+      "type": "input<number>()",
+      "defaut": "5",
+      "role": "Nombre de rangées d’images."
+    },
+    {
+      "nom": "parLigne",
+      "type": "input<number>()",
+      "defaut": "8",
+      "role": "Images par rangée avant répétition ; elles doivent couvrir la largeur du mur."
+    },
+    {
+      "nom": "duree",
+      "type": "input<number>()",
+      "defaut": "150",
+      "role": "Durée d’une boucle complète, en secondes : plus c’est grand, plus la dérive est lente."
+    },
+    {
+      "nom": "perspective",
+      "type": "input<number>()",
+      "defaut": "1400",
+      "role": "Force de la perspective en pixels : plus c’est petit, plus le mur est déformé."
+    },
+    {
+      "nom": "rotation",
+      "type": "input<number>()",
+      "defaut": "28",
+      "role": "Rotation du mur, en degrés."
+    },
+    {
+      "nom": "animations",
+      "type": "input<boolean>()",
+      "defaut": "true",
+      "role": "false : le mur reste immobile (aussi : classe .ngs-sans-animation sur un parent, ou mouvement réduit du système)."
+    }
+  ]
+}

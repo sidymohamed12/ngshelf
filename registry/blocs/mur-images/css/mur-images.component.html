@@ -1,0 +1,67 @@
+<section
+  class="mur"
+  [attr.aria-labelledby]="id"
+  [style.min-height.px]="hauteur()"
+  [style.--ngs-dur]="duree() + 's'"
+  [style.--ngs-par]="parLigne()"
+  [style.--ngs-persp.px]="perspective()"
+  [style.--ngs-rot.deg]="rotation()"
+>
+  <div class="mur__scene" aria-hidden="true">
+    <div class="mur__mur">
+      @for (ligne of lignes(); track $index) {
+        <div class="mur__ligne">
+          <div class="mur__piste">
+            @for (copie of copies; track copie) {
+              @for (src of ligne; track $index) {
+                <div class="mur__tuile">
+                  <img
+                    class="mur__image"
+                    [src]="src"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+  <div class="mur__contenu">
+    @if (niveauTitre() === 1) {
+      <h1 class="mur__titre" [id]="id">
+        {{ titre() }}
+      </h1>
+    } @else {
+      <h2 class="mur__titre" [id]="id">
+        {{ titre() }}
+      </h2>
+    }
+    <p class="mur__texte">
+      {{ texte() }}
+    </p>
+    <div class="mur__actions">
+      @if (action()) {
+        <a class="mur__action" [routerLink]="routeAction()">{{ action() }}</a>
+      }
+      @if (lien()) {
+        <a class="mur__lien" [routerLink]="routeLien()">
+          {{ lien() }}
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M5 12h14m-6-6 6 6-6 6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      }
+    </div>
+  </div>
+</section>
