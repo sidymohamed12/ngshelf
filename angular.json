@@ -104,7 +104,10 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy.conf.mjs",
+            "headers": {
+              "Access-Control-Allow-Origin": "*"
+            }
           }
         },
         "test": {
@@ -172,6 +175,24 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "apercus:build:production"
+            },
+            "development": {
+              "buildTarget": "apercus:build:development"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4201,
+            "headers": {
+              "Access-Control-Allow-Origin": "*"
+            }
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test",
